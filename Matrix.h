@@ -1,3 +1,5 @@
+#include <iostream>
+
 enum EStorageOrder : int { RowMajor, ColMajor };
 
 template<typename Scalar, typename Index = long int, int StorageOrder = RowMajor>
