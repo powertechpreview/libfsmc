@@ -3,6 +3,7 @@ using namespace std;
 #include <altivec.h>
 #include <cstdlib>
 
+// a function to verify the multiplication
 double* result (double* a, double* b) {
 	int tam = 12;
 	double* out;
@@ -20,252 +21,253 @@ double* result (double* a, double* b) {
 	return out;
 }
 
+// the fast 12x12 matrix multiplication function
 double* mul(double* mLHS, double* mRHS, int boolean_mLHSisRowMajor = 1) {
 
 	__vector double mLHScol11, mLHScol21, mLHScol31, mLHScol41, mLHScol51, mLHScol61, mLHScol71, mLHScol81, mLHScol91, mLHScol101, mLHScol111, mLHScol121,
-									mLHScol12, mLHScol22, mLHScol32, mLHScol42, mLHScol52, mLHScol62, mLHScol72, mLHScol82, mLHScol92, mLHScol102, mLHScol112, mLHScol122,
-									mLHScol13, mLHScol23, mLHScol33, mLHScol43, mLHScol53, mLHScol63, mLHScol73, mLHScol83, mLHScol93, mLHScol103, mLHScol113, mLHScol123,
-									mLHScol14, mLHScol24, mLHScol34, mLHScol44, mLHScol54, mLHScol64, mLHScol74, mLHScol84, mLHScol94, mLHScol104, mLHScol114, mLHScol124,
-									mLHScol15, mLHScol25, mLHScol35, mLHScol45, mLHScol55, mLHScol65, mLHScol75, mLHScol85, mLHScol95, mLHScol105, mLHScol115, mLHScol125,
-									mLHScol16, mLHScol26, mLHScol36, mLHScol46, mLHScol56, mLHScol66, mLHScol76, mLHScol86, mLHScol96, mLHScol106, mLHScol116, mLHScol126,
-									mRHSrow11, mRHSrow21, mRHSrow31, mRHSrow41, mRHSrow51, mRHSrow61, mRHSrow71, mRHSrow81, mRHSrow91, mRHSrow101, mRHSrow111, mRHSrow121,
-									mRHSrow12, mRHSrow22, mRHSrow32, mRHSrow42, mRHSrow52, mRHSrow62, mRHSrow72, mRHSrow82, mRHSrow92, mRHSrow102, mRHSrow112, mRHSrow122,
-									mRHSrow13, mRHSrow23, mRHSrow33, mRHSrow43, mRHSrow53, mRHSrow63, mRHSrow73, mRHSrow83, mRHSrow93, mRHSrow103, mRHSrow113, mRHSrow123,
-									mRHSrow14, mRHSrow24, mRHSrow34, mRHSrow44, mRHSrow54, mRHSrow64, mRHSrow74, mRHSrow84, mRHSrow94, mRHSrow104, mRHSrow114, mRHSrow124,
-									mRHSrow15, mRHSrow25, mRHSrow35, mRHSrow45, mRHSrow55, mRHSrow65, mRHSrow75, mRHSrow85, mRHSrow95, mRHSrow105, mRHSrow115, mRHSrow125,
-									mRHSrow16, mRHSrow26, mRHSrow36, mRHSrow46, mRHSrow56, mRHSrow66, mRHSrow76, mRHSrow86, mRHSrow96, mRHSrow106, mRHSrow116, mRHSrow126;
+			mLHScol12, mLHScol22, mLHScol32, mLHScol42, mLHScol52, mLHScol62, mLHScol72, mLHScol82, mLHScol92, mLHScol102, mLHScol112, mLHScol122,
+			mLHScol13, mLHScol23, mLHScol33, mLHScol43, mLHScol53, mLHScol63, mLHScol73, mLHScol83, mLHScol93, mLHScol103, mLHScol113, mLHScol123,
+			mLHScol14, mLHScol24, mLHScol34, mLHScol44, mLHScol54, mLHScol64, mLHScol74, mLHScol84, mLHScol94, mLHScol104, mLHScol114, mLHScol124,
+			mLHScol15, mLHScol25, mLHScol35, mLHScol45, mLHScol55, mLHScol65, mLHScol75, mLHScol85, mLHScol95, mLHScol105, mLHScol115, mLHScol125,
+			mLHScol16, mLHScol26, mLHScol36, mLHScol46, mLHScol56, mLHScol66, mLHScol76, mLHScol86, mLHScol96, mLHScol106, mLHScol116, mLHScol126,
+			mRHSrow11, mRHSrow21, mRHSrow31, mRHSrow41, mRHSrow51, mRHSrow61, mRHSrow71, mRHSrow81, mRHSrow91, mRHSrow101, mRHSrow111, mRHSrow121,
+			mRHSrow12, mRHSrow22, mRHSrow32, mRHSrow42, mRHSrow52, mRHSrow62, mRHSrow72, mRHSrow82, mRHSrow92, mRHSrow102, mRHSrow112, mRHSrow122,
+			mRHSrow13, mRHSrow23, mRHSrow33, mRHSrow43, mRHSrow53, mRHSrow63, mRHSrow73, mRHSrow83, mRHSrow93, mRHSrow103, mRHSrow113, mRHSrow123,
+			mRHSrow14, mRHSrow24, mRHSrow34, mRHSrow44, mRHSrow54, mRHSrow64, mRHSrow74, mRHSrow84, mRHSrow94, mRHSrow104, mRHSrow114, mRHSrow124,
+			mRHSrow15, mRHSrow25, mRHSrow35, mRHSrow45, mRHSrow55, mRHSrow65, mRHSrow75, mRHSrow85, mRHSrow95, mRHSrow105, mRHSrow115, mRHSrow125,
+			mRHSrow16, mRHSrow26, mRHSrow36, mRHSrow46, mRHSrow56, mRHSrow66, mRHSrow76, mRHSrow86, mRHSrow96, mRHSrow106, mRHSrow116, mRHSrow126;
 
 	if (boolean_mLHSisRowMajor) {
 
 		const static __vector unsigned char GETCOL1 = { 0, 1, 2, 3, 4, 5, 6, 7,
-																					16, 17, 18, 19, 20, 21, 22, 23};
+								16, 17, 18, 19, 20, 21, 22, 23};
 
 		const static __vector unsigned char GETCOL2 = { 8, 9, 10, 11, 12, 13, 14, 15,
-																					24, 25, 26, 27, 28, 29, 30, 31};
+								24, 25, 26, 27, 28, 29, 30, 31};
 
-		// pegando as linhas 1 e 2 de cada coluna
-		// colunas 1 e 2
+		// getting rows 1 and 2 of each column
+		// columns 1 and 2
 		__vector double mLHSaux1 = vec_xl(0, mLHS);
 		__vector double mLHSaux2 = vec_xl(0, mLHS + 12);
 		mLHScol11 = vec_perm(mLHSaux1, mLHSaux2, GETCOL1);
 		mLHScol21 = vec_perm(mLHSaux1, mLHSaux2, GETCOL2);
 
-		// colunas 3 e 4
+		// columns 3 and 4
 		__vector double mLHSaux3 = vec_xl(0, mLHS + 2);
 		__vector double mLHSaux4 = vec_xl(0, mLHS + 14);
 		mLHScol31 = vec_perm(mLHSaux3, mLHSaux4, GETCOL1);
 		mLHScol41 = vec_perm(mLHSaux3, mLHSaux4, GETCOL2);
 
-		// colunas 5 e 6
+		// columns 5 and 6
 		__vector double mLHSaux5 = vec_xl(0, mLHS + 4);
 		__vector double mLHSaux6 = vec_xl(0, mLHS + 16);
 		mLHScol51 = vec_perm(mLHSaux5, mLHSaux6, GETCOL1);
 		mLHScol61 = vec_perm(mLHSaux5, mLHSaux6, GETCOL2);
 
-		// colunas 7 e 8
+		// columns 7 and 8
 		__vector double mLHSaux7 = vec_xl(0, mLHS + 6);
 		__vector double mLHSaux8 = vec_xl(0, mLHS + 18);
 		mLHScol71 = vec_perm(mLHSaux7, mLHSaux8, GETCOL1);
 		mLHScol81 = vec_perm(mLHSaux7, mLHSaux8, GETCOL2);
 
-		// colunas 9 e 10
+		// columns 9 and 10
 		__vector double mLHSaux9 = vec_xl(0, mLHS + 8);
 		__vector double mLHSaux10 = vec_xl(0, mLHS + 20);
 		mLHScol91 = vec_perm(mLHSaux9, mLHSaux10, GETCOL1);
 		mLHScol101 = vec_perm(mLHSaux9, mLHSaux10, GETCOL2);
 
-		// colunas 11 e 12
+		// columns 11 and 12
 		__vector double mLHSaux11 = vec_xl(0, mLHS + 10);
 		__vector double mLHSaux12 = vec_xl(0, mLHS + 22);
 		mLHScol111 = vec_perm(mLHSaux11, mLHSaux12, GETCOL1);
 		mLHScol121 = vec_perm(mLHSaux11, mLHSaux12, GETCOL2);
 
-		// pegando as linhas 3 e 4 de cada coluna
-		// colunas 1 e 2
+		// getting rows 3 and 4 of each column
+		// columns 1 and 2
 		__vector double mLHSaux13 = vec_xl(0, mLHS + 24);
 		__vector double mLHSaux14 = vec_xl(0, mLHS + 36);
 		mLHScol12 = vec_perm(mLHSaux13, mLHSaux14, GETCOL1);
 		mLHScol22 = vec_perm(mLHSaux13, mLHSaux14, GETCOL2);
 
-		// colunas 3 e 4
+		// columns 3 and 4
 		__vector double mLHSaux15 = vec_xl(0, mLHS + 26);
 		__vector double mLHSaux16 = vec_xl(0, mLHS + 38);
 		mLHScol32 = vec_perm(mLHSaux15, mLHSaux16, GETCOL1);
 		mLHScol42 = vec_perm(mLHSaux15, mLHSaux16, GETCOL2);
 
-		// colunas 5 e 6
+		// columns 5 and 6
 		__vector double mLHSaux17 = vec_xl(0, mLHS + 28);
 		__vector double mLHSaux18 = vec_xl(0, mLHS + 40);
 		mLHScol52 = vec_perm(mLHSaux17, mLHSaux18, GETCOL1);
 		mLHScol62 = vec_perm(mLHSaux17, mLHSaux18, GETCOL2);
 
-		// colunas 7 e 8
+		// columns 7 and 8
 		__vector double mLHSaux19 = vec_xl(0, mLHS + 30);
 		__vector double mLHSaux20 = vec_xl(0, mLHS + 42);
 		mLHScol72 = vec_perm(mLHSaux19, mLHSaux20, GETCOL1);
 		mLHScol82 = vec_perm(mLHSaux19, mLHSaux20, GETCOL2);
 
-		// colunas 9 e 10
+		// columns 9 and 10
 		__vector double mLHSaux21 = vec_xl(0, mLHS + 32);
 		__vector double mLHSaux22 = vec_xl(0, mLHS + 44);
 		mLHScol92 = vec_perm(mLHSaux21, mLHSaux22, GETCOL1);
 		mLHScol102 = vec_perm(mLHSaux21, mLHSaux22, GETCOL2);
 
-		// colunas 11 e 12
+		// columns 11 and 12
 		__vector double mLHSaux23 = vec_xl(0, mLHS + 34);
 		__vector double mLHSaux24 = vec_xl(0, mLHS + 46);
 		mLHScol112 = vec_perm(mLHSaux23, mLHSaux24, GETCOL1);
 		mLHScol122 = vec_perm(mLHSaux23, mLHSaux24, GETCOL2);
 
-		// pegando as linhas 5 e 6 de cada coluna
-		// colunas 1 e 2
+		// getting rows 5 and 6 of each column
+		// columns 1 and 2
 		__vector double mLHSaux25 = vec_xl(0, mLHS + 48);
 		__vector double mLHSaux26 = vec_xl(0, mLHS + 60);
 		mLHScol13 = vec_perm(mLHSaux25, mLHSaux26, GETCOL1);
 		mLHScol23 = vec_perm(mLHSaux25, mLHSaux26, GETCOL2);
 
-		// colunas 3 e 4
+		// columns 3 and 4
 		__vector double mLHSaux27 = vec_xl(0, mLHS + 50);
 		__vector double mLHSaux28 = vec_xl(0, mLHS + 62);
 		mLHScol33 = vec_perm(mLHSaux27, mLHSaux28, GETCOL1);
 		mLHScol43 = vec_perm(mLHSaux27, mLHSaux28, GETCOL2);
 
-		// colunas 5 e 6
+		// columns 5 and 6
 		__vector double mLHSaux29 = vec_xl(0, mLHS + 52);
 		__vector double mLHSaux30 = vec_xl(0, mLHS + 64);
 		mLHScol53 = vec_perm(mLHSaux29, mLHSaux30, GETCOL1);
 		mLHScol63 = vec_perm(mLHSaux29, mLHSaux30, GETCOL2);
 
-		// colunas 7 e 8
+		// columns 7 and 8
 		__vector double mLHSaux31 = vec_xl(0, mLHS + 54);
 		__vector double mLHSaux32 = vec_xl(0, mLHS + 66);
 		mLHScol73 = vec_perm(mLHSaux31, mLHSaux32, GETCOL1);
 		mLHScol83 = vec_perm(mLHSaux31, mLHSaux32, GETCOL2);
 
-		// colunas 9 e 10
+		// columns 9 and 10
 		__vector double mLHSaux33 = vec_xl(0, mLHS + 56);
 		__vector double mLHSaux34 = vec_xl(0, mLHS + 68);
 		mLHScol93 = vec_perm(mLHSaux33, mLHSaux34, GETCOL1);
 		mLHScol103 = vec_perm(mLHSaux33, mLHSaux34, GETCOL2);
 
-		// colunas 11 e 12
+		// columns 11 and 12
 		__vector double mLHSaux35 = vec_xl(0, mLHS + 58);
 		__vector double mLHSaux36 = vec_xl(0, mLHS + 70);
 		mLHScol113 = vec_perm(mLHSaux35, mLHSaux36, GETCOL1);
 		mLHScol123 = vec_perm(mLHSaux35, mLHSaux36, GETCOL2);
 
-		// pegando as linhas 7 e 8 de cada coluna
-		// colunas 1 e 2
+		// getting rows 7 and 8 of each column
+		// columns 1 and 2
 		__vector double mLHSaux37 = vec_xl(0, mLHS + 72);
 		__vector double mLHSaux38 = vec_xl(0, mLHS + 84);
 		mLHScol14 = vec_perm(mLHSaux37, mLHSaux38, GETCOL1);
 		mLHScol24 = vec_perm(mLHSaux37, mLHSaux38, GETCOL2);
 
-		// colunas 3 e 4
+		// columns 3 and 4
 		__vector double mLHSaux39 = vec_xl(0, mLHS + 74);
 		__vector double mLHSaux40 = vec_xl(0, mLHS + 86);
 		mLHScol34 = vec_perm(mLHSaux39, mLHSaux40, GETCOL1);
 		mLHScol44 = vec_perm(mLHSaux39, mLHSaux40, GETCOL2);
 
-		// colunas 5 e 6
+		// columns 5 and 6
 		__vector double mLHSaux41 = vec_xl(0, mLHS + 76);
 		__vector double mLHSaux42 = vec_xl(0, mLHS + 88);
 		mLHScol54 = vec_perm(mLHSaux41, mLHSaux42, GETCOL1);
 		mLHScol64 = vec_perm(mLHSaux41, mLHSaux42, GETCOL2);
 
-		// colunas 7 e 8
+		// columns 7 and 8
 		__vector double mLHSaux43 = vec_xl(0, mLHS + 78);
 		__vector double mLHSaux44 = vec_xl(0, mLHS + 90);
 		mLHScol74 = vec_perm(mLHSaux43, mLHSaux44, GETCOL1);
 		mLHScol84 = vec_perm(mLHSaux43, mLHSaux44, GETCOL2);
 
-		// colunas 9 e 10
+		// columns 9 and 10
 		__vector double mLHSaux45 = vec_xl(0, mLHS + 80);
 		__vector double mLHSaux46 = vec_xl(0, mLHS + 92);
 		mLHScol94 = vec_perm(mLHSaux45, mLHSaux46, GETCOL1);
 		mLHScol104 = vec_perm(mLHSaux45, mLHSaux46, GETCOL2);
 
-		// colunas 11 e 12
+		// columns 11 and 12
 		__vector double mLHSaux47 = vec_xl(0, mLHS + 82);
 		__vector double mLHSaux48 = vec_xl(0, mLHS + 94);
 		mLHScol114 = vec_perm(mLHSaux47, mLHSaux48, GETCOL1);
 		mLHScol124 = vec_perm(mLHSaux47, mLHSaux48, GETCOL2);
 
-		// pegando as linhas 9 e 10 de cada coluna
-		// colunas 1 e 2
+		// getting rows 9 and 10 of each column
+		// columns 1 and 2
 		__vector double mLHSaux49 = vec_xl(0, mLHS + 96);
 		__vector double mLHSaux50 = vec_xl(0, mLHS + 108);
 		mLHScol15 = vec_perm(mLHSaux49, mLHSaux50, GETCOL1);
 		mLHScol25 = vec_perm(mLHSaux49, mLHSaux50, GETCOL2);
 
-		// colunas 3 e 4
+		// columns 3 and 4
 		__vector double mLHSaux51 = vec_xl(0, mLHS + 98);
 		__vector double mLHSaux52 = vec_xl(0, mLHS + 110);
 		mLHScol35 = vec_perm(mLHSaux51, mLHSaux52, GETCOL1);
 		mLHScol45 = vec_perm(mLHSaux51, mLHSaux52, GETCOL2);
 
-		// colunas 5 e 6
+		// columns 5 and 6
 		__vector double mLHSaux53 = vec_xl(0, mLHS + 100);
 		__vector double mLHSaux54 = vec_xl(0, mLHS + 112);
 		mLHScol55 = vec_perm(mLHSaux53, mLHSaux54, GETCOL1);
 		mLHScol65 = vec_perm(mLHSaux53, mLHSaux54, GETCOL2);
 
-		// colunas 7 e 8
+		// columns 7 and 8
 		__vector double mLHSaux55 = vec_xl(0, mLHS + 102);
 		__vector double mLHSaux56 = vec_xl(0, mLHS + 114);
 		mLHScol75 = vec_perm(mLHSaux55, mLHSaux56, GETCOL1);
 		mLHScol85 = vec_perm(mLHSaux55, mLHSaux56, GETCOL2);
 
-		// colunas 9 e 10
+		// columns 9 and 10
 		__vector double mLHSaux57 = vec_xl(0, mLHS + 104);
 		__vector double mLHSaux58 = vec_xl(0, mLHS + 116);
 		mLHScol95 = vec_perm(mLHSaux57, mLHSaux58, GETCOL1);
 		mLHScol105 = vec_perm(mLHSaux57, mLHSaux58, GETCOL2);
 
-		// colunas 11 e 12
+		// columns 11 and 12
 		__vector double mLHSaux59 = vec_xl(0, mLHS + 106);
 		__vector double mLHSaux60 = vec_xl(0, mLHS + 118);
 		mLHScol115 = vec_perm(mLHSaux59, mLHSaux60, GETCOL1);
 		mLHScol125 = vec_perm(mLHSaux59, mLHSaux60, GETCOL2);
 
-		// pegando as linhas 11 e 12 de cada coluna
-		// colunas 1 e 2
+		// getting rows 11 and 12 of each column
+		// columns 1 and 2
 		__vector double mLHSaux61 = vec_xl(0, mLHS + 120);
 		__vector double mLHSaux62 = vec_xl(0, mLHS + 132);
 		mLHScol16 = vec_perm(mLHSaux61, mLHSaux62, GETCOL1);
 		mLHScol26 = vec_perm(mLHSaux61, mLHSaux62, GETCOL2);
 
-		// colunas 3 e 4
+		// columns 3 and 4
 		__vector double mLHSaux63 = vec_xl(0, mLHS + 122);
 		__vector double mLHSaux64 = vec_xl(0, mLHS + 134);
 		mLHScol36 = vec_perm(mLHSaux63, mLHSaux64, GETCOL1);
 		mLHScol46 = vec_perm(mLHSaux63, mLHSaux64, GETCOL2);
 
-		// colunas 5 e 6
+		// columns 5 and 6
 		__vector double mLHSaux65 = vec_xl(0, mLHS + 124);
 		__vector double mLHSaux66 = vec_xl(0, mLHS + 136);
 		mLHScol56 = vec_perm(mLHSaux65, mLHSaux66, GETCOL1);
 		mLHScol66 = vec_perm(mLHSaux65, mLHSaux66, GETCOL2);
 
-		// colunas 7 e 8
+		// columns 7 and 8
 		__vector double mLHSaux67 = vec_xl(0, mLHS + 126);
 		__vector double mLHSaux68 = vec_xl(0, mLHS + 138);
 		mLHScol76 = vec_perm(mLHSaux67, mLHSaux68, GETCOL1);
 		mLHScol86 = vec_perm(mLHSaux67, mLHSaux68, GETCOL2);
 
-		// colunas 9 e 10
+		// columns 9 and 10
 		__vector double mLHSaux69 = vec_xl(0, mLHS + 128);
 		__vector double mLHSaux70 = vec_xl(0, mLHS + 140);
 		mLHScol96 = vec_perm(mLHSaux69, mLHSaux70, GETCOL1);
 		mLHScol106 = vec_perm(mLHSaux69, mLHSaux70, GETCOL2);
 
-		// colunas 11 e 12
+		// columns 11 and 12
 		__vector double mLHSaux71 = vec_xl(0, mLHS + 130);
 		__vector double mLHSaux72 = vec_xl(0, mLHS + 142);
 		mLHScol116 = vec_perm(mLHSaux71, mLHSaux72, GETCOL1);
 		mLHScol126 = vec_perm(mLHSaux71, mLHSaux72, GETCOL2);
 	} else {
-		// coluna 1
+		// column 1
 		mLHScol11 = vec_xl(0, mLHS);
 		mLHScol12 = vec_xl(0, mLHS + 2);
 		mLHScol13 = vec_xl(0, mLHS + 4);
@@ -273,7 +275,7 @@ double* mul(double* mLHS, double* mRHS, int boolean_mLHSisRowMajor = 1) {
 		mLHScol15 = vec_xl(0, mLHS + 8);
 		mLHScol16 = vec_xl(0, mLHS + 10);
 
-		// coluna 2
+		// column 2
 		mLHScol21 = vec_xl(0, mLHS + 12);
 		mLHScol22 = vec_xl(0, mLHS + 14);
 		mLHScol23 = vec_xl(0, mLHS + 16);
@@ -281,7 +283,7 @@ double* mul(double* mLHS, double* mRHS, int boolean_mLHSisRowMajor = 1) {
 		mLHScol25 = vec_xl(0, mLHS + 20);
 		mLHScol26 = vec_xl(0, mLHS + 22);
 
-		// coluna 3
+		// column 3
 		mLHScol31 = vec_xl(0, mLHS + 24);
 		mLHScol32 = vec_xl(0, mLHS + 26);
 		mLHScol33 = vec_xl(0, mLHS + 28);
@@ -289,7 +291,7 @@ double* mul(double* mLHS, double* mRHS, int boolean_mLHSisRowMajor = 1) {
 		mLHScol35 = vec_xl(0, mLHS + 32);
 		mLHScol36 = vec_xl(0, mLHS + 34);
 
-		// coluna 4
+		// column 4
 		mLHScol41 = vec_xl(0, mLHS + 36);
 		mLHScol42 = vec_xl(0, mLHS + 38);
 		mLHScol43 = vec_xl(0, mLHS + 40);
@@ -297,7 +299,7 @@ double* mul(double* mLHS, double* mRHS, int boolean_mLHSisRowMajor = 1) {
 		mLHScol45 = vec_xl(0, mLHS + 44);
 		mLHScol46 = vec_xl(0, mLHS + 46);
 
-		// coluna 5
+		// column 5
 		mLHScol51 = vec_xl(0, mLHS + 48);
 		mLHScol52 = vec_xl(0, mLHS + 50);
 		mLHScol53 = vec_xl(0, mLHS + 52);
@@ -305,7 +307,7 @@ double* mul(double* mLHS, double* mRHS, int boolean_mLHSisRowMajor = 1) {
 		mLHScol55 = vec_xl(0, mLHS + 56);
 		mLHScol56 = vec_xl(0, mLHS + 58);
 
-		// coluna 6
+		// column 6
 		mLHScol61 = vec_xl(0, mLHS + 60);
 		mLHScol62 = vec_xl(0, mLHS + 62);
 		mLHScol63 = vec_xl(0, mLHS + 64);
@@ -313,7 +315,7 @@ double* mul(double* mLHS, double* mRHS, int boolean_mLHSisRowMajor = 1) {
 		mLHScol65 = vec_xl(0, mLHS + 68);
 		mLHScol66 = vec_xl(0, mLHS + 70);
 
-		// coluna 7
+		// column 7
 		mLHScol71 = vec_xl(0, mLHS + 72);
 		mLHScol72 = vec_xl(0, mLHS + 74);
 		mLHScol73 = vec_xl(0, mLHS + 76);
@@ -321,7 +323,7 @@ double* mul(double* mLHS, double* mRHS, int boolean_mLHSisRowMajor = 1) {
 		mLHScol75 = vec_xl(0, mLHS + 80);
 		mLHScol76 = vec_xl(0, mLHS + 82);
 
-		// coluna 8
+		// column 8
 		mLHScol81 = vec_xl(0, mLHS + 84);
 		mLHScol82 = vec_xl(0, mLHS + 86);
 		mLHScol83 = vec_xl(0, mLHS + 88);
@@ -329,7 +331,7 @@ double* mul(double* mLHS, double* mRHS, int boolean_mLHSisRowMajor = 1) {
 		mLHScol85 = vec_xl(0, mLHS + 92);
 		mLHScol86 = vec_xl(0, mLHS + 94);
 
-		// coluna 9
+		// column 9
 		mLHScol91 = vec_xl(0, mLHS + 96);
 		mLHScol92 = vec_xl(0, mLHS + 98);
 		mLHScol93 = vec_xl(0, mLHS + 100);
@@ -337,7 +339,7 @@ double* mul(double* mLHS, double* mRHS, int boolean_mLHSisRowMajor = 1) {
 		mLHScol95 = vec_xl(0, mLHS + 104);
 		mLHScol96 = vec_xl(0, mLHS + 106);
 
-		// coluna 10
+		// column 10
 		mLHScol101 = vec_xl(0, mLHS + 108);
 		mLHScol102 = vec_xl(0, mLHS + 110);
 		mLHScol103 = vec_xl(0, mLHS + 112);
@@ -345,7 +347,7 @@ double* mul(double* mLHS, double* mRHS, int boolean_mLHSisRowMajor = 1) {
 		mLHScol105 = vec_xl(0, mLHS + 116);
 		mLHScol106 = vec_xl(0, mLHS + 118);
 
-		// coluna 11
+		// column 11
 		mLHScol111 = vec_xl(0, mLHS + 120);
 		mLHScol112 = vec_xl(0, mLHS + 122);
 		mLHScol113 = vec_xl(0, mLHS + 124);
@@ -353,7 +355,7 @@ double* mul(double* mLHS, double* mRHS, int boolean_mLHSisRowMajor = 1) {
 		mLHScol115 = vec_xl(0, mLHS + 128);
 		mLHScol116 = vec_xl(0, mLHS + 130);
 
-		// coluna 12
+		// column 12
 		mLHScol121 = vec_xl(0, mLHS + 132);
 		mLHScol122 = vec_xl(0, mLHS + 134);
 		mLHScol123 = vec_xl(0, mLHS + 136);
@@ -362,7 +364,7 @@ double* mul(double* mLHS, double* mRHS, int boolean_mLHSisRowMajor = 1) {
 		mLHScol126 = vec_xl(0, mLHS + 142);
 	}
 
-	// coluna 1
+	// column 1
 	mRHSrow11 = vec_xl(0, mRHS);
 	mRHSrow12 = vec_xl(0, mRHS + 2);
 	mRHSrow13 = vec_xl(0, mRHS + 4);
@@ -370,7 +372,7 @@ double* mul(double* mLHS, double* mRHS, int boolean_mLHSisRowMajor = 1) {
 	mRHSrow15 = vec_xl(0, mRHS + 8);
 	mRHSrow16 = vec_xl(0, mRHS + 10);
 
-	// coluna 2
+	// column 2
 	mRHSrow21 = vec_xl(0, mRHS + 12);
 	mRHSrow22 = vec_xl(0, mRHS + 14);
 	mRHSrow23 = vec_xl(0, mRHS + 16);
@@ -378,7 +380,7 @@ double* mul(double* mLHS, double* mRHS, int boolean_mLHSisRowMajor = 1) {
 	mRHSrow25 = vec_xl(0, mRHS + 20);
 	mRHSrow26 = vec_xl(0, mRHS + 22);
 
-	// coluna 3
+	// column 3
 	mRHSrow31 = vec_xl(0, mRHS + 24);
 	mRHSrow32 = vec_xl(0, mRHS + 26);
 	mRHSrow33 = vec_xl(0, mRHS + 28);
@@ -386,7 +388,7 @@ double* mul(double* mLHS, double* mRHS, int boolean_mLHSisRowMajor = 1) {
 	mRHSrow35 = vec_xl(0, mRHS + 32);
 	mRHSrow36 = vec_xl(0, mRHS + 34);
 
-	// coluna 4
+	// column 4
 	mRHSrow41 = vec_xl(0, mRHS + 36);
 	mRHSrow42 = vec_xl(0, mRHS + 38);
 	mRHSrow43 = vec_xl(0, mRHS + 40);
@@ -394,7 +396,7 @@ double* mul(double* mLHS, double* mRHS, int boolean_mLHSisRowMajor = 1) {
 	mRHSrow45 = vec_xl(0, mRHS + 44);
 	mRHSrow46 = vec_xl(0, mRHS + 46);
 
-	// coluna 5
+	// column 5
 	mRHSrow51 = vec_xl(0, mRHS + 48);
 	mRHSrow52 = vec_xl(0, mRHS + 50);
 	mRHSrow53 = vec_xl(0, mRHS + 52);
@@ -402,7 +404,7 @@ double* mul(double* mLHS, double* mRHS, int boolean_mLHSisRowMajor = 1) {
 	mRHSrow55 = vec_xl(0, mRHS + 56);
 	mRHSrow56 = vec_xl(0, mRHS + 58);
 
-	// coluna 6
+	// column 6
 	mRHSrow61 = vec_xl(0, mRHS + 60);
 	mRHSrow62 = vec_xl(0, mRHS + 62);
 	mRHSrow63 = vec_xl(0, mRHS + 64);
@@ -410,7 +412,7 @@ double* mul(double* mLHS, double* mRHS, int boolean_mLHSisRowMajor = 1) {
 	mRHSrow65 = vec_xl(0, mRHS + 68);
 	mRHSrow66 = vec_xl(0, mRHS + 70);
 
-	// coluna 7
+	// column 7
 	mRHSrow71 = vec_xl(0, mRHS + 72);
 	mRHSrow72 = vec_xl(0, mRHS + 74);
 	mRHSrow73 = vec_xl(0, mRHS + 76);
@@ -418,7 +420,7 @@ double* mul(double* mLHS, double* mRHS, int boolean_mLHSisRowMajor = 1) {
 	mRHSrow75 = vec_xl(0, mRHS + 80);
 	mRHSrow76 = vec_xl(0, mRHS + 82);
 
-	// coluna 8
+	// column 8
 	mRHSrow81 = vec_xl(0, mRHS + 84);
 	mRHSrow82 = vec_xl(0, mRHS + 86);
 	mRHSrow83 = vec_xl(0, mRHS + 88);
@@ -426,7 +428,7 @@ double* mul(double* mLHS, double* mRHS, int boolean_mLHSisRowMajor = 1) {
 	mRHSrow85 = vec_xl(0, mRHS + 92);
 	mRHSrow86 = vec_xl(0, mRHS + 94);
 
-	// coluna 9
+	// column 9
 	mRHSrow91 = vec_xl(0, mRHS + 96);
 	mRHSrow92 = vec_xl(0, mRHS + 98);
 	mRHSrow93 = vec_xl(0, mRHS + 100);
@@ -434,7 +436,7 @@ double* mul(double* mLHS, double* mRHS, int boolean_mLHSisRowMajor = 1) {
 	mRHSrow95 = vec_xl(0, mRHS + 104);
 	mRHSrow96 = vec_xl(0, mRHS + 106);
 
-	// coluna 10
+	// column 10
 	mRHSrow101 = vec_xl(0, mRHS + 108);
 	mRHSrow102 = vec_xl(0, mRHS + 110);
 	mRHSrow103 = vec_xl(0, mRHS + 112);
@@ -442,7 +444,7 @@ double* mul(double* mLHS, double* mRHS, int boolean_mLHSisRowMajor = 1) {
 	mRHSrow105 = vec_xl(0, mRHS + 116);
 	mRHSrow106 = vec_xl(0, mRHS + 118);
 
-	// coluna 11
+	// column 11
 	mRHSrow111 = vec_xl(0, mRHS + 120);
 	mRHSrow112 = vec_xl(0, mRHS + 122);
 	mRHSrow113 = vec_xl(0, mRHS + 124);
@@ -450,7 +452,7 @@ double* mul(double* mLHS, double* mRHS, int boolean_mLHSisRowMajor = 1) {
 	mRHSrow115 = vec_xl(0, mRHS + 128);
 	mRHSrow116 = vec_xl(0, mRHS + 130);
 
-	// coluna 12
+	// column 12
 	mRHSrow121 = vec_xl(0, mRHS + 132);
 	mRHSrow122 = vec_xl(0, mRHS + 134);
 	mRHSrow123 = vec_xl(0, mRHS + 136);
@@ -628,7 +630,7 @@ double* mul(double* mLHS, double* mRHS, int boolean_mLHSisRowMajor = 1) {
 
 	double* mResult;
 	mResult = new double[144];
-	
+
 	// row 1 of mResult
 	vec_xst(vec_madd(vAuxLHS121, mRHSrow121, vec_madd(vAuxLHS111, mRHSrow111, vec_madd(vAuxLHS101, mRHSrow101, vec_madd(vAuxLHS91, mRHSrow91, vec_madd(vAuxLHS81, mRHSrow81, vec_madd(vAuxLHS71, mRHSrow71, vec_madd(vAuxLHS61, mRHSrow61, vec_madd(vAuxLHS51, mRHSrow51, vec_madd(vAuxLHS41, mRHSrow41, vec_madd(vAuxLHS31, mRHSrow31, vec_madd(vAuxLHS21, mRHSrow21, vec_mul(vAuxLHS11, mRHSrow11)))))))))))), 0, mResult);
 	vec_xst(vec_madd(vAuxLHS121, mRHSrow122, vec_madd(vAuxLHS111, mRHSrow112, vec_madd(vAuxLHS101, mRHSrow102, vec_madd(vAuxLHS91, mRHSrow92, vec_madd(vAuxLHS81, mRHSrow82, vec_madd(vAuxLHS71, mRHSrow72, vec_madd(vAuxLHS61, mRHSrow62, vec_madd(vAuxLHS51, mRHSrow52, vec_madd(vAuxLHS41, mRHSrow42, vec_madd(vAuxLHS31, mRHSrow32, vec_madd(vAuxLHS21, mRHSrow22, vec_mul(vAuxLHS11, mRHSrow12)))))))))))), 0, mResult + 2);
@@ -743,15 +745,14 @@ int main () {
 
 	ar3 = mul(ar1, ar2);
 	ar4 = result(ar1, ar2);
-	
+
 	// verifing the multiplication
 	for (int i = 0; i < 12; i++) {
 		for (int j = 0; j < 12; j++) {
 			cout << (ar3[j + 12*i] == ar4[j + 12*i]) << "\t";
 		}
 		cout << endl;
-	}	
+	}
 
 	return 0;
 }
-
