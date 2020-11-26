@@ -3,7 +3,6 @@ using namespace std;
 #include <altivec.h>
 #include <cstdlib>
 
-// printa a multiplicacao de duas matrizes a e b de tamanho 4x4
 double* result (double* a, double* b) {
 	int tam = 12;
 	double* out;
@@ -21,10 +20,6 @@ double* result (double* a, double* b) {
 	return out;
 }
 
-/*
-	TODO: a gente tem que ver como vai ser a entrada,
-	se vai ser matrix, ponteiro	ou array
-*/
 double* mul(double* mLHS, double* mRHS, int boolean_mLHSisRowMajor = 1) {
 
 	__vector double mLHScol11, mLHScol21, mLHScol31, mLHScol41, mLHScol51, mLHScol61, mLHScol71, mLHScol81, mLHScol91, mLHScol101, mLHScol111, mLHScol121,
@@ -747,17 +742,15 @@ int main () {
 	}
 
 	ar3 = mul(ar1, ar2);
-
-	/*
 	ar4 = result(ar1, ar2);
 	
+	// verifing the multiplication
 	for (int i = 0; i < 12; i++) {
 		for (int j = 0; j < 12; j++) {
 			cout << (ar3[j + 12*i] == ar4[j + 12*i]) << "\t";
 		}
 		cout << endl;
-	}
-	*/
+	}	
 
 	return 0;
 }
