@@ -24,20 +24,20 @@ void mul4x4(int boolean_mLHSisRowMajor, double* mLHS, double* mRHS, double* mRes
                 mLHScol11 = vec_perm(mLHSaux1, mLHSaux2, GETCOL1);
                 mLHScol21 = vec_perm(mLHSaux1, mLHSaux2, GETCOL2);
 
-                __vector double mLHSaux3 = vec_xl(0, mLHS + 2);
-                __vector double mLHSaux4 = vec_xl(0, mLHS + 6);
-                mLHScol31 = vec_perm(mLHSaux3, mLHSaux4, GETCOL1);
-                mLHScol41 = vec_perm(mLHSaux3, mLHSaux4, GETCOL2);
+                mLHSaux1 = vec_xl(0, mLHS + 2);
+                mLHSaux2 = vec_xl(0, mLHS + 6);
+                mLHScol31 = vec_perm(mLHSaux1, mLHSaux2, GETCOL1);
+                mLHScol41 = vec_perm(mLHSaux1, mLHSaux2, GETCOL2);
 
-                __vector double mLHSaux5 = vec_xl(0, mLHS + 8);
-                __vector double mLHSaux6 = vec_xl(0, mLHS + 12);
-                mLHScol12 = vec_perm(mLHSaux5, mLHSaux6, GETCOL1);
-                mLHScol22 = vec_perm(mLHSaux5, mLHSaux6, GETCOL2);
+                mLHSaux1 = vec_xl(0, mLHS + 8);
+                mLHSaux2 = vec_xl(0, mLHS + 12);
+                mLHScol12 = vec_perm(mLHSaux1, mLHSaux2, GETCOL1);
+                mLHScol22 = vec_perm(mLHSaux1, mLHSaux2, GETCOL2);
 
-                __vector double mLHSaux7 = vec_xl(0, mLHS + 10);
-                __vector double mLHSaux8 = vec_xl(0, mLHS + 14);
-                mLHScol32 = vec_perm(mLHSaux7, mLHSaux8, GETCOL1);
-                mLHScol42 = vec_perm(mLHSaux7, mLHSaux8, GETCOL2);
+                mLHSaux1 = vec_xl(0, mLHS + 10);
+                mLHSaux2 = vec_xl(0, mLHS + 14);
+                mLHScol32 = vec_perm(mLHSaux1, mLHSaux2, GETCOL1);
+                mLHScol42 = vec_perm(mLHSaux1, mLHSaux2, GETCOL2);
         }
         else{
                 mLHScol11 = vec_xl(0, mLHS);
@@ -136,7 +136,7 @@ int main()
         for (auto i = 0; i < 16; ++i)
         {
                 mLHS[i] = i + 1;
-                mRHS[i] = (double)(i+1)/10;
+                mRHS[i] = i + 1;
         }
         //==========//
 
