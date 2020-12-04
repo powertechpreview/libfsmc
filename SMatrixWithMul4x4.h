@@ -226,7 +226,7 @@ public:
 
     SMatrix() : m_rows(rows), m_cols(cols), storage_order(StorageOrder) {}
 
-    SMatrix(const Scalar& x0) : m_rows(rows), m_cols(cols), storage_order(StorageOrder)
+    explicit SMatrix(const Scalar& x0) : m_rows(rows), m_cols(cols), storage_order(StorageOrder)
     {
         setVal<rows, cols>(x0);
     }
@@ -281,7 +281,7 @@ SMatrix<Scalar, rows, mRHS_cols> SMatrix<Scalar, rows, cols, StorageOrder>::mul(
         {
             for(int k = 0; k < cols; k++)
             {
-                res.m_data[StorageOrder == RowMajor ? i*mRHS_cols + j : j*rows + i] += this->m_data[StorageOrder == RowMajor ? i*cols + k : k*rows + i]*rhs.m_data[StorageOrder == RowMajor ? k*mRHS_cols + j : j*cols + k];
+                res.m_data[res.StorageOrder == RowMajor ? i*mRHS_cols + j : j*rows + i] += this->m_data[this->StorageOrder == RowMajor ? i*cols + k : k*rows + i]*rhs.m_data[rhs.StorageOrder == RowMajor ? k*mRHS_cols + j : j*cols + k];
             }
         }
     }
@@ -292,19 +292,19 @@ SMatrix<Scalar, rows, mRHS_cols> SMatrix<Scalar, rows, cols, StorageOrder>::mul(
 //  SOLVING ERRORS: ONE CAN NOT SPECIALIZE A MEMBER FUNCTION WITHOUT ALSO SPECIALIZING THE CLASS
 template<>
 template<>
-SMatrix<double, 4, 4> SMatrix<double, 4, 4, RowMajor>::mul<4>(const SMatrix<double, 4, 4>& rhs)
+SMatrix<double, 4, 4> SMatrix<double, 4, 4, RowMajor>::mul<4>(const SMatrix<double, 4, 4>& rhs)  // lhs(this) is RowMajor and rhs is RowMajor
 {
     SMatrix<double, 4, 4> res;
-    mul4x4RowMajor((double*)this->m_data, (double*)rhs.m_data, (double*) res.m_data);
+    mul4x4RowMajor((double*)this->m_data, (double*)rhs.m_data, (double*)res.m_data);
     return res;
 }
 //====================================================================================================
 template<>
 template<>
-SMatrix<double, 4, 4> SMatrix<double, 4, 4, ColMajor>::mul<4>(const SMatrix<double, 4, 4>& rhs)
+SMatrix<double, 4, 4> SMatrix<double, 4, 4, ColMajor>::mul<4>(const SMatrix<double, 4, 4>& rhs)  // lhs(this) is ColMajor and rhs is RowMajor
 {
     SMatrix<double, 4, 4> res;
-    mul4x4ColMajor((double*)this->m_data, (double*)rhs.m_data, (double*) res.m_data);
+    mul4x4ColMajor((double*)this->m_data, (double*)rhs.m_data, (double*)res.m_data);
     return res;
 }
 //====================================================================================================
