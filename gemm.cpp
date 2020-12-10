@@ -24,6 +24,6 @@ int main(int argc, char* argv[])
         }
     }
     std::cout << "Res\n" << m1*m2 << "\n\n";
-    std::cout << "SRes\n" << sm1.mul<m,m>(sm2) << "\n\n";
+    std::cout << "SRes\n" << sm1.mul<m>(sm2) << "\n\n";
     return 0;
 }
