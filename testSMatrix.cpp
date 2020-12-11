@@ -28,5 +28,16 @@ int main()
   std::cout << sm12 << std::endl;
   std::cout << sm11.mul<9>(sm12) << std::endl;
 
+  //12x12
+  SMatrix<double, 12, 12, RowMajor> sm13(90), sm14(100);
+  std::cout << sm13 << std::endl;
+  std::cout << sm14 << std::endl;
+  std::cout << sm13.mul<12>(sm14) << std::endl;
+
+  SMatrix<double, 12, 12, ColMajor> sm15(110);
+  SMatrix<double, 12, 12, RowMajor> sm16(120);
+  std::cout << sm15 << std::endl;
+  std::cout << sm16 << std::endl;
+  std::cout << sm15.mul<12>(sm16) << std::endl;
   return 0;
 }
