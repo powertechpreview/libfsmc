@@ -9,38 +9,51 @@
 //====================================================================================================
 inline void mul4x4RowMajor(const double* mLHS, const double* mRHS, double* const mResult)
 {
-    __vector double mLHScol11, mLHScol21, mLHScol31, mLHScol41,
-                    mLHScol12, mLHScol22, mLHScol32, mLHScol42,
+    __vector double mLHSrow11, mLHSrow21, mLHSrow31, mLHSrow41,
+                    mLHSrow12, mLHSrow22, mLHSrow32, mLHSrow42,
                     mRHSrow11, mRHSrow21, mRHSrow31, mRHSrow41,
                     mRHSrow12, mRHSrow22, mRHSrow32, mRHSrow42;
 
-    //{ [a11 a12 a13 a14], [a21 a22 a23 a24], [a31 a32 a33 a34], [a41 a42 a43 a44]}
+    // row 1
+    mLHSrow11 = vec_xl(0, mLHS);
+    mLHSrow12 = vec_xl(0, mLHS + 2);
 
-    const static __vector unsigned char GETCOL1 = { 0, 1, 2, 3, 4, 5, 6, 7,
-                                                     16, 17, 18, 19, 20, 21, 22, 23};
+    // row 2
+    mLHSrow21 = vec_xl(0, mLHS + 4);
+    mLHSrow22 = vec_xl(0, mLHS + 6);
 
-    const static __vector unsigned char GETCOL2 = { 8, 9, 10, 11, 12, 13, 14, 15,
-                                                     24, 25, 26, 27, 28, 29, 30, 31};
+    // row 3
+    mLHSrow31 = vec_xl(0, mLHS + 8);
+    mLHSrow32 = vec_xl(0, mLHS + 10);
 
-    __vector double mLHSaux1 = vec_xl(0, mLHS);
-    __vector double mLHSaux2 = vec_xl(0, mLHS + 4);
-    mLHScol11 = vec_perm(mLHSaux1, mLHSaux2, GETCOL1);
-    mLHScol21 = vec_perm(mLHSaux1, mLHSaux2, GETCOL2);
+    // row 4
+    mLHSrow41 = vec_xl(0, mLHS + 12);
+    mLHSrow42 = vec_xl(0, mLHS + 14);
 
-    mLHSaux1 = vec_xl(0, mLHS + 2);
-    mLHSaux2 = vec_xl(0, mLHS + 6);
-    mLHScol31 = vec_perm(mLHSaux1, mLHSaux2, GETCOL1);
-    mLHScol41 = vec_perm(mLHSaux1, mLHSaux2, GETCOL2);
+    // column 1
+    __vector double vAuxLHS11 = {mLHSrow11[0], mLHSrow11[0]};
+    __vector double vAuxLHS12 = {mLHSrow21[0], mLHSrow21[0]};
+    __vector double vAuxLHS13 = {mLHSrow31[0], mLHSrow31[0]};
+    __vector double vAuxLHS14 = {mLHSrow41[0], mLHSrow41[0]};
 
-    mLHSaux1 = vec_xl(0, mLHS + 8);
-    mLHSaux2 = vec_xl(0, mLHS + 12);
-    mLHScol12 = vec_perm(mLHSaux1, mLHSaux2, GETCOL1);
-    mLHScol22 = vec_perm(mLHSaux1, mLHSaux2, GETCOL2);
+    // column 2
+    __vector double vAuxLHS21 = {mLHSrow11[1], mLHSrow11[1]};
+    __vector double vAuxLHS22 = {mLHSrow21[1], mLHSrow21[1]};
+    __vector double vAuxLHS23 = {mLHSrow31[1], mLHSrow31[1]};
+    __vector double vAuxLHS24 = {mLHSrow41[1], mLHSrow41[1]};
 
-    mLHSaux1 = vec_xl(0, mLHS + 10);
-    mLHSaux2 = vec_xl(0, mLHS + 14);
-    mLHScol32 = vec_perm(mLHSaux1, mLHSaux2, GETCOL1);
-    mLHScol42 = vec_perm(mLHSaux1, mLHSaux2, GETCOL2);
+    // column 3
+    __vector double vAuxLHS31 = {mLHSrow12[0], mLHSrow12[0]};
+    __vector double vAuxLHS32 = {mLHSrow22[0], mLHSrow22[0]};
+    __vector double vAuxLHS33 = {mLHSrow32[0], mLHSrow32[0]};
+    __vector double vAuxLHS34 = {mLHSrow42[0], mLHSrow42[0]};
+
+    // column 4
+    __vector double vAuxLHS41 = {mLHSrow12[1], mLHSrow12[1]};
+    __vector double vAuxLHS42 = {mLHSrow22[1], mLHSrow22[1]};
+    __vector double vAuxLHS43 = {mLHSrow32[1], mLHSrow32[1]};
+    __vector double vAuxLHS44 = {mLHSrow42[1], mLHSrow42[1]};
+
     //==================================================
 
     mRHSrow11 = vec_xl(0, mRHS);
@@ -54,27 +67,7 @@ inline void mul4x4RowMajor(const double* mLHS, const double* mRHS, double* const
 
     mRHSrow41 = vec_xl(0, mRHS + 12);
     mRHSrow42 = vec_xl(0, mRHS + 14);
-    //==================================================
 
-    __vector double vAuxLHS11 = {mLHScol11[0], mLHScol11[0]};
-    __vector double vAuxLHS12 = {mLHScol11[1], mLHScol11[1]};
-    __vector double vAuxLHS13 = {mLHScol12[0], mLHScol12[0]};
-    __vector double vAuxLHS14 = {mLHScol12[1], mLHScol12[1]};
-
-    __vector double vAuxLHS21 = {mLHScol21[0], mLHScol21[0]};
-    __vector double vAuxLHS22 = {mLHScol21[1], mLHScol21[1]};
-    __vector double vAuxLHS23 = {mLHScol22[0], mLHScol22[0]};
-    __vector double vAuxLHS24 = {mLHScol22[1], mLHScol22[1]};
-
-    __vector double vAuxLHS31 = {mLHScol31[0], mLHScol31[0]};
-    __vector double vAuxLHS32 = {mLHScol31[1], mLHScol31[1]};
-    __vector double vAuxLHS33 = {mLHScol32[0], mLHScol32[0]};
-    __vector double vAuxLHS34 = {mLHScol32[1], mLHScol32[1]};
-
-    __vector double vAuxLHS41 = {mLHScol41[0], mLHScol41[0]};
-    __vector double vAuxLHS42 = {mLHScol41[1], mLHScol41[1]};
-    __vector double vAuxLHS43 = {mLHScol42[0], mLHScol42[0]};
-    __vector double vAuxLHS44 = {mLHScol42[1], mLHScol42[1]};
     //==================================================
 
     //building the first row of mResult
@@ -219,11 +212,11 @@ inline void mul4x4ColMajor(const double* mLHS, const double* mRHS, double* const
 //====================================================================================================
 inline void mul9x9RowMajor(const double* mLHS, const double* mRHS, double* const mResult)
 {
-    __vector double mLHScol11, mLHScol21, mLHScol31, mLHScol41, mLHScol51, mLHScol61, mLHScol71, mLHScol81, mLHScol91,
-                    mLHScol12, mLHScol22, mLHScol32, mLHScol42, mLHScol52, mLHScol62, mLHScol72, mLHScol82, mLHScol92,
-                    mLHScol13, mLHScol23, mLHScol33, mLHScol43, mLHScol53, mLHScol63, mLHScol73, mLHScol83, mLHScol93,
-                    mLHScol14, mLHScol24, mLHScol34, mLHScol44, mLHScol54, mLHScol64, mLHScol74, mLHScol84, mLHScol94,
-                    mLHScol15, mLHScol25, mLHScol35, mLHScol45, mLHScol55, mLHScol65, mLHScol75, mLHScol85, mLHScol95,
+    __vector double mLHSrow11, mLHSrow21, mLHSrow31, mLHSrow41, mLHSrow51, mLHSrow61, mLHSrow71, mLHSrow81, mLHSrow91,
+                    mLHSrow12, mLHSrow22, mLHSrow32, mLHSrow42, mLHSrow52, mLHSrow62, mLHSrow72, mLHSrow82, mLHSrow92,
+                    mLHSrow13, mLHSrow23, mLHSrow33, mLHSrow43, mLHSrow53, mLHSrow63, mLHSrow73, mLHSrow83, mLHSrow93,
+                    mLHSrow14, mLHSrow24, mLHSrow34, mLHSrow44, mLHSrow54, mLHSrow64, mLHSrow74, mLHSrow84, mLHSrow94,
+                    mLHSrow15, mLHSrow25, mLHSrow35, mLHSrow45, mLHSrow55, mLHSrow65, mLHSrow75, mLHSrow85, mLHSrow95,
                     mRHSrow11, mRHSrow21, mRHSrow31, mRHSrow41, mRHSrow51, mRHSrow61, mRHSrow71, mRHSrow81, mRHSrow91,
                     mRHSrow12, mRHSrow22, mRHSrow32, mRHSrow42, mRHSrow52, mRHSrow62, mRHSrow72, mRHSrow82, mRHSrow92,
                     mRHSrow13, mRHSrow23, mRHSrow33, mRHSrow43, mRHSrow53, mRHSrow63, mRHSrow73, mRHSrow83, mRHSrow93,
@@ -233,134 +226,177 @@ inline void mul9x9RowMajor(const double* mLHS, const double* mRHS, double* const
     //{ [a11 a12 a13 a14 a15 a16 a17 a18 a19], [a21 a22 a23 a24 a25 a26 a27 a28 a29], [a31 a32 a33 a34 a35 a36 a37 a38 a39], [a41 a42 a43 a44 a45 a46 a47 a48 a49],
     //  [a51 a52 a53 a54 a55 a56 a57 a58 a59], [a61 a62 a63 a64 a65 a66 a67 a68 a69], [a71 a72 a73 a74 a75 a76 a77 a78 a79], [a81 a82 a83 a84 a85 a86 a87 a88 a89]}
 
-    const static __vector unsigned char GETCOL1 = { 0, 1, 2, 3, 4, 5, 6, 7,
-                                                     16, 17, 18, 19, 20, 21, 22, 23};
+    // row 1
+    mLHSrow11 = vec_xl(0, mLHS);
+    mLHSrow12 = vec_xl(0, mLHS + 2);
+    mLHSrow13 = vec_xl(0, mLHS + 4);
+    mLHSrow14 = vec_xl(0, mLHS + 6);
+    mLHSrow15[0] = mLHS[8];
+    // mLHSrow15[1] = 0
 
-    const static __vector unsigned char GETCOL2 = { 8, 9, 10, 11, 12, 13, 14, 15,
-                                                     24, 25, 26, 27, 28, 29, 30, 31};
-    //==================================================//
-    __vector double mLHSaux1 = vec_xl(0, mLHS);
-    __vector double mLHSaux2 = vec_xl(0, mLHS + 9);
-    mLHScol11 = vec_perm(mLHSaux1, mLHSaux2, GETCOL1);
-    mLHScol21 = vec_perm(mLHSaux1, mLHSaux2, GETCOL2);
+    // row 2
+    mLHSrow21 = vec_xl(0, mLHS + 9);
+    mLHSrow22 = vec_xl(0, mLHS + 11);
+    mLHSrow23 = vec_xl(0, mLHS + 13);
+    mLHSrow24 = vec_xl(0, mLHS + 15);
+    mLHSrow25[0] = mLHS[17];
+    // mLHSrow25[1] = 0
 
-    mLHSaux1 = vec_xl(0, mLHS + 2);
-    mLHSaux2 = vec_xl(0, mLHS + 11);
-    mLHScol31 = vec_perm(mLHSaux1, mLHSaux2, GETCOL1);
-    mLHScol41 = vec_perm(mLHSaux1, mLHSaux2, GETCOL2);
+    // row 3
+    mLHSrow31 = vec_xl(0, mLHS + 18);
+    mLHSrow32 = vec_xl(0, mLHS + 20);
+    mLHSrow33 = vec_xl(0, mLHS + 22);
+    mLHSrow34 = vec_xl(0, mLHS + 24);
+    mLHSrow35[0] = mLHS[26];
+    // mLHSrow35[1] = 0
 
-    mLHSaux1 = vec_xl(0, mLHS + 4);
-    mLHSaux2 = vec_xl(0, mLHS + 13);
-    mLHScol51 = vec_perm(mLHSaux1, mLHSaux2, GETCOL1);
-    mLHScol61 = vec_perm(mLHSaux1, mLHSaux2, GETCOL2);
+    // row 4
+    mLHSrow41 = vec_xl(0, mLHS + 27);
+    mLHSrow42 = vec_xl(0, mLHS + 29);
+    mLHSrow43 = vec_xl(0, mLHS + 31);
+    mLHSrow44 = vec_xl(0, mLHS + 33);
+    mLHSrow45[0] = mLHS[35];
+    // mLHSrow45[1] = 0
 
-    mLHSaux1 = vec_xl(0, mLHS + 6);
-    mLHSaux2 = vec_xl(0, mLHS + 15);
-    mLHScol71 = vec_perm(mLHSaux1, mLHSaux2, GETCOL1);
-    mLHScol81 = vec_perm(mLHSaux1, mLHSaux2, GETCOL2);
+    // row 5
+    mLHSrow51 = vec_xl(0, mLHS + 36);
+    mLHSrow52 = vec_xl(0, mLHS + 38);
+    mLHSrow53 = vec_xl(0, mLHS + 40);
+    mLHSrow54 = vec_xl(0, mLHS + 42);
+    mLHSrow55[0] = mLHS[44];
+    // mLHSrow55[1] = 0
 
-    mLHScol91[0] = mLHS[8];
-    mLHScol91[1] = mLHS[17];
+    // row 6
+    mLHSrow61 = vec_xl(0, mLHS + 45);
+    mLHSrow62 = vec_xl(0, mLHS + 47);
+    mLHSrow63 = vec_xl(0, mLHS + 49);
+    mLHSrow64 = vec_xl(0, mLHS + 51);
+    mLHSrow65[0] = mLHS[53];
+    // mLHSrow65[1] = 0
 
-    //==================================================//
-    mLHSaux1 = vec_xl(0, mLHS + 18);
-    mLHSaux2 = vec_xl(0, mLHS + 27);
-    mLHScol12 = vec_perm(mLHSaux1, mLHSaux2, GETCOL1);
-    mLHScol22 = vec_perm(mLHSaux1, mLHSaux2, GETCOL2);
+    // row 7
+    mLHSrow71 = vec_xl(0, mLHS + 54);
+    mLHSrow72 = vec_xl(0, mLHS + 56);
+    mLHSrow73 = vec_xl(0, mLHS + 58);
+    mLHSrow74 = vec_xl(0, mLHS + 60);
+    mLHSrow75[0] = mLHS[62];
+    // mLHSrow75[1] = 0
 
-    mLHSaux1 = vec_xl(0, mLHS + 20);
-    mLHSaux2 = vec_xl(0, mLHS + 29);
-    mLHScol32 = vec_perm(mLHSaux1, mLHSaux2, GETCOL1);
-    mLHScol42 = vec_perm(mLHSaux1, mLHSaux2, GETCOL2);
+    // row 8
+    mLHSrow81 = vec_xl(0, mLHS + 63);
+    mLHSrow82 = vec_xl(0, mLHS + 65);
+    mLHSrow83 = vec_xl(0, mLHS + 67);
+    mLHSrow84 = vec_xl(0, mLHS + 69);
+    mLHSrow85[0] = mLHS[71];
+    // mLHSrow85[1] = 0
 
-    mLHSaux1 = vec_xl(0, mLHS + 22);
-    mLHSaux2 = vec_xl(0, mLHS + 31);
-    mLHScol52 = vec_perm(mLHSaux1, mLHSaux2, GETCOL1);
-    mLHScol62 = vec_perm(mLHSaux1, mLHSaux2, GETCOL2);
+    // row 9
+    mLHSrow91 = vec_xl(0, mLHS + 72);
+    mLHSrow92 = vec_xl(0, mLHS + 74);
+    mLHSrow93 = vec_xl(0, mLHS + 76);
+    mLHSrow94 = vec_xl(0, mLHS + 78);
+    mLHSrow95[0] = mLHS[80];
+    // mLHSrow95[1] = 0
 
-    mLHSaux1 = vec_xl(0, mLHS + 24);
-    mLHSaux2 = vec_xl(0, mLHS + 33);
-    mLHScol72 = vec_perm(mLHSaux1, mLHSaux2, GETCOL1);
-    mLHScol82 = vec_perm(mLHSaux1, mLHSaux2, GETCOL2);
+    // column 1
+    __vector double vAuxLHS11 = {mLHSrow11[0], mLHSrow11[0]};
+    __vector double vAuxLHS12 = {mLHSrow21[0], mLHSrow21[0]};
+    __vector double vAuxLHS13 = {mLHSrow31[0], mLHSrow31[0]};
+    __vector double vAuxLHS14 = {mLHSrow41[0], mLHSrow41[0]};
+    __vector double vAuxLHS15 = {mLHSrow51[0], mLHSrow51[0]};
+    __vector double vAuxLHS16 = {mLHSrow61[0], mLHSrow61[0]};
+    __vector double vAuxLHS17 = {mLHSrow71[0], mLHSrow71[0]};
+    __vector double vAuxLHS18 = {mLHSrow81[0], mLHSrow81[0]};
+    __vector double vAuxLHS19 = {mLHSrow91[0], mLHSrow91[0]};
 
-    mLHScol92[0] = mLHS[26];
-    mLHScol92[1] = mLHS[35];
+    // column 2
+    __vector double vAuxLHS21 = {mLHSrow11[1], mLHSrow11[1]};
+    __vector double vAuxLHS22 = {mLHSrow21[1], mLHSrow21[1]};
+    __vector double vAuxLHS23 = {mLHSrow31[1], mLHSrow31[1]};
+    __vector double vAuxLHS24 = {mLHSrow41[1], mLHSrow41[1]};
+    __vector double vAuxLHS25 = {mLHSrow51[1], mLHSrow51[1]};
+    __vector double vAuxLHS26 = {mLHSrow61[1], mLHSrow61[1]};
+    __vector double vAuxLHS27 = {mLHSrow71[1], mLHSrow71[1]};
+    __vector double vAuxLHS28 = {mLHSrow81[1], mLHSrow81[1]};
+    __vector double vAuxLHS29 = {mLHSrow91[1], mLHSrow91[1]};
 
-    //==================================================//
-    mLHSaux1 = vec_xl(0, mLHS + 36);
-    mLHSaux2 = vec_xl(0, mLHS + 45);
-    mLHScol13 = vec_perm(mLHSaux1, mLHSaux2, GETCOL1);
-    mLHScol23 = vec_perm(mLHSaux1, mLHSaux2, GETCOL2);
+    // column 3
+    __vector double vAuxLHS31 = {mLHSrow12[0], mLHSrow12[0]};
+    __vector double vAuxLHS32 = {mLHSrow22[0], mLHSrow22[0]};
+    __vector double vAuxLHS33 = {mLHSrow32[0], mLHSrow32[0]};
+    __vector double vAuxLHS34 = {mLHSrow42[0], mLHSrow42[0]};
+    __vector double vAuxLHS35 = {mLHSrow52[0], mLHSrow52[0]};
+    __vector double vAuxLHS36 = {mLHSrow62[0], mLHSrow62[0]};
+    __vector double vAuxLHS37 = {mLHSrow72[0], mLHSrow72[0]};
+    __vector double vAuxLHS38 = {mLHSrow82[0], mLHSrow82[0]};
+    __vector double vAuxLHS39 = {mLHSrow92[0], mLHSrow92[0]};
 
-    mLHSaux1 = vec_xl(0, mLHS + 38);
-    mLHSaux2 = vec_xl(0, mLHS + 47);
-    mLHScol33 = vec_perm(mLHSaux1, mLHSaux2, GETCOL1);
-    mLHScol43 = vec_perm(mLHSaux1, mLHSaux2, GETCOL2);
+    // column 4
+    __vector double vAuxLHS41 = {mLHSrow12[1], mLHSrow12[1]};
+    __vector double vAuxLHS42 = {mLHSrow22[1], mLHSrow22[1]};
+    __vector double vAuxLHS43 = {mLHSrow32[1], mLHSrow32[1]};
+    __vector double vAuxLHS44 = {mLHSrow42[1], mLHSrow42[1]};
+    __vector double vAuxLHS45 = {mLHSrow52[1], mLHSrow52[1]};
+    __vector double vAuxLHS46 = {mLHSrow62[1], mLHSrow62[1]};
+    __vector double vAuxLHS47 = {mLHSrow72[1], mLHSrow72[1]};
+    __vector double vAuxLHS48 = {mLHSrow82[1], mLHSrow82[1]};
+    __vector double vAuxLHS49 = {mLHSrow92[1], mLHSrow92[1]};
 
-    mLHSaux1 = vec_xl(0, mLHS + 40);
-    mLHSaux2 = vec_xl(0, mLHS + 49);
-    mLHScol53 = vec_perm(mLHSaux1, mLHSaux2, GETCOL1);
-    mLHScol63 = vec_perm(mLHSaux1, mLHSaux2, GETCOL2);
+    // column 5
+    __vector double vAuxLHS51 = {mLHSrow13[0], mLHSrow13[0]};
+    __vector double vAuxLHS52 = {mLHSrow23[0], mLHSrow23[0]};
+    __vector double vAuxLHS53 = {mLHSrow33[0], mLHSrow33[0]};
+    __vector double vAuxLHS54 = {mLHSrow43[0], mLHSrow43[0]};
+    __vector double vAuxLHS55 = {mLHSrow53[0], mLHSrow53[0]};
+    __vector double vAuxLHS56 = {mLHSrow63[0], mLHSrow63[0]};
+    __vector double vAuxLHS57 = {mLHSrow73[0], mLHSrow73[0]};
+    __vector double vAuxLHS58 = {mLHSrow83[0], mLHSrow83[0]};
+    __vector double vAuxLHS59 = {mLHSrow93[0], mLHSrow93[0]};
 
-    mLHSaux1 = vec_xl(0, mLHS + 42);
-    mLHSaux2 = vec_xl(0, mLHS + 51);
-    mLHScol73 = vec_perm(mLHSaux1, mLHSaux2, GETCOL1);
-    mLHScol83 = vec_perm(mLHSaux1, mLHSaux2, GETCOL2);
+    // column 6
+    __vector double vAuxLHS61 = {mLHSrow13[1], mLHSrow13[1]};
+    __vector double vAuxLHS62 = {mLHSrow23[1], mLHSrow23[1]};
+    __vector double vAuxLHS63 = {mLHSrow33[1], mLHSrow33[1]};
+    __vector double vAuxLHS64 = {mLHSrow43[1], mLHSrow43[1]};
+    __vector double vAuxLHS65 = {mLHSrow53[1], mLHSrow53[1]};
+    __vector double vAuxLHS66 = {mLHSrow63[1], mLHSrow63[1]};
+    __vector double vAuxLHS67 = {mLHSrow73[1], mLHSrow73[1]};
+    __vector double vAuxLHS68 = {mLHSrow83[1], mLHSrow83[1]};
+    __vector double vAuxLHS69 = {mLHSrow93[1], mLHSrow93[1]};
 
-    mLHScol93[0] = mLHS[44];
-    mLHScol93[1] = mLHS[53];
+    // column 7
+    __vector double vAuxLHS71 = {mLHSrow14[0], mLHSrow14[0]};
+    __vector double vAuxLHS72 = {mLHSrow24[0], mLHSrow24[0]};
+    __vector double vAuxLHS73 = {mLHSrow34[0], mLHSrow34[0]};
+    __vector double vAuxLHS74 = {mLHSrow44[0], mLHSrow44[0]};
+    __vector double vAuxLHS75 = {mLHSrow54[0], mLHSrow54[0]};
+    __vector double vAuxLHS76 = {mLHSrow64[0], mLHSrow64[0]};
+    __vector double vAuxLHS77 = {mLHSrow74[0], mLHSrow74[0]};
+    __vector double vAuxLHS78 = {mLHSrow84[0], mLHSrow84[0]};
+    __vector double vAuxLHS79 = {mLHSrow94[0], mLHSrow94[0]};
 
-    //==================================================//
-    mLHSaux1 = vec_xl(0, mLHS + 54);
-    mLHSaux2 = vec_xl(0, mLHS + 63);
-    mLHScol14 = vec_perm(mLHSaux1, mLHSaux2, GETCOL1);
-    mLHScol24 = vec_perm(mLHSaux1, mLHSaux2, GETCOL2);
+    // column 8
+    __vector double vAuxLHS81 = {mLHSrow14[1], mLHSrow14[1]};
+    __vector double vAuxLHS82 = {mLHSrow24[1], mLHSrow24[1]};
+    __vector double vAuxLHS83 = {mLHSrow34[1], mLHSrow34[1]};
+    __vector double vAuxLHS84 = {mLHSrow44[1], mLHSrow44[1]};
+    __vector double vAuxLHS85 = {mLHSrow54[1], mLHSrow54[1]};
+    __vector double vAuxLHS86 = {mLHSrow64[1], mLHSrow64[1]};
+    __vector double vAuxLHS87 = {mLHSrow74[1], mLHSrow74[1]};
+    __vector double vAuxLHS88 = {mLHSrow84[1], mLHSrow84[1]};
+    __vector double vAuxLHS89 = {mLHSrow94[1], mLHSrow94[1]};
 
-    mLHSaux1 = vec_xl(0, mLHS + 56);
-    mLHSaux2 = vec_xl(0, mLHS + 65);
-    mLHScol34 = vec_perm(mLHSaux1, mLHSaux2, GETCOL1);
-    mLHScol44 = vec_perm(mLHSaux1, mLHSaux2, GETCOL2);
+    // column 9
+    __vector double vAuxLHS91 = {mLHSrow15[0], mLHSrow15[0]};
+    __vector double vAuxLHS92 = {mLHSrow25[0], mLHSrow25[0]};
+    __vector double vAuxLHS93 = {mLHSrow35[0], mLHSrow35[0]};
+    __vector double vAuxLHS94 = {mLHSrow45[0], mLHSrow45[0]};
+    __vector double vAuxLHS95 = {mLHSrow55[0], mLHSrow55[0]};
+    __vector double vAuxLHS96 = {mLHSrow65[0], mLHSrow65[0]};
+    __vector double vAuxLHS97 = {mLHSrow75[0], mLHSrow75[0]};
+    __vector double vAuxLHS98 = {mLHSrow85[0], mLHSrow85[0]};
+    __vector double vAuxLHS99 = {mLHSrow95[0], mLHSrow95[0]};
 
-    mLHSaux1 = vec_xl(0, mLHS + 58);
-    mLHSaux2 = vec_xl(0, mLHS + 67);
-    mLHScol54 = vec_perm(mLHSaux1, mLHSaux2, GETCOL1);
-    mLHScol64 = vec_perm(mLHSaux1, mLHSaux2, GETCOL2);
-
-    mLHSaux1 = vec_xl(0, mLHS + 60);
-    mLHSaux2 = vec_xl(0, mLHS + 69);
-    mLHScol74 = vec_perm(mLHSaux1, mLHSaux2, GETCOL1);
-    mLHScol84 = vec_perm(mLHSaux1, mLHSaux2, GETCOL2);
-
-    mLHScol94[0] = mLHS[62];
-    mLHScol94[1] = mLHS[71];
-
-    //==================================================//
-    mLHScol15[0] = mLHS[72];
-    mLHScol15[1] = 0;
-
-    mLHScol25[0] = mLHS[73];
-    mLHScol25[1] = 0;
-
-    mLHScol35[0] = mLHS[74];
-    mLHScol35[1] = 0;
-
-    mLHScol45[0] = mLHS[75];
-    mLHScol45[1] = 0;
-
-    mLHScol55[0] = mLHS[76];
-    mLHScol55[1] = 0;
-
-    mLHScol65[0] = mLHS[77];
-    mLHScol65[1] = 0;
-
-    mLHScol75[0] = mLHS[78];
-    mLHScol75[1] = 0;
-
-    mLHScol85[0] = mLHS[79];
-    mLHScol85[1] = 0;
-
-    mLHScol95[0] = mLHS[80];
-    mLHScol95[1] = 0;
 
     mRHSrow11 = vec_xl(0, mRHS);
     mRHSrow12 = vec_xl(0, mRHS + 2);
@@ -424,96 +460,6 @@ inline void mul9x9RowMajor(const double* mLHS, const double* mRHS, double* const
     mRHSrow94 = vec_xl(0, mRHS + 78);
     mRHSrow95[0] = mRHS[80];
     mRHSrow95[1] = 0;
-
-    __vector double vAuxLHS11 = {mLHScol11[0], mLHScol11[0]};
-    __vector double vAuxLHS12 = {mLHScol11[1], mLHScol11[1]};
-    __vector double vAuxLHS13 = {mLHScol12[0], mLHScol12[0]};
-    __vector double vAuxLHS14 = {mLHScol12[1], mLHScol12[1]};
-    __vector double vAuxLHS15 = {mLHScol13[0], mLHScol13[0]};
-    __vector double vAuxLHS16 = {mLHScol13[1], mLHScol13[1]};
-    __vector double vAuxLHS17 = {mLHScol14[0], mLHScol14[0]};
-    __vector double vAuxLHS18 = {mLHScol14[1], mLHScol14[1]};
-    __vector double vAuxLHS19 = {mLHScol15[0], mLHScol15[0]};
-
-    __vector double vAuxLHS21 = {mLHScol21[0], mLHScol21[0]};
-    __vector double vAuxLHS22 = {mLHScol21[1], mLHScol21[1]};
-    __vector double vAuxLHS23 = {mLHScol22[0], mLHScol22[0]};
-    __vector double vAuxLHS24 = {mLHScol22[1], mLHScol22[1]};
-    __vector double vAuxLHS25 = {mLHScol23[0], mLHScol23[0]};
-    __vector double vAuxLHS26 = {mLHScol23[1], mLHScol23[1]};
-    __vector double vAuxLHS27 = {mLHScol24[0], mLHScol24[0]};
-    __vector double vAuxLHS28 = {mLHScol24[1], mLHScol24[1]};
-    __vector double vAuxLHS29 = {mLHScol25[0], mLHScol25[0]};
-
-    __vector double vAuxLHS31 = {mLHScol31[0], mLHScol31[0]};
-    __vector double vAuxLHS32 = {mLHScol31[1], mLHScol31[1]};
-    __vector double vAuxLHS33 = {mLHScol32[0], mLHScol32[0]};
-    __vector double vAuxLHS34 = {mLHScol32[1], mLHScol32[1]};
-    __vector double vAuxLHS35 = {mLHScol33[0], mLHScol33[0]};
-    __vector double vAuxLHS36 = {mLHScol33[1], mLHScol33[1]};
-    __vector double vAuxLHS37 = {mLHScol34[0], mLHScol34[0]};
-    __vector double vAuxLHS38 = {mLHScol34[1], mLHScol34[1]};
-    __vector double vAuxLHS39 = {mLHScol35[0], mLHScol35[0]};
-
-    __vector double vAuxLHS41 = {mLHScol41[0], mLHScol41[0]};
-    __vector double vAuxLHS42 = {mLHScol41[1], mLHScol41[1]};
-    __vector double vAuxLHS43 = {mLHScol42[0], mLHScol42[0]};
-    __vector double vAuxLHS44 = {mLHScol42[1], mLHScol42[1]};
-    __vector double vAuxLHS45 = {mLHScol43[0], mLHScol43[0]};
-    __vector double vAuxLHS46 = {mLHScol43[1], mLHScol43[1]};
-    __vector double vAuxLHS47 = {mLHScol44[0], mLHScol44[0]};
-    __vector double vAuxLHS48 = {mLHScol44[1], mLHScol44[1]};
-    __vector double vAuxLHS49 = {mLHScol45[0], mLHScol45[0]};
-
-    __vector double vAuxLHS51 = {mLHScol51[0], mLHScol51[0]};
-    __vector double vAuxLHS52 = {mLHScol51[1], mLHScol51[1]};
-    __vector double vAuxLHS53 = {mLHScol52[0], mLHScol52[0]};
-    __vector double vAuxLHS54 = {mLHScol52[1], mLHScol52[1]};
-    __vector double vAuxLHS55 = {mLHScol53[0], mLHScol53[0]};
-    __vector double vAuxLHS56 = {mLHScol53[1], mLHScol53[1]};
-    __vector double vAuxLHS57 = {mLHScol54[0], mLHScol54[0]};
-    __vector double vAuxLHS58 = {mLHScol54[1], mLHScol54[1]};
-    __vector double vAuxLHS59 = {mLHScol55[0], mLHScol55[0]};
-
-    __vector double vAuxLHS61 = {mLHScol61[0], mLHScol61[0]};
-    __vector double vAuxLHS62 = {mLHScol61[1], mLHScol61[1]};
-    __vector double vAuxLHS63 = {mLHScol62[0], mLHScol62[0]};
-    __vector double vAuxLHS64 = {mLHScol62[1], mLHScol62[1]};
-    __vector double vAuxLHS65 = {mLHScol63[0], mLHScol63[0]};
-    __vector double vAuxLHS66 = {mLHScol63[1], mLHScol63[1]};
-    __vector double vAuxLHS67 = {mLHScol64[0], mLHScol64[0]};
-    __vector double vAuxLHS68 = {mLHScol64[1], mLHScol64[1]};
-    __vector double vAuxLHS69 = {mLHScol65[0], mLHScol65[0]};
-
-    __vector double vAuxLHS71 = {mLHScol71[0], mLHScol71[0]};
-    __vector double vAuxLHS72 = {mLHScol71[1], mLHScol71[1]};
-    __vector double vAuxLHS73 = {mLHScol72[0], mLHScol72[0]};
-    __vector double vAuxLHS74 = {mLHScol72[1], mLHScol72[1]};
-    __vector double vAuxLHS75 = {mLHScol73[0], mLHScol73[0]};
-    __vector double vAuxLHS76 = {mLHScol73[1], mLHScol73[1]};
-    __vector double vAuxLHS77 = {mLHScol74[0], mLHScol74[0]};
-    __vector double vAuxLHS78 = {mLHScol74[1], mLHScol74[1]};
-    __vector double vAuxLHS79 = {mLHScol75[0], mLHScol75[0]};
-
-    __vector double vAuxLHS81 = {mLHScol81[0], mLHScol81[0]};
-    __vector double vAuxLHS82 = {mLHScol81[1], mLHScol81[1]};
-    __vector double vAuxLHS83 = {mLHScol82[0], mLHScol82[0]};
-    __vector double vAuxLHS84 = {mLHScol82[1], mLHScol82[1]};
-    __vector double vAuxLHS85 = {mLHScol83[0], mLHScol83[0]};
-    __vector double vAuxLHS86 = {mLHScol83[1], mLHScol83[1]};
-    __vector double vAuxLHS87 = {mLHScol84[0], mLHScol84[0]};
-    __vector double vAuxLHS88 = {mLHScol84[1], mLHScol84[1]};
-    __vector double vAuxLHS89 = {mLHScol85[0], mLHScol85[0]};
-
-    __vector double vAuxLHS91 = {mLHScol91[0], mLHScol91[0]};
-    __vector double vAuxLHS92 = {mLHScol91[1], mLHScol91[1]};
-    __vector double vAuxLHS93 = {mLHScol92[0], mLHScol92[0]};
-    __vector double vAuxLHS94 = {mLHScol92[1], mLHScol92[1]};
-    __vector double vAuxLHS95 = {mLHScol93[0], mLHScol93[0]};
-    __vector double vAuxLHS96 = {mLHScol93[1], mLHScol93[1]};
-    __vector double vAuxLHS97 = {mLHScol94[0], mLHScol94[0]};
-    __vector double vAuxLHS98 = {mLHScol94[1], mLHScol94[1]};
-    __vector double vAuxLHS99 = {mLHScol95[0], mLHScol95[0]};
 
     //building the first row of mResult
     vec_xst(vec_madd( mRHSrow91, vAuxLHS91,
