@@ -57,6 +57,11 @@ public:
         }
         return out;
     }
+
+	void identity() {
+		for (int i = 0; i < rows*cols; i++)
+			m_data[i] = i % (cols + 1) == 0 ? 1 : 0;
+	}
 };
 
 // Template definition - multiplication of matrices
@@ -72,7 +77,7 @@ SMatrix<Scalar, rows, mRHS_cols> SMatrix<Scalar, rows, cols, StorageOrder>::mul(
         {
             for(int k = 0; k < cols; k++)
             {
-                res.m_data[res.StorageOrder == RowMajor ? i*mRHS_cols + j : j*rows + i] += this->m_data[this->StorageOrder == RowMajor ? i*cols + k : k*rows + i]*rhs.m_data[rhs.StorageOrder == RowMajor ? k*mRHS_cols + j : j*cols + k];
+                res.m_data[res.storage_order == RowMajor ? i*mRHS_cols + j : j*rows + i] += this->m_data[this->storage_order == RowMajor ? i*cols + k : k*rows + i]*rhs.m_data[rhs.storage_order == RowMajor ? k*mRHS_cols + j : j*cols + k];
             }
         }
     }

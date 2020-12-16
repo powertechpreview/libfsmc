@@ -4,6 +4,12 @@
 
 int main()
 {
+  //2x2
+  SMatrix<int, 2, 2, RowMajor> sm01(1), sm02(2);
+  std::cout << sm01 << std::endl;
+  std::cout << sm02 << std::endl;
+  std::cout << sm01.mul<2>(sm02) << std::endl;
+
   //4x4
   SMatrix<double, 4, 4, RowMajor> sm1(10), sm2(20);
   std::cout << sm1 << std::endl;

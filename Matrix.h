@@ -1,3 +1,6 @@
+#ifndef IBM_MATRIX_H
+#define IBM_MATRIX_H
+
 #include <iostream>
 
 enum EStorageOrder : int { RowMajor, ColMajor };
@@ -71,3 +74,4 @@ public:
     }
 };
 
+#endif //IBM_MATRIX_H
