@@ -41,8 +41,8 @@ public:
 
     // Template declaration - multiplication of matrices  // ONE MUST DEFINE THE TEMPLATE FUNCTION OUTSIDE THE CLASS TO ALLOW SPECIALIZATION (but must declare it inside the class)
     //====================================================================================================
-    template<int mRHS_cols>
-    SMatrix<Scalar, rows, mRHS_cols> mul(const SMatrix<Scalar, cols, mRHS_cols>& rhs);
+    template<int mRHS_cols, int outOrder = RowMajor>
+    SMatrix<Scalar, rows, mRHS_cols, outOrder> mul(const SMatrix<Scalar, cols, mRHS_cols>& rhs);
 
     //====================================================================================================
     friend std::ostream& operator<<(std::ostream& out, const SMatrix& m)
@@ -57,20 +57,15 @@ public:
         }
         return out;
     }
-
-	void identity() {
-		for (int i = 0; i < rows*cols; i++)
-			m_data[i] = i % (cols + 1) == 0 ? 1 : 0;
-	}
 };
 
 // Template definition - multiplication of matrices
 //====================================================================================================
 template<typename Scalar, int rows, int cols, int StorageOrder>
-template<int mRHS_cols>
-SMatrix<Scalar, rows, mRHS_cols> SMatrix<Scalar, rows, cols, StorageOrder>::mul(const SMatrix<Scalar, cols, mRHS_cols>& rhs)
+template<int mRHS_cols, int outOrder>
+SMatrix<Scalar, rows, mRHS_cols, outOrder> SMatrix<Scalar, rows, cols, StorageOrder>::mul(const SMatrix<Scalar, cols, mRHS_cols>& rhs)
 {
-    SMatrix<Scalar, rows, mRHS_cols> res;    //if RowMajor: lhs(this): #rows = rows, #columns = cols
+    SMatrix<Scalar, rows, mRHS_cols, outOrder> res;    //if RowMajor: lhs(this): #rows = rows, #columns = cols
     for(int i = 0; i < rows; i++)            //             rhs:       #rows = cols, #columns = mRHS_cols
     {                                        //             res:       #rows = rows, #columns = mRHS_cols
         for(int j = 0; j < mRHS_cols; j++)

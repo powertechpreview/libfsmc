@@ -10,6 +10,16 @@ int main()
   std::cout << sm02 << std::endl;
   std::cout << sm01.mul<2>(sm02) << std::endl;
 
+  SMatrix<int, 2, 2, RowMajor> sm03, sm04(1);
+  for (int i = 0; i < 4; i++)
+	  sm03.m_data[i] = i + 1;
+  SMatrix<int, 2, 2, ColMajor> sm05 = sm03.mul<2, ColMajor>(sm04);
+
+  std::cout << sm03 << std::endl;
+  std::cout << sm04 << std::endl;
+  std::cout << sm05.m_data[0] << " " << sm05.m_data[1] << std::endl 
+	    << sm05.m_data[2] << " " << sm05.m_data[3] << std::endl << std::endl;
+
   //4x4
   SMatrix<double, 4, 4, RowMajor> sm1(10), sm2(20);
   std::cout << sm1 << std::endl;
