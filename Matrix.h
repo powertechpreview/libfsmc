@@ -2,8 +2,7 @@
 #define IBM_MATRIX_H
 
 #include <iostream>
-
-enum EStorageOrder : int { RowMajor, ColMajor };
+#include "EStorageOrder.h"
 
 template<typename Scalar, typename Index = long int, int StorageOrder = RowMajor>
 class Matrix {

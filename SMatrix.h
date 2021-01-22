@@ -5,8 +5,7 @@
 #include <stdio.h>
 #include <altivec.h>
 #include "Smul.h"
-
-enum EStorageOrder : int { RowMajor, ColMajor };
+#include "EStorageOrder.h"
 
 template<typename Scalar, int rows, int cols, int StorageOrder = RowMajor>
 class SMatrix
@@ -37,6 +36,12 @@ public:
     inline Scalar& operator()(int i, int j) const
     {
         return m_data[StorageOrder == RowMajor ? i*cols + j : j*rows + i];
+    }
+
+    void operator=(const SMatrix& m)
+    {
+	for (int i = 0; i < m_rows*m_cols; i++)
+		m_data[i] = m.m_data[i];
     }
 
     // Template declaration - multiplication of matrices  // ONE MUST DEFINE THE TEMPLATE FUNCTION OUTSIDE THE CLASS TO ALLOW SPECIALIZATION (but must declare it inside the class)
