@@ -24,16 +24,11 @@ public:
     template<int r, int c>
     void setVal(const Scalar& v)
     {
-        for(int i = 0; i < r; i++)
-        {
-            for(int j = 0; j < c; j++)
-            {
-                m_data[StorageOrder == RowMajor ? i*cols + j : j*rows + i] = v;
-            }
-        }
+        for(int i = 0; i < r*c; i++)
+		m_data[i] = v;
     }
 
-    inline Scalar& operator()(int i, int j) const
+    inline Scalar& operator()(int i, int j) //const
     {
         return m_data[StorageOrder == RowMajor ? i*cols + j : j*rows + i];
     }
@@ -42,6 +37,26 @@ public:
     {
 	for (int i = 0; i < m_rows*m_cols; i++)
 		m_data[i] = m.m_data[i];
+    }
+
+    inline SMatrix<Scalar, rows, cols> operator+(const SMatrix& m)
+    {
+	    SMatrix<Scalar, rows, cols> res;
+
+	    for (int i = 0; i < rows*cols; i++)
+		    res.m_data[i] = m_data[i] + m.m_data[i];
+
+	    return res;
+    }
+
+    inline SMatrix<Scalar, rows, cols> operator-(const SMatrix& m)
+    {
+	    SMatrix<Scalar, rows, cols> res;
+
+	    for (int i = 0; i < rows*cols; i++)
+		    res.m_data[i] = m_data[i] - m.m_data[i];
+
+	    return res;
     }
 
     // Template declaration - multiplication of matrices  // ONE MUST DEFINE THE TEMPLATE FUNCTION OUTSIDE THE CLASS TO ALLOW SPECIALIZATION (but must declare it inside the class)
