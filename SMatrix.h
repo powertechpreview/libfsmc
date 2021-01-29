@@ -137,6 +137,23 @@ SMatrix<double, 12, 12> SMatrix<double, 12, 12, ColMajor>::mul<12>(const SMatrix
         mul12x12ColMajor((double*)this->m_data, (double*)rhs.m_data, (double*)res.m_data);
         return res;
 }
+//====================================================================================================//
+template<>
+template<>
+SMatrix<double, 27, 27> SMatrix<double, 27, 27, RowMajor>::mul<27>(const SMatrix<double, 27, 27>& rhs)
+{
+        SMatrix<double, 27, 27> res;
+        mul27x27RowMajor((double*)this->m_data, (double*)rhs.m_data, (double*)res.m_data);
+        return res;
+}
 
+template<>
+template<>
+SMatrix<double, 27, 27> SMatrix<double, 27, 27, ColMajor>::mul<27>(const SMatrix<double, 27, 27>& rhs)
+{
+        SMatrix<double, 27, 27> res;
+        mul27x27ColMajor((double*)this->m_data, (double*)rhs.m_data, (double*)res.m_data);
+        return res;
+}
 
 #endif //IBM_SMATRIX_H
