@@ -85,7 +85,7 @@ template<typename Scalar, int rows, int cols, int StorageOrder>
 template<int mRHS_cols, int outOrder>
 SMatrix<Scalar, rows, mRHS_cols, outOrder> SMatrix<Scalar, rows, cols, StorageOrder>::mul(const SMatrix<Scalar, cols, mRHS_cols>& rhs)
 {
-    SMatrix<Scalar, rows, mRHS_cols, outOrder> res;    //if RowMajor: lhs(this): #rows = rows, #columns = cols
+    SMatrix<Scalar, rows, mRHS_cols, outOrder> res(0);    //if RowMajor: lhs(this): #rows = rows, #columns = cols
     for(int i = 0; i < rows; i++)            //             rhs:       #rows = cols, #columns = mRHS_cols
     {                                        //             res:       #rows = rows, #columns = mRHS_cols
         for(int j = 0; j < mRHS_cols; j++)
