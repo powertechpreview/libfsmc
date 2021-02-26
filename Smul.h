@@ -3,10 +3,13 @@
 
 #include <iostream>
 #include <stdio.h>
-#include <altivec.h>
+#include <altivec.h>	// library with specific functions for Power
 
-
-//====================================================================================================
+/*
+ * Function that recives three pointers, mLHS, mRHS and mResult, where the first two contains the elements 
+ * of two 4x4 double matrices stored in row-major order, performs the matrix multiplication between 
+ * them (mLHS*mRHS) and stores the resulting matrix in mResult as a row-major matrix.
+ */
 inline void mul4x4RowMajor(const double* mLHS, const double* mRHS, double* const mResult)
 {
     __vector double mLHSrow11, mLHSrow21, mLHSrow31, mLHSrow41,
@@ -14,63 +17,66 @@ inline void mul4x4RowMajor(const double* mLHS, const double* mRHS, double* const
                     mRHSrow11, mRHSrow21, mRHSrow31, mRHSrow41,
                     mRHSrow12, mRHSrow22, mRHSrow32, mRHSrow42;
 
+    /* Loading the left-hand side matrix. 
+     * mLHSrowij means (mLHS(i-1, j-1), mLHS(i-1, j)) in math notation.
+     */
     // row 1
     mLHSrow11 = vec_xl(0, mLHS);
     mLHSrow12 = vec_xl(0, mLHS + 2);
-
     // row 2
     mLHSrow21 = vec_xl(0, mLHS + 4);
     mLHSrow22 = vec_xl(0, mLHS + 6);
-
     // row 3
     mLHSrow31 = vec_xl(0, mLHS + 8);
     mLHSrow32 = vec_xl(0, mLHS + 10);
-
     // row 4
     mLHSrow41 = vec_xl(0, mLHS + 12);
     mLHSrow42 = vec_xl(0, mLHS + 14);
 
+    /* Creating a vector for each element of mLHS. 
+     * vAuxLHSij means (mLHS(j-1, i-1), mLHS(j-1, i-1)) in math notation.
+     */
     // column 1
     __vector double vAuxLHS11 = {mLHSrow11[0], mLHSrow11[0]};
     __vector double vAuxLHS12 = {mLHSrow21[0], mLHSrow21[0]};
     __vector double vAuxLHS13 = {mLHSrow31[0], mLHSrow31[0]};
     __vector double vAuxLHS14 = {mLHSrow41[0], mLHSrow41[0]};
-
     // column 2
     __vector double vAuxLHS21 = {mLHSrow11[1], mLHSrow11[1]};
     __vector double vAuxLHS22 = {mLHSrow21[1], mLHSrow21[1]};
     __vector double vAuxLHS23 = {mLHSrow31[1], mLHSrow31[1]};
     __vector double vAuxLHS24 = {mLHSrow41[1], mLHSrow41[1]};
-
     // column 3
     __vector double vAuxLHS31 = {mLHSrow12[0], mLHSrow12[0]};
     __vector double vAuxLHS32 = {mLHSrow22[0], mLHSrow22[0]};
     __vector double vAuxLHS33 = {mLHSrow32[0], mLHSrow32[0]};
     __vector double vAuxLHS34 = {mLHSrow42[0], mLHSrow42[0]};
-
     // column 4
     __vector double vAuxLHS41 = {mLHSrow12[1], mLHSrow12[1]};
     __vector double vAuxLHS42 = {mLHSrow22[1], mLHSrow22[1]};
     __vector double vAuxLHS43 = {mLHSrow32[1], mLHSrow32[1]};
     __vector double vAuxLHS44 = {mLHSrow42[1], mLHSrow42[1]};
 
-    //==================================================
 
+    /* Loading the right-hand side matrix. 
+     * mRHSrowij means (mRHS(i-1, j-1), mRHS(i-1, j)) in math notation.
+     */
+    // row 1
     mRHSrow11 = vec_xl(0, mRHS);
     mRHSrow12 = vec_xl(0, mRHS + 2);
-
+    // row 2
     mRHSrow21 = vec_xl(0, mRHS + 4);
     mRHSrow22 = vec_xl(0, mRHS + 6);
-
+    // row 3
     mRHSrow31 = vec_xl(0, mRHS + 8);
     mRHSrow32 = vec_xl(0, mRHS + 10);
-
+    // row 4
     mRHSrow41 = vec_xl(0, mRHS + 12);
     mRHSrow42 = vec_xl(0, mRHS + 14);
 
-    //==================================================
 
-    //building the first row of mResult
+    /* Computing the resulting matrix and storing it to mResult. */
+    // row 1
     vec_xst(vec_add(
                     vec_madd(mRHSrow21, vAuxLHS21, vec_mul(mRHSrow11, vAuxLHS11)),
                     vec_madd(mRHSrow41, vAuxLHS41, vec_mul(mRHSrow31, vAuxLHS31)) ),
@@ -80,7 +86,7 @@ inline void mul4x4RowMajor(const double* mLHS, const double* mRHS, double* const
                     vec_madd(mRHSrow42, vAuxLHS41, vec_mul(mRHSrow32, vAuxLHS31)) ),
             0, mResult + 2);
 
-    //building the second row of mResult
+    // row 2
     vec_xst(vec_add(
                     vec_madd(mRHSrow21, vAuxLHS22, vec_mul(mRHSrow11, vAuxLHS12)),
                     vec_madd(mRHSrow41, vAuxLHS42, vec_mul(mRHSrow31, vAuxLHS32)) ),
@@ -90,7 +96,7 @@ inline void mul4x4RowMajor(const double* mLHS, const double* mRHS, double* const
                     vec_madd(mRHSrow42, vAuxLHS42, vec_mul(mRHSrow32, vAuxLHS32)) ),
             0, mResult + 6);
 
-    //building the third row of mResult
+    // row 3
     vec_xst(vec_add(
                     vec_madd(mRHSrow21, vAuxLHS23, vec_mul(mRHSrow11, vAuxLHS13)),
                     vec_madd(mRHSrow41, vAuxLHS43, vec_mul(mRHSrow31, vAuxLHS33)) ),
@@ -100,7 +106,7 @@ inline void mul4x4RowMajor(const double* mLHS, const double* mRHS, double* const
                     vec_madd(mRHSrow42, vAuxLHS43, vec_mul(mRHSrow32, vAuxLHS33)) ),
             0, mResult + 10);
 
-    //building the fourth row of mResult
+    // row 4
     vec_xst(vec_add(
                     vec_madd(mRHSrow21, vAuxLHS24, vec_mul(mRHSrow11, vAuxLHS14)),
                     vec_madd(mRHSrow41, vAuxLHS44, vec_mul(mRHSrow31, vAuxLHS34)) ),
@@ -110,8 +116,13 @@ inline void mul4x4RowMajor(const double* mLHS, const double* mRHS, double* const
                     vec_madd(mRHSrow42, vAuxLHS44, vec_mul(mRHSrow32, vAuxLHS34)) ),
             0, mResult + 14);
 }
-//====================================================================================================
 
+/*
+ * Function that recives three pointers, mLHS, mRHS and mResult, where mLHS contains the elements 
+ * of a 4x4 double matrix stored in row-major order and mRHS contains the elements of a 4x4 double 
+ * matrix stored in column-major order, performs the matrix multiplication between 
+ * them (mLHS*mRHS) and stores the resulting matrix in mResult as a row-major matrix.
+ */
 inline void mul4x4ColMajor(const double* mLHS, const double* mRHS, double* const mResult)
 {
     __vector double mLHScol11, mLHScol21, mLHScol31, mLHScol41,
@@ -130,7 +141,6 @@ inline void mul4x4ColMajor(const double* mLHS, const double* mRHS, double* const
 
     mLHScol41 = vec_xl(0, mLHS + 12);
     mLHScol42 = vec_xl(0, mLHS + 14);
-    //==================================================
 
     mRHSrow11 = vec_xl(0, mRHS);
     mRHSrow12 = vec_xl(0, mRHS + 2);
@@ -143,7 +153,6 @@ inline void mul4x4ColMajor(const double* mLHS, const double* mRHS, double* const
 
     mRHSrow41 = vec_xl(0, mRHS + 12);
     mRHSrow42 = vec_xl(0, mRHS + 14);
-    //==================================================
 
     __vector double vAuxLHS11 = {mLHScol11[0], mLHScol11[0]};
     __vector double vAuxLHS12 = {mLHScol11[1], mLHScol11[1]};
@@ -164,7 +173,6 @@ inline void mul4x4ColMajor(const double* mLHS, const double* mRHS, double* const
     __vector double vAuxLHS42 = {mLHScol41[1], mLHScol41[1]};
     __vector double vAuxLHS43 = {mLHScol42[0], mLHScol42[0]};
     __vector double vAuxLHS44 = {mLHScol42[1], mLHScol42[1]};
-    //==================================================
 
     //building the first row of mResult
     vec_xst(vec_add(
@@ -206,10 +214,12 @@ inline void mul4x4ColMajor(const double* mLHS, const double* mRHS, double* const
                     vec_madd(mRHSrow42, vAuxLHS44, vec_mul(mRHSrow32, vAuxLHS34)) ),
             0, mResult + 14);
 }
-//====================================================================================================//
 
-
-//====================================================================================================
+/*
+ * Function that recives three pointers, mLHS, mRHS and mResult, where the first two contains the elements 
+ * of two 9x9 double matrices stored in row-major order, performs the matrix multiplication between 
+ * them (mLHS*mRHS) and stores the resulting matrix in mResult as a row-major matrix.
+ */
 inline void mul9x9RowMajor(const double* mLHS, const double* mRHS, double* const mResult)
 {
     __vector double mLHSrow11, mLHSrow21, mLHSrow31, mLHSrow41, mLHSrow51, mLHSrow61, mLHSrow71, mLHSrow81, mLHSrow91,
@@ -222,9 +232,6 @@ inline void mul9x9RowMajor(const double* mLHS, const double* mRHS, double* const
                     mRHSrow13, mRHSrow23, mRHSrow33, mRHSrow43, mRHSrow53, mRHSrow63, mRHSrow73, mRHSrow83, mRHSrow93,
                     mRHSrow14, mRHSrow24, mRHSrow34, mRHSrow44, mRHSrow54, mRHSrow64, mRHSrow74, mRHSrow84, mRHSrow94,
                     mRHSrow15, mRHSrow25, mRHSrow35, mRHSrow45, mRHSrow55, mRHSrow65, mRHSrow75, mRHSrow85, mRHSrow95;
-
-    //{ [a11 a12 a13 a14 a15 a16 a17 a18 a19], [a21 a22 a23 a24 a25 a26 a27 a28 a29], [a31 a32 a33 a34 a35 a36 a37 a38 a39], [a41 a42 a43 a44 a45 a46 a47 a48 a49],
-    //  [a51 a52 a53 a54 a55 a56 a57 a58 a59], [a61 a62 a63 a64 a65 a66 a67 a68 a69], [a71 a72 a73 a74 a75 a76 a77 a78 a79], [a81 a82 a83 a84 a85 a86 a87 a88 a89]}
 
     // row 1
     mLHSrow11 = vec_xl(0, mLHS);
@@ -878,8 +885,13 @@ inline void mul9x9RowMajor(const double* mLHS, const double* mRHS, double* const
       mResult[80] = mResultLastElem[0];
 
 }
-//====================================================================================================
 
+/*
+ * Function that recives three pointers, mLHS, mRHS and mResult, where mLHS contains the elements 
+ * of a 9x9 double matrix stored in row-major order and mRHS contains the elements of a 9x9 double 
+ * matrix stored in column-major order, performs the matrix multiplication between 
+ * them (mLHS*mRHS) and stores the resulting matrix in mResult as a row-major matrix.
+ */
 inline void mul9x9ColMajor(const double* mLHS, const double* mRHS, double* const mResult)
 {
     __vector double mLHScol11, mLHScol21, mLHScol31, mLHScol41, mLHScol51, mLHScol61, mLHScol71, mLHScol81, mLHScol91,
@@ -1526,7 +1538,12 @@ inline void mul9x9ColMajor(const double* mLHS, const double* mRHS, double* const
       mResult[80] = mResultLastElem[0];
 
 }
-//====================================================================================================//
+
+/*
+ * Function that recives three pointers, mLHS, mRHS and mResult, where the first two contains the elements 
+ * of two 12x12 double matrices stored in row-major order, performs the matrix multiplication between 
+ * them (mLHS*mRHS) and stores the resulting matrix in mResult as a row-major matrix.
+ */
 inline void mul12x12RowMajor(double* mLHS, double* mRHS, double* mResult) {
 
 	__vector double mLHSrow11, mLHSrow21, mLHSrow31, mLHSrow41, mLHSrow51, mLHSrow61, mLHSrow71, mLHSrow81, mLHSrow91, mLHSrow101, mLHSrow111, mLHSrow121,
@@ -1999,6 +2016,12 @@ inline void mul12x12RowMajor(double* mLHS, double* mRHS, double* mResult) {
 	vec_xst(vec_madd(vAuxLHS1212, mRHSrow126, vec_madd(vAuxLHS1112, mRHSrow116, vec_madd(vAuxLHS1012, mRHSrow106, vec_madd(vAuxLHS912, mRHSrow96, vec_madd(vAuxLHS812, mRHSrow86, vec_madd(vAuxLHS712, mRHSrow76, vec_madd(vAuxLHS612, mRHSrow66, vec_madd(vAuxLHS512, mRHSrow56, vec_madd(vAuxLHS412, mRHSrow46, vec_madd(vAuxLHS312, mRHSrow36, vec_madd(vAuxLHS212, mRHSrow26, vec_mul(vAuxLHS0112, mRHSrow16)))))))))))), 0, mResult + 142);
 }
 
+/*
+ * Function that recives three pointers, mLHS, mRHS and mResult, where mLHS contains the elements 
+ * of a 12x12 double matrix stored in row-major order and mRHS contains the elements of a 12x12 double 
+ * matrix stored in column-major order, performs the matrix multiplication between 
+ * them (mLHS*mRHS) and stores the resulting matrix in mResult as a row-major matrix.
+ */
 inline void mul12x12ColMajor(double* mLHS, double* mRHS, double* mResult) {
 
 	__vector double mLHScol11, mLHScol21, mLHScol31, mLHScol41, mLHScol51, mLHScol61, mLHScol71, mLHScol81, mLHScol91, mLHScol101, mLHScol111, mLHScol121,
