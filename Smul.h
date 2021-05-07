@@ -2525,4 +2525,55 @@ inline void mul12x12ColMajor(double* mLHS, double* mRHS, double* mResult) {
 	vec_xst(vec_madd(vAuxLHS1212, mRHSrow126, vec_madd(vAuxLHS1112, mRHSrow116, vec_madd(vAuxLHS1012, mRHSrow106, vec_madd(vAuxLHS912, mRHSrow96, vec_madd(vAuxLHS812, mRHSrow86, vec_madd(vAuxLHS712, mRHSrow76, vec_madd(vAuxLHS612, mRHSrow66, vec_madd(vAuxLHS512, mRHSrow56, vec_madd(vAuxLHS412, mRHSrow46, vec_madd(vAuxLHS312, mRHSrow36, vec_madd(vAuxLHS212, mRHSrow26, vec_mul(vAuxLHS0112, mRHSrow16)))))))))))), 0, mResult + 142);
 }
 
+//====================================================================================================//
+//Divide And Conquer - Matrix Size 2^n by 2^n, where n>=1 .
+//====================================================================================================//
+
+template <typename T>
+inline void Mul2x2(T* lhs, T* rhs, T* res, int SIZE){
+	
+	res[0] += lhs[0]*rhs[0] + lhs[1]*rhs[SIZE];
+
+	res[1] += lhs[0]*rhs[1] + lhs[1]*rhs[SIZE+1];
+
+	res[SIZE] += lhs[SIZE]*rhs[0] + lhs[SIZE+1]*rhs[SIZE];
+
+	res[SIZE+1] += lhs[SIZE]*rhs[1] + lhs[SIZE+1]*rhs[SIZE+1];
+
+
+}
+
+
+template <typename t>
+inline void conquer(t* lhs, t* rhs, t* res, int n, int N){
+
+	if(n==2){
+		
+		Mul2x2(lhs, rhs, res, N);
+	
+	}
+
+	else{
+	
+		int k=n/2;
+
+		conquer(lhs, rhs, res,k ,N);
+		conquer(lhs+k, rhs+N*k, res, k, N);
+
+
+		conquer(lhs, rhs+k, res+k, k, N);
+		conquer(lhs+k, rhs+k*N+k, res+k, k, N);
+
+
+		conquer(lhs+N*k, rhs, res+k*N, k, N);
+		conquer(lhs+k*N+k, rhs+k*N, res+k*N, k, N);
+		
+
+		conquer(lhs+N*k, rhs+k, res+k*N+k, k, N);
+		conquer(lhs+k*N+k, rhs+k*N+k, res+k*N+k, k, N);
+	}
+
+}
+
+
 #endif //IBM_SMUL_H
