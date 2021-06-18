@@ -138,4 +138,63 @@ SMatrix<double, 12, 12> SMatrix<double, 12, 12, ColMajor>::mul<12>(const SMatrix
         return res;
 }
 
+//====================================================================================================//
+// Divide and Conquer - multiplication of 1024 by 1024 double matrices
+//====================================================================================================//
+template<>
+template<>
+SMatrix<double, 1024, 1024> SMatrix<double, 1024, 1024, RowMajor>::mul<1024>(const SMatrix<double, 1024, 1024>& rhs)
+{
+        SMatrix<double, 1024, 1024> res;
+        conquer((double*)this->m_data, (double*)rhs.m_data, (double*)res.m_data, 1024, 1024);
+        return res;
+}
+
+template<>
+template<>
+SMatrix<double, 1024, 1024> SMatrix<double, 1024, 1024, ColMajor>::mul<1024>(const SMatrix<double, 1024, 1024>& rhs)
+{
+        SMatrix<double, 1024, 1024> res;
+        conquer((double*)this->m_data, (double*)rhs.m_data, (double*)res.m_data, 1024, 1024);
+        return res;
+}
+// Divide and Conquer - multiplication of 512 by 512 double matrices
+//====================================================================================================//
+template<>
+template<>
+SMatrix<double, 512, 512> SMatrix<double, 512, 512, RowMajor>::mul<512>(const SMatrix<double, 512, 512>& rhs)
+{
+        SMatrix<double, 512, 512> res;
+        conquer((double*)this->m_data, (double*)rhs.m_data, (double*)res.m_data, 512, 512);
+        return res;
+}
+
+template<>
+template<>
+SMatrix<double, 512, 512> SMatrix<double, 512, 512, ColMajor>::mul<512>(const SMatrix<double, 512, 512>& rhs)
+{
+        SMatrix<double, 512, 512> res;
+        conquer((double*)this->m_data, (double*)rhs.m_data, (double*)res.m_data, 512, 512);
+        return res;
+}
+
+// Divide and Conquer - multiplication of 256 by 256 double matrices
+//====================================================================================================//
+template<>
+template<>
+SMatrix<double, 256, 256> SMatrix<double, 256, 256, RowMajor>::mul<256>(const SMatrix<double, 256, 256>& rhs)
+{
+        SMatrix<double, 256, 256> res;
+        conquer((double*)this->m_data, (double*)rhs.m_data, (double*)res.m_data, 256, 256);
+        return res;
+}
+
+template<>
+template<>
+SMatrix<double, 256, 256> SMatrix<double, 256, 256, ColMajor>::mul<256>(const SMatrix<double, 256, 256>& rhs)
+{
+        SMatrix<double, 256, 256> res;
+        conquer((double*)this->m_data, (double*)rhs.m_data, (double*)res.m_data, 256, 256);
+        return res;
+}
 #endif //IBM_SMATRIX_H
