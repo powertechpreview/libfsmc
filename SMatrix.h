@@ -197,4 +197,147 @@ SMatrix<double, 256, 256> SMatrix<double, 256, 256, ColMajor>::mul<256>(const SM
         conquer((double*)this->m_data, (double*)rhs.m_data, (double*)res.m_data, 256, 256);
         return res;
 }
+
+// Divide and Conquer - multiplication of 128 by 128 double matrices
+//====================================================================================================//
+template<>
+template<>
+SMatrix<double, 128, 128> SMatrix<double, 128, 128, RowMajor>::mul<128>(const SMatrix<double, 128, 128>& rhs)
+{
+        SMatrix<double, 128, 128> res;
+        conquer((double*)this->m_data, (double*)rhs.m_data, (double*)res.m_data, 128, 128);
+        return res;
+}
+
+template<>
+template<>
+SMatrix<double, 128, 128> SMatrix<double, 128, 128, ColMajor>::mul<128>(const SMatrix<double, 128, 128>& rhs)
+{
+        SMatrix<double, 128, 128> res;
+        conquer((double*)this->m_data, (double*)rhs.m_data, (double*)res.m_data, 128, 128);
+        return res;
+}
+
+// Divide and Conquer - multiplication of 64 by 64 double matrices
+//====================================================================================================//
+template<>
+template<>
+SMatrix<double, 64, 64> SMatrix<double, 64, 64 , RowMajor>::mul<64>(const SMatrix<double, 64, 64>& rhs)
+{
+        SMatrix<double, 64, 64> res;
+        conquer((double*)this->m_data, (double*)rhs.m_data, (double*)res.m_data, 64, 64);
+        return res;
+}
+
+template<>
+template<>
+SMatrix<double, 64, 64> SMatrix<double, 64, 64, ColMajor>::mul<64>(const SMatrix<double, 64, 64>& rhs)
+{
+        SMatrix<double, 64, 64> res;
+        conquer((double*)this->m_data, (double*)rhs.m_data, (double*)res.m_data, 64, 64);
+        return res;
+}
+
+
+// Divide and Conquer - multiplication of 32 by 32 double matrices
+//====================================================================================================//
+template<>
+template<>
+SMatrix<double, 32, 32> SMatrix<double, 32, 32, RowMajor>::mul<32>(const SMatrix<double, 32, 32>& rhs)
+{
+        SMatrix<double, 32, 32> res;
+        conquer((double*)this->m_data, (double*)rhs.m_data, (double*)res.m_data, 32, 32);
+        return res;
+}
+
+template<>
+template<>
+SMatrix<double, 32, 32> SMatrix<double, 32, 32, ColMajor>::mul<32>(const SMatrix<double, 32, 32>& rhs)
+{
+        SMatrix<double, 32, 32> res;
+        conquer((double*)this->m_data, (double*)rhs.m_data, (double*)res.m_data, 32, 32);
+        return res;
+}
+
+// Divide and Conquer - multiplication of 16 by 16 double matrices
+//====================================================================================================//
+template<>
+template<>
+SMatrix<double, 16, 16> SMatrix<double, 16, 16, RowMajor>::mul<16>(const SMatrix<double, 16, 16>& rhs)
+{
+        SMatrix<double, 16, 16> res;
+        conquer((double*)this->m_data, (double*)rhs.m_data, (double*)res.m_data, 16, 16);
+        return res;
+}
+
+template<>
+template<>
+SMatrix<double, 16, 16> SMatrix<double, 16, 16, ColMajor>::mul<16>(const SMatrix<double, 16, 16>& rhs)
+{
+        SMatrix<double, 16, 16> res;
+        conquer((double*)this->m_data, (double*)rhs.m_data, (double*)res.m_data, 16, 16);
+        return res;
+}
+
+
+// Divide and Conquer - multiplication of 8 by 8 double matrices
+//====================================================================================================//
+template<>
+template<>
+SMatrix<double, 8, 8> SMatrix<double, 8, 8, RowMajor>::mul<8>(const SMatrix<double, 8, 8>& rhs)
+{
+        SMatrix<double, 8, 8> res;
+        conquer((double*)this->m_data, (double*)rhs.m_data, (double*)res.m_data, 8, 8);
+        return res;
+}
+
+template<>
+template<>
+SMatrix<double, 8, 8> SMatrix<double, 8, 8, ColMajor>::mul<8>(const SMatrix<double, 8, 8>& rhs)
+{
+        SMatrix<double, 8, 8> res;
+        conquer((double*)this->m_data, (double*)rhs.m_data, (double*)res.m_data, 8, 8);
+        return res;
+}
+
+// Divide and Conquer - multiplication of 4 by 4 double matrices
+//====================================================================================================//
+template<>
+template<>
+SMatrix<double, 4, 4> SMatrix<double, 4, 4, RowMajor>::mul<4>(const SMatrix<double, 4, 4>& rhs)
+{
+        SMatrix<double, 4, 4> res;
+        conquer((double*)this->m_data, (double*)rhs.m_data, (double*)res.m_data, 4, 4);
+        return res;
+}
+
+template<>
+template<>
+SMatrix<double, 4, 4> SMatrix<double, 4, 4, ColMajor>::mul<4>(const SMatrix<double, 4, 4>& rhs)
+{
+        SMatrix<double, 4, 4> res;
+        conquer((double*)this->m_data, (double*)rhs.m_data, (double*)res.m_data, 4, 4);
+        return res;
+}
+
+
+// Divide and Conquer - multiplication of 2 by 2 double matrices
+//====================================================================================================//
+template<>
+template<>
+SMatrix<double, 2, 2> SMatrix<double, 2, 2, RowMajor>::mul<2>(const SMatrix<double, 2, 2>& rhs)
+{
+        SMatrix<double, 2, 2> res;
+        conquer((double*)this->m_data, (double*)rhs.m_data, (double*)res.m_data, 2, 2);
+        return res;
+}
+
+template<>
+template<>
+SMatrix<double, 2, 2> SMatrix<double, 2, 2, ColMajor>::mul<2>(const SMatrix<double, 2, 2>& rhs)
+{
+        SMatrix<double, 2, 2> res;
+        conquer((double*)this->m_data, (double*)rhs.m_data, (double*)res.m_data, 2, 2);
+        return res;
+}
 #endif //IBM_SMATRIX_H
