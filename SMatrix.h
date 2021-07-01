@@ -300,27 +300,6 @@ SMatrix<double, 8, 8> SMatrix<double, 8, 8, ColMajor>::mul<8>(const SMatrix<doub
         return res;
 }
 
-// Divide and Conquer - multiplication of 4 by 4 double matrices
-//====================================================================================================//
-template<>
-template<>
-SMatrix<double, 4, 4> SMatrix<double, 4, 4, RowMajor>::mul<4>(const SMatrix<double, 4, 4>& rhs)
-{
-        SMatrix<double, 4, 4> res;
-        conquer((double*)this->m_data, (double*)rhs.m_data, (double*)res.m_data, 4, 4);
-        return res;
-}
-
-template<>
-template<>
-SMatrix<double, 4, 4> SMatrix<double, 4, 4, ColMajor>::mul<4>(const SMatrix<double, 4, 4>& rhs)
-{
-        SMatrix<double, 4, 4> res;
-        conquer((double*)this->m_data, (double*)rhs.m_data, (double*)res.m_data, 4, 4);
-        return res;
-}
-
-
 // Divide and Conquer - multiplication of 2 by 2 double matrices
 //====================================================================================================//
 template<>
