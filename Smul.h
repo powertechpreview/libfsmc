@@ -5,7 +5,11 @@
 #include <stdio.h>
 #include <altivec.h>
 
-//Float 4x4 RowMajor
+
+inline void mul4x4RowMajorFloat(const float* mLHS, const float* mRHS, float* const mResult){
+}
+
+
 
 inline void mul4x4ColMajorFloat(const float* mLHS, const float* mRHS, float* const mResult){
 	vector float mLHScol1,mLHScol2,mLHScol3,mLHScol4;
@@ -44,25 +48,26 @@ inline void mul4x4ColMajorFloat(const float* mLHS, const float* mRHS, float* con
  	//row 1 
 	vec_xst(
 	vec_add(vec_add(vec_mul(auxLHS11,mRHSrow1),vec_mul(auxLHS12,mRHSrow2)),
-	vec_add(vec_mul(auxLHS13,mRHSrow3),vec_mul(auxLHS14,mRHSrow4)))
+	vec_add(vec_mul(auxLHS13,mRHSrow3),vec_mul(auxLHS14,mRHSrow4))),
+	mResult
 	);
 
 	//row 2 
 	vec_xst(
 	vec_add(vec_add(vec_mul(auxLHS21,mRHSrow1),vec_mul(auxLHS22,mRHSrow2)),
-	vec_add(vec_mul(auxLHS23,mRHSrow3),vec_mul(auxLHS24,mRHSrow4)))
+	vec_add(vec_mul(auxLHS23,mRHSrow3),vec_mul(auxLHS24,mRHSrow4))),mResult+4
 	);
 
 	//row 3
 	vec_xst(
 	vec_add(vec_add(vec_mul(auxLHS31,mRHSrow1),vec_mul(auxLHS32,mRHSrow2)),
-	vec_add(vec_mul(auxLHS33,mRHSrow3),vec_mul(auxLHS34,mRHSrow4)))
+	vec_add(vec_mul(auxLHS33,mRHSrow3),vec_mul(auxLHS34,mRHSrow4))),mResult+8
 	);
 
 	//row 4
 	vec_xst(
 	vec_add(vec_add(vec_mul(auxLHS41,mRHSrow1),vec_mul(auxLHS42,mRHSrow2)),
-	vec_add(vec_mul(auxLHS43,mRHSrow3),vec_mul(auxLHS44,mRHSrow4)))
+	vec_add(vec_mul(auxLHS43,mRHSrow3),vec_mul(auxLHS44,mRHSrow4))),mResult+12
 	);
 
 }
