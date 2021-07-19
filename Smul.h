@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <altivec.h>
 
-//Float 4x4 RowMajor
+//Float 4x4 ColMajor
 
 inline void mul4x4ColMajorFloat(const float* mLHS, const float* mRHS, float* const mResult){
 	vector float mLHScol1,mLHScol2,mLHScol3,mLHScol4;
