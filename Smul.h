@@ -5,6 +5,67 @@
 #include <stdio.h>
 #include <altivec.h>
 
+//Float 4x4 RowMajor
+
+inline void mul4x4ColMajorFloat(const float* mLHS, const float* mRHS, float* const mResult){
+	vector float mLHScol1,mLHScol2,mLHScol3,mLHScol4;
+	vector float mRHSrow1,mRHSrow2,mRHSrow3,mRHSrow4;
+	
+	mLHScol1 = vec_xl(0,mLHS);
+	mLHScol2 = vec_xl(0,mLHS+4);
+	mLHScol3 = vec_xl(0,mLHS+8);
+	mLHScol4 = vec_xl(0,mLHS+12);
+
+	mRHSrow1 = vec_xl(0,mRHS);
+	mRHSrow2 = vec_xl(0,mRHS+4);
+	mRHSrow3 = vec_xl(0,mRHS+8);
+	mRHSrow4 = vec_xl(0,mRHS+12);
+
+	vector float auxLHS11 = {mLHScol1[0],mLHScol1[0],mLHScol1[0],mLHScol1[0]};
+	vector float auxLHS12 = {mLHScol1[1],mLHScol1[1],mLHScol1[1],mLHScol1[1]};
+	vector float auxLHS13 = {mLHScol1[2],mLHScol1[2],mLHScol1[2],mLHScol1[2]};
+	vector float auxLHS14 = {mLHScol1[3],mLHScol1[3],mLHScol1[3],mLHScol1[3]};
+	
+	vector float auxLHS21 = {mLHScol2[0],mLHScol2[0],mLHScol2[0],mLHScol2[0]};
+	vector float auxLHS22 = {mLHScol2[1],mLHScol2[1],mLHScol2[1],mLHScol2[1]};
+	vector float auxLHS23 = {mLHScol2[2],mLHScol2[2],mLHScol2[2],mLHScol2[2]};
+	vector float auxLHS24 = {mLHScol2[3],mLHScol2[3],mLHScol2[3],mLHScol2[3]};
+	
+	vector float auxLHS31 = {mLHScol3[0],mLHScol3[0],mLHScol3[0],mLHScol3[0]};
+	vector float auxLHS32 = {mLHScol3[1],mLHScol3[1],mLHScol3[1],mLHScol3[1]};
+	vector float auxLHS33 = {mLHScol3[2],mLHScol3[2],mLHScol3[2],mLHScol3[2]};
+	vector float auxLHS34 = {mLHScol3[3],mLHScol3[3],mLHScol3[3],mLHScol3[3]};
+	
+	vector float auxLHS41 = {mLHScol4[0],mLHScol4[0],mLHScol4[0],mLHScol4[0]};
+	vector float auxLHS42 = {mLHScol4[1],mLHScol4[1],mLHScol4[1],mLHScol4[1]};
+	vector float auxLHS43 = {mLHScol4[2],mLHScol4[2],mLHScol4[2],mLHScol4[2]};
+	vector float auxLHS44 = {mLHScol4[3],mLHScol4[3],mLHScol4[3],mLHScol4[3]};
+
+ 	//row 1 
+	vec_xst(
+	vec_add(vec_add(vec_mul(auxLHS11,mRHSrow1),vec_mul(auxLHS12,mRHSrow2)),
+	vec_add(vec_mul(auxLHS13,mRHSrow3),vec_mul(auxLHS14,mRHSrow4)))
+	);
+
+	//row 2 
+	vec_xst(
+	vec_add(vec_add(vec_mul(auxLHS21,mRHSrow1),vec_mul(auxLHS22,mRHSrow2)),
+	vec_add(vec_mul(auxLHS23,mRHSrow3),vec_mul(auxLHS24,mRHSrow4)))
+	);
+
+	//row 3
+	vec_xst(
+	vec_add(vec_add(vec_mul(auxLHS31,mRHSrow1),vec_mul(auxLHS32,mRHSrow2)),
+	vec_add(vec_mul(auxLHS33,mRHSrow3),vec_mul(auxLHS34,mRHSrow4)))
+	);
+
+	//row 4
+	vec_xst(
+	vec_add(vec_add(vec_mul(auxLHS41,mRHSrow1),vec_mul(auxLHS42,mRHSrow2)),
+	vec_add(vec_mul(auxLHS43,mRHSrow3),vec_mul(auxLHS44,mRHSrow4)))
+	);
+
+}
 
 //====================================================================================================
 inline void mul4x4RowMajor(const double* mLHS, const double* mRHS, double* const mResult)
