@@ -78,6 +78,10 @@ SMatrix<Scalar, rows, mRHS_cols> SMatrix<Scalar, rows, cols, StorageOrder>::mul(
     }
     return res;
 }
+
+//----------------------------------------------------------------------------------------------------//
+//----------------------------------------------------------------------------------------------------//
+//----------------------------------------------------------------------------------------------------//
 // Template specialization - multiplication of 4 by 4 double matrices
 //====================================================================================================
 //  SOLVING ERRORS: ONE CAN NOT SPECIALIZE A MEMBER FUNCTION WITHOUT ALSO SPECIALIZING THE CLASS
@@ -98,7 +102,37 @@ SMatrix<double, 4, 4> SMatrix<double, 4, 4, ColMajor>::mul<4>(const SMatrix<doub
     mul4x4ColMajor((double*)this->m_data, (double*)rhs.m_data, (double*)res.m_data);
     return res;
 }
-//====================================================================================================//
+
+//----------------------------------------------------------------------------------------------------//
+//----------------------------------------------------------------------------------------------------//
+//----------------------------------------------------------------------------------------------------//
+
+
+// Template specialization - multiplication of 4 by 4 float matrices
+//====================================================================================================
+//  SOLVING ERRORS: ONE CAN NOT SPECIALIZE A MEMBER FUNCTION WITHOUT ALSO SPECIALIZING THE CLASS
+template<>
+template<>
+SMatrix<float, 4, 4> SMatrix<float, 4, 4, RowMajor>::mul<4>(const SMatrix<float, 4, 4>& rhs)  // lhs(this) is RowMajor and rhs is RowMajor
+{
+    SMatrix<float, 4, 4> res;
+    mul4x4RowMajorFloat((float*)this->m_data, (float*)rhs.m_data, (float*)res.m_data);
+    return res;
+}
+//====================================================================================================
+template<>
+template<>
+SMatrix<float, 4, 4> SMatrix<float, 4, 4, ColMajor>::mul<4>(const SMatrix<float, 4, 4>& rhs)  // lhs(this) is ColMajor and rhs is RowMajor
+{
+    SMatrix<float, 4, 4> res;
+    mul4x4ColMajorFloat((float*)this->m_data, (float*)rhs.m_data, (float*)res.m_data);
+    return res;
+
+}
+
+//----------------------------------------------------------------------------------------------------//
+//----------------------------------------------------------------------------------------------------//
+//----------------------------------------------------------------------------------------------------//
 
 // Template specialization - multiplication of 9 by 9 double matrices
 //====================================================================================================
@@ -119,6 +153,38 @@ SMatrix<double, 9, 9> SMatrix<double, 9, 9, ColMajor>::mul<9>(const SMatrix<doub
     mul9x9ColMajor((double*)this->m_data, (double*)rhs.m_data, (double*)res.m_data);
     return res;
 }
+
+//----------------------------------------------------------------------------------------------------//
+//----------------------------------------------------------------------------------------------------//
+//----------------------------------------------------------------------------------------------------//
+
+// Template specialization - multiplication of 9 by 9 float matrices
+//====================================================================================================
+template<>
+template<>
+SMatrix<float, 9, 9> SMatrix<float, 9, 9, RowMajor>::mul<9>(const SMatrix<float, 9, 9>& rhs)  // lhs(this) is RowMajor and rhs is RowMajor
+{
+    SMatrix<float, 9, 9> res;
+    mul4x4RowMajorFloat((float*)this->m_data, (float*)rhs.m_data, (float*)res.m_data);
+    return res;
+}
+//====================================================================================================
+template<>
+template<>
+SMatrix<float, 9, 9> SMatrix<float, 9, 9, ColMajor>::mul<9>(const SMatrix<float, 9, 9>& rhs)  // lhs(this) is ColMajor and rhs is RowMajor
+{
+    SMatrix<float, 9, 9> res;
+    mul4x4ColMajorFloat((float*)this->m_data, (float*)rhs.m_data, (float*)res.m_data);
+    return res;
+
+}
+
+
+//----------------------------------------------------------------------------------------------------//
+//----------------------------------------------------------------------------------------------------//
+//----------------------------------------------------------------------------------------------------//
+
+// Template specialization - multiplication of 12 by 12 double matrices
 //====================================================================================================//
 template<>
 template<>
@@ -137,6 +203,34 @@ SMatrix<double, 12, 12> SMatrix<double, 12, 12, ColMajor>::mul<12>(const SMatrix
         mul12x12ColMajor((double*)this->m_data, (double*)rhs.m_data, (double*)res.m_data);
         return res;
 }
+
+//----------------------------------------------------------------------------------------------------//
+//----------------------------------------------------------------------------------------------------//
+//----------------------------------------------------------------------------------------------------//
+
+
+// Template specialization - multiplication of 12 by 12 float matrices
+//====================================================================================================
+template<>
+template<>
+SMatrix<float, 12, 12> SMatrix<float, 12, 12, RowMajor>::mul<12>(const SMatrix<float, 12, 12>& rhs)  // lhs(this) is RowMajor and rhs is RowMajor
+{
+    SMatrix<float, 12, 12> res;
+    mul4x4RowMajorFloat((float*)this->m_data, (float*)rhs.m_data, (float*)res.m_data);
+    return res;
+}
+//====================================================================================================
+template<>
+template<>
+SMatrix<float, 12, 12> SMatrix<float, 12, 12, ColMajor>::mul<12>(const SMatrix<float, 12, 12>& rhs)  // lhs(this) is ColMajor and rhs is RowMajor
+{
+    SMatrix<float, 12, 12> res;
+    mul4x4ColMajorFloat((float*)this->m_data, (float*)rhs.m_data, (float*)res.m_data);
+    return res;
+
+}
+
+
 
 //====================================================================================================//
 // Divide and Conquer - multiplication of 1024 by 1024 double matrices
