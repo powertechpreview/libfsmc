@@ -126,198 +126,211 @@ inline void mul12x12ColMajorFloat(const float* mLHS, const float* mRHS, float* c
 //Splat
 //===================================================================================
 
-	vector float aux111={mLHScol11[0],mLHScol11[0],mLHScol11[0],mLHScol11[0]};
-	vector float aux112={mLHScol11[1],mLHScol11[1],mLHScol11[1],mLHScol11[1]};
-	vector float aux113={mLHScol11[2],mLHScol11[2],mLHScol11[2],mLHScol11[2]};
-	vector float aux114={mLHScol11[3],mLHScol11[3],mLHScol11[3],mLHScol11[3]};
+	vector float vAuxLHS11={mLHScol11[0],mLHScol11[0],mLHScol11[0],mLHScol11[0]};
+	vector float vAuxLHS12={mLHScol11[1],mLHScol11[1],mLHScol11[1],mLHScol11[1]};
+	vector float vAuxLHS13={mLHScol11[2],mLHScol11[2],mLHScol11[2],mLHScol11[2]};
+	vector float vAuxLHS14={mLHScol11[3],mLHScol11[3],mLHScol11[3],mLHScol11[3]};
 
-	vector float aux121={mLHScol12[0],mLHScol12[0],mLHScol12[0],mLHScol12[0]};
-	vector float aux122={mLHScol12[1],mLHScol12[1],mLHScol12[1],mLHScol12[1]};
-	vector float aux123={mLHScol12[2],mLHScol12[2],mLHScol12[2],mLHScol12[2]};
-	vector float aux124={mLHScol12[3],mLHScol12[3],mLHScol12[3],mLHScol12[3]};
+	vector float vAuxLHS15={mLHScol12[0],mLHScol12[0],mLHScol12[0],mLHScol12[0]};
+	vector float vAuxLHS16={mLHScol12[1],mLHScol12[1],mLHScol12[1],mLHScol12[1]};
+	vector float vAuxLHS17={mLHScol12[2],mLHScol12[2],mLHScol12[2],mLHScol12[2]};
+	vector float vAuxLHS18={mLHScol12[3],mLHScol12[3],mLHScol12[3],mLHScol12[3]};
 
-	vector float aux131={mLHScol13[0],mLHScol13[0],mLHScol13[0],mLHScol13[0]};
-	vector float aux132={mLHScol13[1],mLHScol13[1],mLHScol13[1],mLHScol13[1]};
-	vector float aux133={mLHScol13[2],mLHScol13[2],mLHScol13[2],mLHScol13[2]};
-	vector float aux134={mLHScol13[3],mLHScol13[3],mLHScol13[3],mLHScol13[3]};
+	vector float vAuxLHS19={mLHScol13[0],mLHScol13[0],mLHScol13[0],mLHScol13[0]};
+	vector float vAuxLHS110={mLHScol13[1],mLHScol13[1],mLHScol13[1],mLHScol13[1]};
+	vector float vAuxLHS111={mLHScol13[2],mLHScol13[2],mLHScol13[2],mLHScol13[2]};
+	vector float vAuxLHS112={mLHScol13[3],mLHScol13[3],mLHScol13[3],mLHScol13[3]};
 
 //===================================================================================
 
+	vector float vAuxLHS21={mLHScol21[0],mLHScol21[0],mLHScol21[0],mLHScol21[0]};
+	vector float vAuxLHS22={mLHScol21[1],mLHScol21[1],mLHScol21[1],mLHScol21[1]};
+	vector float vAuxLHS23={mLHScol21[2],mLHScol21[2],mLHScol21[2],mLHScol21[2]};
+	vector float vAuxLHS24={mLHScol21[3],mLHScol21[3],mLHScol21[3],mLHScol21[3]};
 
-	vector float aux211={mLHScol21[0],mLHScol21[0],mLHScol21[0],mLHScol21[0]};
-	vector float aux212={mLHScol21[1],mLHScol21[1],mLHScol21[1],mLHScol21[1]};
-	vector float aux213={mLHScol21[2],mLHScol21[2],mLHScol21[2],mLHScol21[2]};
-	vector float aux214={mLHScol21[3],mLHScol21[3],mLHScol21[3],mLHScol21[3]};
+	vector float vAuxLHS25={mLHScol22[0],mLHScol22[0],mLHScol22[0],mLHScol22[0]};
+	vector float vAuxLHS26={mLHScol22[1],mLHScol22[1],mLHScol22[1],mLHScol22[1]};
+	vector float vAuxLHS27={mLHScol22[2],mLHScol22[2],mLHScol22[2],mLHScol22[2]};
+	vector float vAuxLHS28={mLHScol22[3],mLHScol22[3],mLHScol22[3],mLHScol22[3]};
 
-	vector float aux221={mLHScol22[0],mLHScol22[0],mLHScol22[0],mLHScol22[0]};
-	vector float aux222={mLHScol22[1],mLHScol22[1],mLHScol22[1],mLHScol22[1]};
-	vector float aux223={mLHScol22[2],mLHScol22[2],mLHScol22[2],mLHScol22[2]};
-	vector float aux224={mLHScol22[3],mLHScol22[3],mLHScol22[3],mLHScol22[3]};
+	vector float vAuxLHS29={mLHScol23[0],mLHScol23[0],mLHScol23[0],mLHScol23[0]};
+	vector float vAuxLHS210={mLHScol23[1],mLHScol23[1],mLHScol23[1],mLHScol23[1]};
+	vector float vAuxLHS211={mLHScol23[2],mLHScol23[2],mLHScol23[2],mLHScol23[2]};
+	vector float vAuxLHS212={mLHScol23[3],mLHScol23[3],mLHScol23[3],mLHScol23[3]};
 
-	vector float aux231={mLHScol23[0],mLHScol23[0],mLHScol23[0],mLHScol23[0]};
-	vector float aux232={mLHScol23[1],mLHScol23[1],mLHScol23[1],mLHScol23[1]};
-	vector float aux233={mLHScol23[2],mLHScol23[2],mLHScol23[2],mLHScol23[2]};
-	vector float aux234={mLHScol23[3],mLHScol23[3],mLHScol23[3],mLHScol23[3]};
 //===================================================================================
 
-	vector float aux311={mLHScol31[0],mLHScol31[0],mLHScol31[0],mLHScol31[0]};
-	vector float aux312={mLHScol31[1],mLHScol31[1],mLHScol31[1],mLHScol31[1]};
-	vector float aux313={mLHScol31[2],mLHScol31[2],mLHScol31[2],mLHScol31[2]};
-	vector float aux314={mLHScol31[3],mLHScol31[3],mLHScol31[3],mLHScol31[3]};
+	vector float vAuxLHS31={mLHScol31[0],mLHScol31[0],mLHScol31[0],mLHScol31[0]};
+	vector float vAuxLHS32={mLHScol31[1],mLHScol31[1],mLHScol31[1],mLHScol31[1]};
+	vector float vAuxLHS33={mLHScol31[2],mLHScol31[2],mLHScol31[2],mLHScol31[2]};
+	vector float vAuxLHS34={mLHScol31[3],mLHScol31[3],mLHScol31[3],mLHScol31[3]};
 
-	vector float aux321={mLHScol32[0],mLHScol32[0],mLHScol32[0],mLHScol32[0]};
-	vector float aux322={mLHScol32[1],mLHScol32[1],mLHScol32[1],mLHScol32[1]};
-	vector float aux323={mLHScol32[2],mLHScol32[2],mLHScol32[2],mLHScol32[2]};
-	vector float aux324={mLHScol32[3],mLHScol32[3],mLHScol32[3],mLHScol32[3]};
+	vector float vAuxLHS35={mLHScol32[0],mLHScol32[0],mLHScol32[0],mLHScol32[0]};
+	vector float vAuxLHS36={mLHScol32[1],mLHScol32[1],mLHScol32[1],mLHScol32[1]};
+	vector float vAuxLHS37={mLHScol32[2],mLHScol32[2],mLHScol32[2],mLHScol32[2]};
+	vector float vAuxLHS38={mLHScol32[3],mLHScol32[3],mLHScol32[3],mLHScol32[3]};
 
-	vector float aux331={mLHScol33[0],mLHScol33[0],mLHScol33[0],mLHScol33[0]};
-	vector float aux332={mLHScol33[1],mLHScol33[1],mLHScol33[1],mLHScol33[1]};
-	vector float aux333={mLHScol33[2],mLHScol33[2],mLHScol33[2],mLHScol33[2]};
-	vector float aux334={mLHScol33[3],mLHScol33[3],mLHScol33[3],mLHScol33[3]};
+	vector float vAuxLHS39={mLHScol33[0],mLHScol33[0],mLHScol33[0],mLHScol33[0]};
+	vector float vAuxLHS310={mLHScol33[1],mLHScol33[1],mLHScol33[1],mLHScol33[1]};
+	vector float vAuxLHS311={mLHScol33[2],mLHScol33[2],mLHScol33[2],mLHScol33[2]};
+	vector float vAuxLHS312={mLHScol33[3],mLHScol33[3],mLHScol33[3],mLHScol33[3]};
+
+
 //===================================================================================
 
-	vector float aux411={mLHScol41[0],mLHScol41[0],mLHScol41[0],mLHScol41[0]};
-	vector float aux412={mLHScol41[1],mLHScol41[1],mLHScol41[1],mLHScol41[1]};
-	vector float aux413={mLHScol41[2],mLHScol41[2],mLHScol41[2],mLHScol41[2]};
-	vector float aux414={mLHScol41[3],mLHScol41[3],mLHScol41[3],mLHScol41[3]};
+	vector float vAuxLHS41={mLHScol41[0],mLHScol41[0],mLHScol41[0],mLHScol41[0]};
+	vector float vAuxLHS42={mLHScol41[1],mLHScol41[1],mLHScol41[1],mLHScol41[1]};
+	vector float vAuxLHS43={mLHScol41[2],mLHScol41[2],mLHScol41[2],mLHScol41[2]};
+	vector float vAuxLHS44={mLHScol41[3],mLHScol41[3],mLHScol41[3],mLHScol41[3]};
 
-	vector float aux421={mLHScol42[0],mLHScol42[0],mLHScol42[0],mLHScol42[0]};
-	vector float aux422={mLHScol42[1],mLHScol42[1],mLHScol42[1],mLHScol42[1]};
-	vector float aux423={mLHScol42[2],mLHScol42[2],mLHScol42[2],mLHScol42[2]};
-	vector float aux424={mLHScol42[3],mLHScol42[3],mLHScol42[3],mLHScol42[3]};
+	vector float vAuxLHS45={mLHScol42[0],mLHScol22[0],mLHScol22[0],mLHScol22[0]};
+	vector float vAuxLHS46={mLHScol42[1],mLHScol22[1],mLHScol22[1],mLHScol22[1]};
+	vector float vAuxLHS47={mLHScol42[2],mLHScol22[2],mLHScol22[2],mLHScol22[2]};
+	vector float vAuxLHS48={mLHScol42[3],mLHScol22[3],mLHScol22[3],mLHScol22[3]};
 
-	vector float aux431={mLHScol43[0],mLHScol43[0],mLHScol43[0],mLHScol43[0]};
-	vector float aux432={mLHScol43[1],mLHScol43[1],mLHScol43[1],mLHScol43[1]};
-	vector float aux433={mLHScol43[2],mLHScol43[2],mLHScol43[2],mLHScol43[2]};
-	vector float aux434={mLHScol43[3],mLHScol43[3],mLHScol43[3],mLHScol43[3]};
+	vector float vAuxLHS49={mLHScol43[0],mLHScol43[0],mLHScol43[0],mLHScol43[0]};
+	vector float vAuxLHS410={mLHScol43[1],mLHScol43[1],mLHScol43[1],mLHScol43[1]};
+	vector float vAuxLHS411={mLHScol43[2],mLHScol43[2],mLHScol43[2],mLHScol43[2]};
+	vector float vAuxLHS412={mLHScol43[3],mLHScol43[3],mLHScol43[3],mLHScol43[3]};
+
+
 //===================================================================================
 
-	vector float aux511={mLHScol51[0],mLHScol51[0],mLHScol51[0],mLHScol51[0]};
-	vector float aux512={mLHScol51[1],mLHScol51[1],mLHScol51[1],mLHScol51[1]};
-	vector float aux513={mLHScol51[2],mLHScol51[2],mLHScol51[2],mLHScol51[2]};
-	vector float aux514={mLHScol51[3],mLHScol51[3],mLHScol51[3],mLHScol51[3]};
+	
+	vector float vAuxLHS51={mLHScol51[0],mLHScol51[0],mLHScol51[0],mLHScol51[0]};
+	vector float vAuxLHS52={mLHScol51[1],mLHScol51[1],mLHScol51[1],mLHScol51[1]};
+	vector float vAuxLHS53={mLHScol51[2],mLHScol51[2],mLHScol51[2],mLHScol51[2]};
+	vector float vAuxLHS54={mLHScol51[3],mLHScol51[3],mLHScol51[3],mLHScol51[3]};
 
-	vector float aux521={mLHScol52[0],mLHScol52[0],mLHScol52[0],mLHScol52[0]};
-	vector float aux522={mLHScol52[1],mLHScol52[1],mLHScol52[1],mLHScol52[1]};
-	vector float aux523={mLHScol52[2],mLHScol52[2],mLHScol52[2],mLHScol52[2]};
-	vector float aux524={mLHScol52[3],mLHScol52[3],mLHScol52[3],mLHScol52[3]};
+	vector float vAuxLHS55={mLHScol52[0],mLHScol52[0],mLHScol52[0],mLHScol52[0]};
+	vector float vAuxLHS56={mLHScol52[1],mLHScol52[1],mLHScol52[1],mLHScol52[1]};
+	vector float vAuxLHS57={mLHScol52[2],mLHScol52[2],mLHScol52[2],mLHScol52[2]};
+	vector float vAuxLHS58={mLHScol52[3],mLHScol52[3],mLHScol52[3],mLHScol52[3]};
 
-	vector float aux531={mLHScol53[0],mLHScol53[0],mLHScol53[0],mLHScol53[0]};
-	vector float aux532={mLHScol53[1],mLHScol53[1],mLHScol53[1],mLHScol53[1]};
-	vector float aux533={mLHScol53[2],mLHScol53[2],mLHScol53[2],mLHScol53[2]};
-	vector float aux534={mLHScol53[3],mLHScol53[3],mLHScol53[3],mLHScol53[3]};
+	vector float vAuxLHS59={mLHScol53[0],mLHScol53[0],mLHScol53[0],mLHScol53[0]};
+	vector float vAuxLHS510={mLHScol53[1],mLHScol53[1],mLHScol53[1],mLHScol53[1]};
+	vector float vAuxLHS511={mLHScol53[2],mLHScol53[2],mLHScol53[2],mLHScol53[2]};
+	vector float vAuxLHS512={mLHScol53[3],mLHScol53[3],mLHScol53[3],mLHScol53[3]};
+
 //===================================================================================
 
-	vector float aux611={mLHScol61[0],mLHScol61[0],mLHScol61[0],mLHScol61[0]};
-	vector float aux612={mLHScol61[1],mLHScol61[1],mLHScol61[1],mLHScol61[1]};
-	vector float aux613={mLHScol61[2],mLHScol61[2],mLHScol61[2],mLHScol61[2]};
-	vector float aux614={mLHScol61[3],mLHScol61[3],mLHScol61[3],mLHScol61[3]};
+	vector float vAuxLHS61={mLHScol61[0],mLHScol61[0],mLHScol61[0],mLHScol61[0]};
+	vector float vAuxLHS62={mLHScol61[1],mLHScol61[1],mLHScol61[1],mLHScol61[1]};
+	vector float vAuxLHS63={mLHScol61[2],mLHScol61[2],mLHScol61[2],mLHScol61[2]};
+	vector float vAuxLHS64={mLHScol61[3],mLHScol61[3],mLHScol61[3],mLHScol61[3]};
 
-	vector float aux621={mLHScol62[0],mLHScol62[0],mLHScol62[0],mLHScol62[0]};
-	vector float aux622={mLHScol62[1],mLHScol62[1],mLHScol62[1],mLHScol62[1]};
-	vector float aux623={mLHScol62[2],mLHScol62[2],mLHScol62[2],mLHScol62[2]};
-	vector float aux624={mLHScol62[3],mLHScol62[3],mLHScol62[3],mLHScol62[3]};
+	vector float vAuxLHS65={mLHScol62[0],mLHScol62[0],mLHScol62[0],mLHScol62[0]};
+	vector float vAuxLHS66={mLHScol62[1],mLHScol62[1],mLHScol62[1],mLHScol62[1]};
+	vector float vAuxLHS67={mLHScol62[2],mLHScol62[2],mLHScol62[2],mLHScol62[2]};
+	vector float vAuxLHS68={mLHScol62[3],mLHScol62[3],mLHScol62[3],mLHScol62[3]};
 
-	vector float aux631={mLHScol63[0],mLHScol63[0],mLHScol63[0],mLHScol63[0]};
-	vector float aux632={mLHScol63[1],mLHScol63[1],mLHScol63[1],mLHScol63[1]};
-	vector float aux633={mLHScol63[2],mLHScol63[2],mLHScol63[2],mLHScol63[2]};
-	vector float aux634={mLHScol63[3],mLHScol63[3],mLHScol63[3],mLHScol63[3]};
+	vector float vAuxLHS69={mLHScol63[0],mLHScol63[0],mLHScol63[0],mLHScol63[0]};
+	vector float vAuxLHS610={mLHScol63[1],mLHScol63[1],mLHScol63[1],mLHScol63[1]};
+	vector float vAuxLHS611={mLHScol63[2],mLHScol63[2],mLHScol63[2],mLHScol63[2]};
+	vector float vAuxLHS612={mLHScol63[3],mLHScol63[3],mLHScol63[3],mLHScol63[3]};
+
 //===================================================================================
 
-	vector float aux711={mLHScol71[0],mLHScol71[0],mLHScol71[0],mLHScol71[0]};
-	vector float aux712={mLHScol71[1],mLHScol71[1],mLHScol71[1],mLHScol71[1]};
-	vector float aux713={mLHScol71[2],mLHScol71[2],mLHScol71[2],mLHScol71[2]};
-	vector float aux714={mLHScol71[3],mLHScol71[3],mLHScol71[3],mLHScol71[3]};
+	vector float vAuxLHS71={mLHScol71[0],mLHScol71[0],mLHScol71[0],mLHScol71[0]};
+	vector float vAuxLHS72={mLHScol71[1],mLHScol71[1],mLHScol71[1],mLHScol71[1]};
+	vector float vAuxLHS73={mLHScol71[2],mLHScol71[2],mLHScol71[2],mLHScol71[2]};
+	vector float vAuxLHS74={mLHScol71[3],mLHScol71[3],mLHScol71[3],mLHScol71[3]};
 
-	vector float aux721={mLHScol72[0],mLHScol72[0],mLHScol72[0],mLHScol72[0]};
-	vector float aux722={mLHScol72[1],mLHScol72[1],mLHScol72[1],mLHScol72[1]};
-	vector float aux723={mLHScol72[2],mLHScol72[2],mLHScol72[2],mLHScol72[2]};
-	vector float aux724={mLHScol72[3],mLHScol72[3],mLHScol72[3],mLHScol72[3]};
+	vector float vAuxLHS75={mLHScol72[0],mLHScol72[0],mLHScol72[0],mLHScol72[0]};
+	vector float vAuxLHS76={mLHScol72[1],mLHScol72[1],mLHScol72[1],mLHScol72[1]};
+	vector float vAuxLHS77={mLHScol72[2],mLHScol72[2],mLHScol72[2],mLHScol72[2]};
+	vector float vAuxLHS78={mLHScol72[3],mLHScol72[3],mLHScol72[3],mLHScol72[3]};
 
-	vector float aux731={mLHScol73[0],mLHScol73[0],mLHScol73[0],mLHScol73[0]};
-	vector float aux732={mLHScol73[1],mLHScol73[1],mLHScol73[1],mLHScol73[1]};
-	vector float aux733={mLHScol73[2],mLHScol73[2],mLHScol73[2],mLHScol73[2]};
-	vector float aux734={mLHScol73[3],mLHScol73[3],mLHScol73[3],mLHScol73[3]};
+	vector float vAuxLHS79={mLHScol73[0],mLHScol73[0],mLHScol73[0],mLHScol73[0]};
+	vector float vAuxLHS710={mLHScol73[1],mLHScol73[1],mLHScol73[1],mLHScol73[1]};
+	vector float vAuxLHS711={mLHScol73[2],mLHScol73[2],mLHScol73[2],mLHScol73[2]};
+	vector float vAuxLHS712={mLHScol73[3],mLHScol73[3],mLHScol73[3],mLHScol73[3]};
+
 //===================================================================================
 
-	vector float aux811={mLHScol81[0],mLHScol81[0],mLHScol81[0],mLHScol81[0]};
-	vector float aux812={mLHScol81[1],mLHScol81[1],mLHScol81[1],mLHScol81[1]};
-	vector float aux813={mLHScol81[2],mLHScol81[2],mLHScol81[2],mLHScol81[2]};
-	vector float aux814={mLHScol81[3],mLHScol81[3],mLHScol81[3],mLHScol81[3]};
+	vector float vAuxLHS81={mLHScol81[0],mLHScol81[0],mLHScol81[0],mLHScol81[0]};
+	vector float vAuxLHS82={mLHScol81[1],mLHScol81[1],mLHScol81[1],mLHScol81[1]};
+	vector float vAuxLHS83={mLHScol81[2],mLHScol81[2],mLHScol81[2],mLHScol81[2]};
+	vector float vAuxLHS84={mLHScol81[3],mLHScol81[3],mLHScol81[3],mLHScol81[3]};
 
-	vector float aux821={mLHScol82[0],mLHScol82[0],mLHScol82[0],mLHScol82[0]};
-	vector float aux822={mLHScol82[1],mLHScol82[1],mLHScol82[1],mLHScol82[1]};
-	vector float aux823={mLHScol82[2],mLHScol82[2],mLHScol82[2],mLHScol82[2]};
-	vector float aux824={mLHScol82[3],mLHScol82[3],mLHScol82[3],mLHScol82[3]};
+	vector float vAuxLHS85={mLHScol82[0],mLHScol82[0],mLHScol82[0],mLHScol82[0]};
+	vector float vAuxLHS86={mLHScol82[1],mLHScol82[1],mLHScol82[1],mLHScol82[1]};
+	vector float vAuxLHS87={mLHScol82[2],mLHScol82[2],mLHScol82[2],mLHScol82[2]};
+	vector float vAuxLHS88={mLHScol82[3],mLHScol82[3],mLHScol82[3],mLHScol82[3]};
 
-	vector float aux831={mLHScol83[0],mLHScol83[0],mLHScol83[0],mLHScol83[0]};
-	vector float aux832={mLHScol83[1],mLHScol83[1],mLHScol83[1],mLHScol83[1]};
-	vector float aux833={mLHScol83[2],mLHScol83[2],mLHScol83[2],mLHScol83[2]};
-	vector float aux834={mLHScol83[3],mLHScol83[3],mLHScol83[3],mLHScol83[3]};
+	vector float vAuxLHS89={mLHScol83[0],mLHScol83[0],mLHScol83[0],mLHScol83[0]};
+	vector float vAuxLHS810={mLHScol83[1],mLHScol83[1],mLHScol83[1],mLHScol83[1]};
+	vector float vAuxLHS811={mLHScol83[2],mLHScol83[2],mLHScol83[2],mLHScol83[2]};
+	vector float vAuxLHS812={mLHScol83[3],mLHScol83[3],mLHScol83[3],mLHScol83[3]};
+
 //===================================================================================
 
-	vector float aux911={mLHScol91[0],mLHScol91[0],mLHScol91[0],mLHScol91[0]};
-	vector float aux912={mLHScol91[1],mLHScol91[1],mLHScol91[1],mLHScol91[1]};
-	vector float aux913={mLHScol91[2],mLHScol91[2],mLHScol91[2],mLHScol91[2]};
-	vector float aux914={mLHScol91[3],mLHScol91[3],mLHScol91[3],mLHScol91[3]};
+	vector float vAuxLHS91={mLHScol91[0],mLHScol91[0],mLHScol91[0],mLHScol91[0]};
+	vector float vAuxLHS92={mLHScol91[1],mLHScol91[1],mLHScol91[1],mLHScol91[1]};
+	vector float vAuxLHS93={mLHScol91[2],mLHScol91[2],mLHScol91[2],mLHScol91[2]};
+	vector float vAuxLHS94={mLHScol91[3],mLHScol91[3],mLHScol91[3],mLHScol91[3]};
 
-	vector float aux921={mLHScol92[0],mLHScol92[0],mLHScol92[0],mLHScol92[0]};
-	vector float aux922={mLHScol92[1],mLHScol92[1],mLHScol92[1],mLHScol92[1]};
-	vector float aux923={mLHScol92[2],mLHScol92[2],mLHScol92[2],mLHScol92[2]};
-	vector float aux924={mLHScol92[3],mLHScol92[3],mLHScol92[3],mLHScol92[3]};
+	vector float vAuxLHS95={mLHScol92[0],mLHScol92[0],mLHScol92[0],mLHScol92[0]};
+	vector float vAuxLHS96={mLHScol92[1],mLHScol92[1],mLHScol92[1],mLHScol92[1]};
+	vector float vAuxLHS97={mLHScol92[2],mLHScol92[2],mLHScol92[2],mLHScol92[2]};
+	vector float vAuxLHS98={mLHScol92[3],mLHScol92[3],mLHScol92[3],mLHScol92[3]};
 
-	vector float aux931={mLHScol93[0],mLHScol93[0],mLHScol93[0],mLHScol93[0]};
-	vector float aux932={mLHScol93[1],mLHScol93[1],mLHScol93[1],mLHScol93[1]};
-	vector float aux933={mLHScol93[2],mLHScol93[2],mLHScol93[2],mLHScol93[2]};
-	vector float aux934={mLHScol93[3],mLHScol93[3],mLHScol93[3],mLHScol93[3]};
+	vector float vAuxLHS99={mLHScol93[0],mLHScol93[0],mLHScol93[0],mLHScol93[0]};
+	vector float vAuxLHS910={mLHScol93[1],mLHScol93[1],mLHScol93[1],mLHScol93[1]};
+	vector float vAuxLHS911={mLHScol93[2],mLHScol93[2],mLHScol93[2],mLHScol93[2]};
+	vector float vAuxLHS912={mLHScol93[3],mLHScol93[3],mLHScol93[3],mLHScol93[3]};
+
 //===================================================================================
 
-	vector float aux1011={mLHScol101[0],mLHScol101[0],mLHScol101[0],mLHScol101[0]};
-	vector float aux1012={mLHScol101[1],mLHScol101[1],mLHScol101[1],mLHScol101[1]};
-	vector float aux1013={mLHScol101[2],mLHScol101[2],mLHScol101[2],mLHScol101[2]};
-	vector float aux1014={mLHScol101[3],mLHScol101[3],mLHScol101[3],mLHScol101[3]};
+	vector float vAuxLHS101={mLHScol101[0],mLHScol101[0],mLHScol101[0],mLHScol101[0]};
+	vector float vAuxLHS102={mLHScol101[1],mLHScol101[1],mLHScol101[1],mLHScol101[1]};
+	vector float vAuxLHS103={mLHScol101[2],mLHScol101[2],mLHScol101[2],mLHScol101[2]};
+	vector float vAuxLHS104={mLHScol101[3],mLHScol101[3],mLHScol101[3],mLHScol101[3]};
 
-	vector float aux1021={mLHScol102[0],mLHScol102[0],mLHScol102[0],mLHScol102[0]};
-	vector float aux1022={mLHScol102[1],mLHScol102[1],mLHScol102[1],mLHScol102[1]};
-	vector float aux1023={mLHScol102[2],mLHScol102[2],mLHScol102[2],mLHScol102[2]};
-	vector float aux1024={mLHScol102[3],mLHScol102[3],mLHScol102[3],mLHScol102[3]};
+	vector float vAuxLHS105={mLHScol102[0],mLHScol102[0],mLHScol102[0],mLHScol102[0]};
+	vector float vAuxLHS106={mLHScol102[1],mLHScol102[1],mLHScol102[1],mLHScol102[1]};
+	vector float vAuxLHS107={mLHScol102[2],mLHScol102[2],mLHScol102[2],mLHScol102[2]};
+	vector float vAuxLHS108={mLHScol102[3],mLHScol102[3],mLHScol102[3],mLHScol102[3]};
 
-	vector float aux1031={mLHScol103[0],mLHScol103[0],mLHScol103[0],mLHScol103[0]};
-	vector float aux1032={mLHScol103[1],mLHScol103[1],mLHScol103[1],mLHScol103[1]};
-	vector float aux1033={mLHScol103[2],mLHScol103[2],mLHScol103[2],mLHScol103[2]};
-	vector float aux1034={mLHScol103[3],mLHScol103[3],mLHScol103[3],mLHScol103[3]};
+	vector float vAuxLHS109={mLHScol103[0],mLHScol103[0],mLHScol103[0],mLHScol103[0]};
+	vector float vAuxLHS1010={mLHScol103[1],mLHScol103[1],mLHScol103[1],mLHScol103[1]};
+	vector float vAuxLHS1011={mLHScol103[2],mLHScol103[2],mLHScol103[2],mLHScol103[2]};
+	vector float vAuxLHS1012={mLHScol103[3],mLHScol103[3],mLHScol103[3],mLHScol103[3]};
+
 //===================================================================================
 
-	vector float aux1111={mLHScol111[0],mLHScol111[0],mLHScol111[0],mLHScol111[0]};
-	vector float aux1112={mLHScol111[1],mLHScol111[1],mLHScol111[1],mLHScol111[1]};
-	vector float aux1113={mLHScol111[2],mLHScol111[2],mLHScol111[2],mLHScol111[2]};
-	vector float aux1114={mLHScol111[3],mLHScol111[3],mLHScol111[3],mLHScol111[3]};
+	vector float vAuxLHS111={mLHScol111[0],mLHScol111[0],mLHScol111[0],mLHScol111[0]};
+	vector float vAuxLHS112={mLHScol111[1],mLHScol111[1],mLHScol111[1],mLHScol111[1]};
+	vector float vAuxLHS113={mLHScol111[2],mLHScol111[2],mLHScol111[2],mLHScol111[2]};
+	vector float vAuxLHS114={mLHScol111[3],mLHScol111[3],mLHScol111[3],mLHScol111[3]};
 
-	vector float aux1121={mLHScol112[0],mLHScol112[0],mLHScol112[0],mLHScol112[0]};
-	vector float aux1122={mLHScol112[1],mLHScol112[1],mLHScol112[1],mLHScol112[1]};
-	vector float aux1123={mLHScol112[2],mLHScol112[2],mLHScol112[2],mLHScol112[2]};
-	vector float aux1124={mLHScol112[3],mLHScol112[3],mLHScol112[3],mLHScol112[3]};
+	vector float vAuxLHS115={mLHScol112[0],mLHScol112[0],mLHScol112[0],mLHScol112[0]};
+	vector float vAuxLHS116={mLHScol112[1],mLHScol112[1],mLHScol112[1],mLHScol112[1]};
+	vector float vAuxLHS117={mLHScol112[2],mLHScol112[2],mLHScol112[2],mLHScol112[2]};
+	vector float vAuxLHS118={mLHScol112[3],mLHScol112[3],mLHScol112[3],mLHScol112[3]};
 
-	vector float aux1131={mLHScol113[0],mLHScol113[0],mLHScol113[0],mLHScol113[0]};
-	vector float aux1132={mLHScol113[1],mLHScol113[1],mLHScol113[1],mLHScol113[1]};
-	vector float aux1133={mLHScol113[2],mLHScol113[2],mLHScol113[2],mLHScol113[2]};
-	vector float aux1134={mLHScol113[3],mLHScol113[3],mLHScol113[3],mLHScol113[3]};
+	vector float vAuxLHS119={mLHScol113[0],mLHScol113[0],mLHScol113[0],mLHScol113[0]};
+	vector float vAuxLHS1110={mLHScol113[1],mLHScol113[1],mLHScol113[1],mLHScol113[1]};
+	vector float vAuxLHS1111={mLHScol113[2],mLHScol113[2],mLHScol113[2],mLHScol113[2]};
+	vector float vAuxLHS1112={mLHScol113[3],mLHScol113[3],mLHScol113[3],mLHScol113[3]};
+
 //===================================================================================
 
-	vector float aux1211={mLHScol121[0],mLHScol121[0],mLHScol121[0],mLHScol121[0]};
-	vector float aux1212={mLHScol121[1],mLHScol121[1],mLHScol121[1],mLHScol121[1]};
-	vector float aux1213={mLHScol121[2],mLHScol121[2],mLHScol121[2],mLHScol121[2]};
-	vector float aux1214={mLHScol121[3],mLHScol121[3],mLHScol121[3],mLHScol121[3]};
+	vector float vAuxLHS121={mLHScol121[0],mLHScol121[0],mLHScol121[0],mLHScol121[0]};
+	vector float vAuxLHS122={mLHScol121[1],mLHScol121[1],mLHScol121[1],mLHScol121[1]};
+	vector float vAuxLHS123={mLHScol121[2],mLHScol121[2],mLHScol121[2],mLHScol121[2]};
+	vector float vAuxLHS124={mLHScol121[3],mLHScol121[3],mLHScol121[3],mLHScol121[3]};
 
-	vector float aux1221={mLHScol122[0],mLHScol122[0],mLHScol122[0],mLHScol122[0]};
-	vector float aux1222={mLHScol122[1],mLHScol122[1],mLHScol122[1],mLHScol122[1]};
-	vector float aux1223={mLHScol122[2],mLHScol122[2],mLHScol122[2],mLHScol122[2]};
-	vector float aux1224={mLHScol122[3],mLHScol122[3],mLHScol122[3],mLHScol122[3]};
+	vector float vAuxLHS125={mLHScol122[0],mLHScol122[0],mLHScol122[0],mLHScol122[0]};
+	vector float vAuxLHS126={mLHScol122[1],mLHScol122[1],mLHScol122[1],mLHScol122[1]};
+	vector float vAuxLHS127={mLHScol122[2],mLHScol122[2],mLHScol122[2],mLHScol122[2]};
+	vector float vAuxLHS128={mLHScol122[3],mLHScol122[3],mLHScol122[3],mLHScol122[3]};
 
-	vector float aux1231={mLHScol123[0],mLHScol123[0],mLHScol123[0],mLHScol123[0]};
-	vector float aux1232={mLHScol123[1],mLHScol123[1],mLHScol123[1],mLHScol123[1]};
-	vector float aux1233={mLHScol123[2],mLHScol123[2],mLHScol123[2],mLHScol123[2]};
-	vector float aux1234={mLHScol123[3],mLHScol123[3],mLHScol123[3],mLHScol123[3]};
+	vector float vAuxLHS129={mLHScol123[0],mLHScol123[0],mLHScol123[0],mLHScol123[0]};
+	vector float vAuxLHS1210={mLHScol123[1],mLHScol123[1],mLHScol123[1],mLHScol123[1]};
+	vector float vAuxLHS1211={mLHScol123[2],mLHScol123[2],mLHScol123[2],mLHScol123[2]};
+	vector float vAuxLHS1212={mLHScol123[3],mLHScol123[3],mLHScol123[3],mLHScol123[3]};
+
 //===================================================================================
 //end of splat
 //===================================================================================
@@ -327,7 +340,6 @@ inline void mul12x12ColMajorFloat(const float* mLHS, const float* mRHS, float* c
 
 
 }
-
 
 //float 9x9 matrices
 inline void mul9x9ColMajorFloat(const float* mLHS, const float* mRHS, float* const mResult){
