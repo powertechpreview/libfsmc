@@ -70,6 +70,57 @@ inline void mul12x12ColMajorFloat(const float* mLHS, const float* mRHS, float* c
 	mLHScol123 = vec_xl(0,mLHS+4*35);
 //=====================================================================
 
+	mRHSrow11 = vec_xl(0,mRHS);
+	mRHSrow12 = vec_xl(0,mRHS+4);
+	mRHSrow13 = vec_xl(0,mRHS+4*2);
+
+	mRHSrow21 = vec_xl(0,mRHS+4*3);
+	mRHSrow22 = vec_xl(0,mRHS+4*4);
+	mRHSrow23 = vec_xl(0,mRHS+4*5);
+
+	mRHSrow31 = vec_xl(0,mRHS+4*6);
+	mRHSrow32 = vec_xl(0,mRHS+4*7);
+	mRHSrow33 = vec_xl(0,mRHS+4*8);
+
+	mRHSrow41 = vec_xl(0,mRHS+4*9);
+	mRHSrow42 = vec_xl(0,mRHS+4*10);
+	mRHSrow43 = vec_xl(0,mRHS+4*11);
+
+	mRHSrow51 = vec_xl(0,mRHS+4*12);
+	mRHSrow52 = vec_xl(0,mRHS+4*13);
+	mRHSrow53 = vec_xl(0,mRHS+4*14);
+
+	mRHSrow61 = vec_xl(0,mRHS+4*15);
+	mRHSrow62 = vec_xl(0,mRHS+4*16);
+	mRHSrow63 = vec_xl(0,mRHS+4*17);
+
+	mRHSrow71 = vec_xl(0,mRHS+4*18);
+	mRHSrow72 = vec_xl(0,mRHS+4*19);
+	mRHSrow73 = vec_xl(0,mRHS+4*20);
+
+	mRHSrow81 = vec_xl(0,mRHS+4*21);
+	mRHSrow82 = vec_xl(0,mRHS+4*22);
+	mRHSrow83 = vec_xl(0,mRHS+4*23);
+
+	mRHSrow91 = vec_xl(0,mRHS+4*24);
+	mRHSrow92 = vec_xl(0,mRHS+4*25);
+	mRHSrow93 = vec_xl(0,mRHS+4*26);
+
+	mRHSrow101 = vec_xl(0,mRHS+4*27);
+	mRHSrow102 = vec_xl(0,mRHS+4*28);
+	mRHSrow103 = vec_xl(0,mRHS+4*29);
+
+	mRHSrow111 = vec_xl(0,mRHS+4*30);
+	mRHSrow112 = vec_xl(0,mRHS+4*31);
+	mRHSrow113 = vec_xl(0,mRHS+4*32);
+
+	mRHSrow121 = vec_xl(0,mRHS+4*33);
+	mRHSrow122 = vec_xl(0,mRHS+4*34);
+	mRHSrow123 = vec_xl(0,mRHS+4*35);
+//=====================================================================
+
+
+
 
 //===================================================================================
 //Splat
@@ -311,6 +362,23 @@ inline void mul9x9ColMajorFloat(const float* mLHS, const float* mRHS, float* con
 	mLHScol92 = vec_xl(0,mLHS+4*17+8);
 
 
+	mRHSrow11 = vec_xl(0,mRHS);
+	mRHSrow12 = vec_xl(0,mRHS+4);
+	mRHSrow21 = vec_xl(0,mRHS+4*2+1);
+	mRHSrow22 = vec_xl(0,mRHS+4*3+1);
+	mRHSrow31 = vec_xl(0,mRHS+4*4+2);
+	mRHSrow32 = vec_xl(0,mRHS+4*5+2);
+	mRHSrow41 = vec_xl(0,mRHS+4*6+3);
+	mRHSrow42 = vec_xl(0,mRHS+4*7+3);
+	mRHSrow51 = vec_xl(0,mRHS+4*8+4);
+	mRHSrow52 = vec_xl(0,mRHS+4*9+4);
+	mRHSrow61 = vec_xl(0,mRHS+4*10+5);
+	mRHSrow62 = vec_xl(0,mRHS+4*11+5);
+	mRHSrow71 = vec_xl(0,mRHS+4*12+6);
+	mRHSrow72 = vec_xl(0,mRHS+4*13+6);
+	mRHSrow81 = vec_xl(0,mRHS+4*14+7);
+	mRHSrow82 = vec_xl(0,mRHS+4*15+7);
+	mRHSrow91 = vec_xl(0,mRHS+4*16+8);
 
 //===================================================================================
 //Splat
