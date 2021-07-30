@@ -337,6 +337,8 @@ inline void mul12x12ColMajorFloat(const float* mLHS, const float* mRHS, float* c
 //store rows
 //===================================================================================
 
+
+
 }
 //float 9x9 matrices
 inline void mul9x9ColMajorFloat(const float* mLHS, const float* mRHS, float* const mResult){
