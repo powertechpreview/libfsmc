@@ -336,9 +336,8 @@ inline void mul12x12ColMajorFloat(const float* mLHS, const float* mRHS, float* c
 //===================================================================================
 //store rows
 //===================================================================================
-vec_xst(vec_madd(vAuxLHS121, mRHSrow121, vec_madd(vAuxLHS111, mRHSrow111, vec_madd(vAuxLHS101, mRHSrow101, vec_madd(vAuxLHS91, mRHSrow91, vec_madd(vAuxLHS81, mRHSrow81, vec_madd(vAuxLHS71, mRHSrow71, vec_madd(vAuxLHS61, mRHSrow61, vec_madd(vAuxLHS51, mRHSrow51, vec_madd(vAuxLHS41, mRHSrow41, vec_madd(vAuxLHS31, mRHSrow31, vec_madd(vAuxLHS21, mRHSrow21, vec_mul(vAuxLHS11, mRHSrow11)))))))))))), 0, mResult);
 
-
+}
 //float 9x9 matrices
 inline void mul9x9ColMajorFloat(const float* mLHS, const float* mRHS, float* const mResult){
 
