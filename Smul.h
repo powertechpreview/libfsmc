@@ -461,47 +461,47 @@ inline void mul9x9ColMajorFloat(const float* mLHS, const float* mRHS, float* con
 	mRHSrow11 = vec_xl(0,mRHS);
 	mRHSrow12 = vec_xl(0,mRHS+4);
 	mRHSrow13 = vec_splats((float)0);
-	mRHSrow13 = mRHS[8];
+	mRHSrow13[0] = mRHS[8];
 
 	mRHSrow21 = vec_xl(0,mRHS+4*2+1);
 	mRHSrow22 = vec_xl(0,mRHS+4*3+1);
 	mRHSrow23 = vec_splats((float)0);
-	mRHSrow23 = mRHS[17];
+	mRHSrow23[0] = mRHS[17];
 
 	mRHSrow31 = vec_xl(0,mRHS+4*4+2);
 	mRHSrow32 = vec_xl(0,mRHS+4*5+2);
 	mRHSrow33 = vec_splats((float)0);
-	mRHSrow33 = mRHS[26];
+	mRHSrow33[0] = mRHS[26];
 
 	mRHSrow41 = vec_xl(0,mRHS+4*6+3);
 	mRHSrow42 = vec_xl(0,mRHS+4*7+3);
 	mRHSrow43 = vec_splats((float)0);
-	mRHSrow43 = mRHS[35];
+	mRHSrow43[0] = mRHS[35];
 
 	mRHSrow51 = vec_xl(0,mRHS+4*8+4);
 	mRHSrow52 = vec_xl(0,mRHS+4*9+4);
 	mRHSrow53 = vec_splats((float)0);
-	mRHSrow53 = mRHS[44];
+	mRHSrow53[0] = mRHS[44];
 
 	mRHSrow61 = vec_xl(0,mRHS+4*10+5);
 	mRHSrow62 = vec_xl(0,mRHS+4*11+5);
 	mRHSrow63 = vec_splats((float)0);
-	mRHSrow63 = mRHS[53];
+	mRHSrow63[0] = mRHS[53];
 	
 	mRHSrow71 = vec_xl(0,mRHS+4*12+6);
 	mRHSrow72 = vec_xl(0,mRHS+4*13+6);
 	mRHSrow73 = vec_splats((float)0);
-	mRHSrow73 = mRHS[62];
+	mRHSrow73[0] = mRHS[62];
 
 	mRHSrow81 = vec_xl(0,mRHS+4*14+7);
 	mRHSrow82 = vec_xl(0,mRHS+4*15+7);
 	mRHSrow83 = vec_splats((float)0);
-	mRHSrow83 = mRHS[71];
+	mRHSrow83[0] = mRHS[71];
 
 	mRHSrow91 = vec_xl(0,mRHS+4*16+8);
 	mRHSrow92 = vec_xl(0,mRHS+4*17+8);
 	mRHSrow93 = vec_splats((float)0);
-	mRHSrow93 = mRHS[80];
+	mRHSrow93[0] = mRHS[80];
 
 //===================================================================================
 //Splat
@@ -518,8 +518,7 @@ inline void mul9x9ColMajorFloat(const float* mLHS, const float* mRHS, float* con
 	
 	vector float aux19={mLHScol13[0],mLHScol13[0],mLHScol13[0],mLHScol13[0]};
 //===================================================================================
-
-	vector float aux21={mLHScol21[0],mLHScol21[0],mLHScol21[0],mLHScol21i[0]};
+	vector float aux21={mLHScol21[0],mLHScol21[0],mLHScol21[0],mLHScol21[0]};
 	vector float aux22={mLHScol21[1],mLHScol21[1],mLHScol21[1],mLHScol21[1]};
 	vector float aux23={mLHScol21[2],mLHScol21[2],mLHScol21[2],mLHScol21[2]};
 	vector float aux24={mLHScol21[3],mLHScol21[3],mLHScol21[3],mLHScol21[3]};
@@ -545,8 +544,6 @@ inline void mul9x9ColMajorFloat(const float* mLHS, const float* mRHS, float* con
 	vector float aux39={mLHScol33[0],mLHScol33[0],mLHScol33[0],mLHScol33[0]};
 //===================================================================================
 
-//===================================================================================
-
 	vector float aux41={mLHScol41[0],mLHScol41[0],mLHScol41[0],mLHScol41[0]};
 	vector float aux42={mLHScol41[1],mLHScol41[1],mLHScol41[1],mLHScol41[1]};
 	vector float aux43={mLHScol41[2],mLHScol41[2],mLHScol41[2],mLHScol41[2]};
@@ -558,7 +555,6 @@ inline void mul9x9ColMajorFloat(const float* mLHS, const float* mRHS, float* con
 	vector float aux48={mLHScol42[3],mLHScol42[3],mLHScol42[3],mLHScol42[3]};
 
 	vector float aux49={mLHScol43[0],mLHScol43[0],mLHScol43[0],mLHScol43[0]};
-//===================================================================================
 //===================================================================================
 	vector float aux51={mLHScol51[0],mLHScol51[0],mLHScol51[0],mLHScol51[0]};
 	vector float aux52={mLHScol51[1],mLHScol51[1],mLHScol51[1],mLHScol51[1]};
@@ -572,7 +568,6 @@ inline void mul9x9ColMajorFloat(const float* mLHS, const float* mRHS, float* con
 
 	vector float aux59={mLHScol53[0],mLHScol53[0],mLHScol53[0],mLHScol53[0]};
 //===================================================================================
-//===================================================================================
 	vector float aux61={mLHScol61[0],mLHScol61[0],mLHScol61[0],mLHScol61[0]};
 	vector float aux62={mLHScol61[1],mLHScol61[1],mLHScol61[1],mLHScol61[1]};
 	vector float aux63={mLHScol61[2],mLHScol61[2],mLHScol61[2],mLHScol61[2]};
@@ -584,7 +579,6 @@ inline void mul9x9ColMajorFloat(const float* mLHS, const float* mRHS, float* con
 	vector float aux68={mLHScol62[3],mLHScol62[3],mLHScol62[3],mLHScol62[3]};
 
 	vector float aux69={mLHScol63[0],mLHScol63[0],mLHScol63[0],mLHScol63[0]};
-//===================================================================================
 //===================================================================================
 	vector float aux71={mLHScol71[0],mLHScol71[0],mLHScol71[0],mLHScol71[0]};
 	vector float aux72={mLHScol71[1],mLHScol71[1],mLHScol71[1],mLHScol71[1]};
@@ -598,7 +592,6 @@ inline void mul9x9ColMajorFloat(const float* mLHS, const float* mRHS, float* con
 
 	vector float aux79={mLHScol73[0],mLHScol73[0],mLHScol73[0],mLHScol73[0]};
 //===================================================================================
-//===================================================================================
 	vector float aux81={mLHScol81[0],mLHScol81[0],mLHScol81[0],mLHScol81[0]};
 	vector float aux82={mLHScol81[1],mLHScol81[1],mLHScol81[1],mLHScol81[1]};
 	vector float aux83={mLHScol81[2],mLHScol81[2],mLHScol81[2],mLHScol81[2]};
@@ -610,7 +603,6 @@ inline void mul9x9ColMajorFloat(const float* mLHS, const float* mRHS, float* con
 	vector float aux88={mLHScol82[3],mLHScol82[3],mLHScol82[3],mLHScol82[3]};
 
 	vector float aux89={mLHScol83[0],mLHScol83[0],mLHScol83[0],mLHScol83[0]};
-//===================================================================================
 //===================================================================================
 	vector float aux91={mLHScol91[0],mLHScol91[0],mLHScol91[0],mLHScol91[0]};
 	vector float aux92={mLHScol91[1],mLHScol91[1],mLHScol91[1],mLHScol91[1]};
