@@ -165,7 +165,7 @@ template<>
 SMatrix<float, 9, 9> SMatrix<float, 9, 9, RowMajor>::mul<9>(const SMatrix<float, 9, 9>& rhs)  // lhs(this) is RowMajor and rhs is RowMajor
 {
     SMatrix<float, 9, 9> res;
-   // mul9x9RowMajorFloat((float*)this->m_data, (float*)rhs.m_data, (float*)res.m_data);
+    mul9x9RowMajorFloat((float*)this->m_data, (float*)rhs.m_data, (float*)res.m_data);
     return res;
 }
 //====================================================================================================
@@ -216,7 +216,7 @@ template<>
 SMatrix<float, 12, 12> SMatrix<float, 12, 12, RowMajor>::mul<12>(const SMatrix<float, 12, 12>& rhs)  // lhs(this) is RowMajor and rhs is RowMajor
 {
     SMatrix<float, 12, 12> res;
-   // mul12x12RowMajorFloat((float*)this->m_data, (float*)rhs.m_data, (float*)res.m_data);
+    mul12x12RowMajorFloat((float*)this->m_data, (float*)rhs.m_data, (float*)res.m_data);
     return res;
 }
 //====================================================================================================
