@@ -42,8 +42,10 @@ public:
     // Template declaration - multiplication of matrices  // ONE MUST DEFINE THE TEMPLATE FUNCTION OUTSIDE THE CLASS TO ALLOW SPECIALIZATION (but must declare it inside the class)
     //====================================================================================================
     template<int mRHS_cols>
-    SMatrix<Scalar, rows, mRHS_cols> mul(const SMatrix<Scalar, cols, mRHS_cols>& rhs);
+    SMatrix<Scalar, rows, mRHS_cols> mul(const SMatrix<Scalar, cols, mRHS_cols, RowMajor>& rhs);
 
+    template<int mRHS_cols>
+    SMatrix<Scalar, rows, mRHS_cols> mul(const SMatrix<Scalar, cols, mRHS_cols, ColMajor>& rhs);
     //====================================================================================================
     friend std::ostream& operator<<(std::ostream& out, const SMatrix& m)
     {
@@ -63,8 +65,11 @@ public:
 //====================================================================================================
 template<typename Scalar, int rows, int cols, int StorageOrder>
 template<int mRHS_cols>
-SMatrix<Scalar, rows, mRHS_cols> SMatrix<Scalar, rows, cols, StorageOrder>::mul(const SMatrix<Scalar, cols, mRHS_cols>& rhs)
+SMatrix<Scalar, rows, mRHS_cols> SMatrix<Scalar, rows, cols, StorageOrder>::mul(const SMatrix<Scalar, cols, mRHS_cols, RowMajor>& rhs)
 {
+    std::cout << "Generic  ";
+    if(this->storage_order == RowMajor) std::cout << "RowMajor x RowMajor\n";
+    else std::cout << "ColMajor x RowMajor\n";
     SMatrix<Scalar, rows, mRHS_cols> res;    //if RowMajor: lhs(this): #rows = rows, #columns = cols
     for(int i = 0; i < rows; i++)            //             rhs:       #rows = cols, #columns = mRHS_cols
     {                                        //             res:       #rows = rows, #columns = mRHS_cols
@@ -72,7 +77,28 @@ SMatrix<Scalar, rows, mRHS_cols> SMatrix<Scalar, rows, cols, StorageOrder>::mul(
         {
             for(int k = 0; k < cols; k++)
             {
-                res.m_data[res.StorageOrder == RowMajor ? i*mRHS_cols + j : j*rows + i] += this->m_data[this->StorageOrder == RowMajor ? i*cols + k : k*rows + i]*rhs.m_data[rhs.StorageOrder == RowMajor ? k*mRHS_cols + j : j*cols + k];
+                res.m_data[res.storage_order == RowMajor ? i*mRHS_cols + j : j*rows + i] += this->m_data[this->StorageOrder == RowMajor ? i*cols + k : k*rows + i]*rhs.m_data[k*mRHS_cols + j];
+            }
+        }
+    }
+    return res;
+}
+
+template<typename Scalar, int rows, int cols, int StorageOrder>
+template<int mRHS_cols>
+SMatrix<Scalar, rows, mRHS_cols> SMatrix<Scalar, rows, cols, StorageOrder>::mul(const SMatrix<Scalar, cols, mRHS_cols, ColMajor>& rhs)
+{
+    std::cout << "Generic  ";
+    if(this->storage_order == RowMajor) std::cout << "RowMajor x ColMajor\n";
+    else std::cout << "ColMajor x ColMajor\n";
+    SMatrix<Scalar, rows, mRHS_cols> res;    //if RowMajor: lhs(this): #rows = rows, #columns = cols
+    for(int i = 0; i < rows; i++)            //             rhs:       #rows = cols, #columns = mRHS_cols
+    {                                        //             res:       #rows = rows, #columns = mRHS_cols
+        for(int j = 0; j < mRHS_cols; j++)
+        {
+            for(int k = 0; k < cols; k++)
+            {
+                res.m_data[res.storage_order == RowMajor ? i*mRHS_cols + j : j*rows + i] += this->m_data[this->storage_order == RowMajor ? i*cols + k : k*rows + i]*rhs.m_data[j*cols + k];
             }
         }
     }
@@ -113,8 +139,9 @@ SMatrix<double, 4, 4> SMatrix<double, 4, 4, ColMajor>::mul<4>(const SMatrix<doub
 //  SOLVING ERRORS: ONE CAN NOT SPECIALIZE A MEMBER FUNCTION WITHOUT ALSO SPECIALIZING THE CLASS
 template<>
 template<>
-SMatrix<float, 4, 4> SMatrix<float, 4, 4, RowMajor>::mul<4>(const SMatrix<float, 4, 4>& rhs)  // lhs(this) is RowMajor and rhs is RowMajor
+SMatrix<float, 4, 4> SMatrix<float, 4, 4, RowMajor>::mul<4>(const SMatrix<float, 4, 4, RowMajor>& rhs)  // lhs(this) is RowMajor and rhs is RowMajor
 {
+    std::cout << "Specific RowMajor x RowMajor\n";
     SMatrix<float, 4, 4> res;
     mul4x4RowMajorFloat((float*)this->m_data, (float*)rhs.m_data, (float*)res.m_data);
     return res;
@@ -122,14 +149,35 @@ SMatrix<float, 4, 4> SMatrix<float, 4, 4, RowMajor>::mul<4>(const SMatrix<float,
 //====================================================================================================
 template<>
 template<>
-SMatrix<float, 4, 4> SMatrix<float, 4, 4, ColMajor>::mul<4>(const SMatrix<float, 4, 4>& rhs)  // lhs(this) is ColMajor and rhs is RowMajor
+SMatrix<float, 4, 4> SMatrix<float, 4, 4, ColMajor>::mul<4>(const SMatrix<float, 4, 4, RowMajor>& rhs)  // lhs(this) is ColMajor and rhs is RowMajor
 {
+    std::cout << "Specific ColMajor x RowMajor\n";
     SMatrix<float, 4, 4> res;
     mul4x4ColMajorFloat((float*)this->m_data, (float*)rhs.m_data, (float*)res.m_data);
     return res;
 
 }
+//====================================================================================================
+template<>
+template<>
+SMatrix<float, 4, 4> SMatrix<float, 4, 4, RowMajor>::mul<4>(const SMatrix<float, 4, 4, ColMajor>& rhs)  // lhs(this) is RowMajor and rhs is RowMajor
+{
+    std::cout << "Specific RowMajor x ColMajor\n";
+    SMatrix<float, 4, 4> res;
+    mul4x4RowMajorFloat((float*)this->m_data, (float*)rhs.m_data, (float*)res.m_data);
+    return res;
+}
+//====================================================================================================
+template<>
+template<>
+SMatrix<float, 4, 4> SMatrix<float, 4, 4, ColMajor>::mul<4>(const SMatrix<float, 4, 4, ColMajor>& rhs)  // lhs(this) is ColMajor and rhs is RowMajor
+{
+    std::cout << "Specific ColMajor x ColMajor\n";
+    SMatrix<float, 4, 4> res;
+    mul4x4ColMajorFloat((float*)this->m_data, (float*)rhs.m_data, (float*)res.m_data);
+    return res;
 
+}
 //----------------------------------------------------------------------------------------------------//
 //----------------------------------------------------------------------------------------------------//
 //----------------------------------------------------------------------------------------------------//
