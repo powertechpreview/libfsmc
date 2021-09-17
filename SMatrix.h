@@ -160,21 +160,21 @@ SMatrix<float, 4, 4> SMatrix<float, 4, 4, ColMajor>::mul<4>(const SMatrix<float,
 //====================================================================================================
 template<>
 template<>
-SMatrix<float, 4, 4> SMatrix<float, 4, 4, RowMajor>::mul<4>(const SMatrix<float, 4, 4, ColMajor>& rhs)  // lhs(this) is RowMajor and rhs is RowMajor
+SMatrix<float, 4, 4> SMatrix<float, 4, 4, RowMajor>::mul<4>(const SMatrix<float, 4, 4, ColMajor>& rhs)  // lhs(this) is RowMajor and rhs is ColMajor
 {
     std::cout << "Specific RowMajor x ColMajor\n";
     SMatrix<float, 4, 4> res;
-    mul4x4RowMajorFloat((float*)this->m_data, (float*)rhs.m_data, (float*)res.m_data);
+    mul4x4RowColFloat((float*)this->m_data, (float*)rhs.m_data, (float*)res.m_data);
     return res;
 }
 //====================================================================================================
 template<>
 template<>
-SMatrix<float, 4, 4> SMatrix<float, 4, 4, ColMajor>::mul<4>(const SMatrix<float, 4, 4, ColMajor>& rhs)  // lhs(this) is ColMajor and rhs is RowMajor
+SMatrix<float, 4, 4> SMatrix<float, 4, 4, ColMajor>::mul<4>(const SMatrix<float, 4, 4, ColMajor>& rhs)  // lhs(this) is ColMajor and rhs is ColMajor
 {
     std::cout << "Specific ColMajor x ColMajor\n";
     SMatrix<float, 4, 4> res;
-    mul4x4ColMajorFloat((float*)this->m_data, (float*)rhs.m_data, (float*)res.m_data);
+    mul4x4ColColFloat((float*)this->m_data, (float*)rhs.m_data, (float*)res.m_data);
     return res;
 
 }
@@ -227,6 +227,27 @@ SMatrix<float, 9, 9> SMatrix<float, 9, 9, ColMajor>::mul<9>(const SMatrix<float,
 
 }
 
+//====================================================================================================
+template<>
+template<>
+SMatrix<float, 9, 9> SMatrix<float, 9, 9, RowMajor>::mul<9>(const SMatrix<float, 9, 9, ColMajor>& rhs)  // lhs(this) is RowMajor and rhs is ColMajor
+{
+    std::cout << "Specific RowMajor x ColMajor\n";
+    SMatrix<float, 9, 9> res;
+    mul9x9RowColFloat((float*)this->m_data, (float*)rhs.m_data, (float*)res.m_data);
+    return res;
+}
+//====================================================================================================
+template<>
+template<>
+SMatrix<float, 9, 9> SMatrix<float, 9, 9, ColMajor>::mul<9>(const SMatrix<float, 9, 9, ColMajor>& rhs)  // lhs(this) is ColMajor and rhs is ColMajor
+{
+    std::cout << "Specific ColMajor x ColMajor\n";
+    SMatrix<float, 9, 9> res;
+    mul4x4ColColFloat((float*)this->m_data, (float*)rhs.m_data, (float*)res.m_data);
+    return res;
+
+}
 
 //----------------------------------------------------------------------------------------------------//
 //----------------------------------------------------------------------------------------------------//
@@ -279,6 +300,27 @@ SMatrix<float, 12, 12> SMatrix<float, 12, 12, ColMajor>::mul<12>(const SMatrix<f
 }
 
 
+//====================================================================================================
+template<>
+template<>
+SMatrix<float, 12, 12> SMatrix<float, 12, 12, RowMajor>::mul<12>(const SMatrix<float, 12, 12, ColMajor>& rhs)  // lhs(this) is RowMajor and rhs is ColMajor
+{
+    std::cout << "Specific RowMajor x ColMajor\n";
+    SMatrix<float, 12, 12> res;
+    mul9x9RowColFloat((float*)this->m_data, (float*)rhs.m_data, (float*)res.m_data);
+    return res;
+}
+//====================================================================================================
+template<>
+template<>
+SMatrix<float, 12, 12> SMatrix<float, 12, 12, ColMajor>::mul<12>(const SMatrix<float, 12, 12, ColMajor>& rhs)  // lhs(this) is ColMajor and rhs is ColMajor
+{
+    std::cout << "Specific ColMajor x ColMajor\n";
+    SMatrix<float, 12, 12> res;
+    mul4x4ColColFloat((float*)this->m_data, (float*)rhs.m_data, (float*)res.m_data);
+    return res;
+
+}
 
 //====================================================================================================//
 // Divide and Conquer - multiplication of 1024 by 1024 double matrices
