@@ -244,7 +244,7 @@ SMatrix<float, 9, 9> SMatrix<float, 9, 9, ColMajor>::mul<9>(const SMatrix<float,
 {
     std::cout << "Specific ColMajor x ColMajor\n";
     SMatrix<float, 9, 9> res;
-    mul4x4ColColFloat((float*)this->m_data, (float*)rhs.m_data, (float*)res.m_data);
+    mul9x9ColColFloat((float*)this->m_data, (float*)rhs.m_data, (float*)res.m_data);
     return res;
 
 }
@@ -307,7 +307,7 @@ SMatrix<float, 12, 12> SMatrix<float, 12, 12, RowMajor>::mul<12>(const SMatrix<f
 {
     std::cout << "Specific RowMajor x ColMajor\n";
     SMatrix<float, 12, 12> res;
-    mul9x9RowColFloat((float*)this->m_data, (float*)rhs.m_data, (float*)res.m_data);
+    mul12x12RowColFloat((float*)this->m_data, (float*)rhs.m_data, (float*)res.m_data);
     return res;
 }
 //====================================================================================================
@@ -317,7 +317,7 @@ SMatrix<float, 12, 12> SMatrix<float, 12, 12, ColMajor>::mul<12>(const SMatrix<f
 {
     std::cout << "Specific ColMajor x ColMajor\n";
     SMatrix<float, 12, 12> res;
-    mul4x4ColColFloat((float*)this->m_data, (float*)rhs.m_data, (float*)res.m_data);
+    mul12x12ColColFloat((float*)this->m_data, (float*)rhs.m_data, (float*)res.m_data);
     return res;
 
 }
