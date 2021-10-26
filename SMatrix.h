@@ -42,8 +42,10 @@ public:
     // Template declaration - multiplication of matrices  // ONE MUST DEFINE THE TEMPLATE FUNCTION OUTSIDE THE CLASS TO ALLOW SPECIALIZATION (but must declare it inside the class)
     //====================================================================================================
     template<int mRHS_cols>
-    SMatrix<Scalar, rows, mRHS_cols> mul(const SMatrix<Scalar, cols, mRHS_cols>& rhs);
+    SMatrix<Scalar, rows, mRHS_cols> mul(const SMatrix<Scalar, cols, mRHS_cols, RowMajor>& rhs);
 
+    template<int mRHS_cols>
+    SMatrix<Scalar, rows, mRHS_cols> mul(const SMatrix<Scalar, cols, mRHS_cols, ColMajor>& rhs);
     //====================================================================================================
     friend std::ostream& operator<<(std::ostream& out, const SMatrix& m)
     {
@@ -63,8 +65,11 @@ public:
 //====================================================================================================
 template<typename Scalar, int rows, int cols, int StorageOrder>
 template<int mRHS_cols>
-SMatrix<Scalar, rows, mRHS_cols> SMatrix<Scalar, rows, cols, StorageOrder>::mul(const SMatrix<Scalar, cols, mRHS_cols>& rhs)
+SMatrix<Scalar, rows, mRHS_cols> SMatrix<Scalar, rows, cols, StorageOrder>::mul(const SMatrix<Scalar, cols, mRHS_cols, RowMajor>& rhs)
 {
+    std::cout << "Generic  ";
+    if(this->storage_order == RowMajor) std::cout << "RowMajor x RowMajor\n";
+    else std::cout << "ColMajor x RowMajor\n";
     SMatrix<Scalar, rows, mRHS_cols> res;    //if RowMajor: lhs(this): #rows = rows, #columns = cols
     for(int i = 0; i < rows; i++)            //             rhs:       #rows = cols, #columns = mRHS_cols
     {                                        //             res:       #rows = rows, #columns = mRHS_cols
@@ -72,12 +77,37 @@ SMatrix<Scalar, rows, mRHS_cols> SMatrix<Scalar, rows, cols, StorageOrder>::mul(
         {
             for(int k = 0; k < cols; k++)
             {
-                res.m_data[res.StorageOrder == RowMajor ? i*mRHS_cols + j : j*rows + i] += this->m_data[this->StorageOrder == RowMajor ? i*cols + k : k*rows + i]*rhs.m_data[rhs.StorageOrder == RowMajor ? k*mRHS_cols + j : j*cols + k];
+                res.m_data[res.storage_order == RowMajor ? i*mRHS_cols + j : j*rows + i] += this->m_data[this->StorageOrder == RowMajor ? i*cols + k : k*rows + i]*rhs.m_data[k*mRHS_cols + j];
             }
         }
     }
     return res;
 }
+
+template<typename Scalar, int rows, int cols, int StorageOrder>
+template<int mRHS_cols>
+SMatrix<Scalar, rows, mRHS_cols> SMatrix<Scalar, rows, cols, StorageOrder>::mul(const SMatrix<Scalar, cols, mRHS_cols, ColMajor>& rhs)
+{
+    std::cout << "Generic  ";
+    if(this->storage_order == RowMajor) std::cout << "RowMajor x ColMajor\n";
+    else std::cout << "ColMajor x ColMajor\n";
+    SMatrix<Scalar, rows, mRHS_cols> res;    //if RowMajor: lhs(this): #rows = rows, #columns = cols
+    for(int i = 0; i < rows; i++)            //             rhs:       #rows = cols, #columns = mRHS_cols
+    {                                        //             res:       #rows = rows, #columns = mRHS_cols
+        for(int j = 0; j < mRHS_cols; j++)
+        {
+            for(int k = 0; k < cols; k++)
+            {
+                res.m_data[res.storage_order == RowMajor ? i*mRHS_cols + j : j*rows + i] += this->m_data[this->storage_order == RowMajor ? i*cols + k : k*rows + i]*rhs.m_data[j*cols + k];
+            }
+        }
+    }
+    return res;
+}
+
+//----------------------------------------------------------------------------------------------------//
+//----------------------------------------------------------------------------------------------------//
+//----------------------------------------------------------------------------------------------------//
 // Template specialization - multiplication of 4 by 4 double matrices
 //====================================================================================================
 //  SOLVING ERRORS: ONE CAN NOT SPECIALIZE A MEMBER FUNCTION WITHOUT ALSO SPECIALIZING THE CLASS
@@ -98,7 +128,59 @@ SMatrix<double, 4, 4> SMatrix<double, 4, 4, ColMajor>::mul<4>(const SMatrix<doub
     mul4x4ColMajor((double*)this->m_data, (double*)rhs.m_data, (double*)res.m_data);
     return res;
 }
-//====================================================================================================//
+
+//----------------------------------------------------------------------------------------------------//
+//----------------------------------------------------------------------------------------------------//
+//----------------------------------------------------------------------------------------------------//
+
+
+// Template specialization - multiplication of 4 by 4 float matrices
+//====================================================================================================
+//  SOLVING ERRORS: ONE CAN NOT SPECIALIZE A MEMBER FUNCTION WITHOUT ALSO SPECIALIZING THE CLASS
+template<>
+template<>
+SMatrix<float, 4, 4> SMatrix<float, 4, 4, RowMajor>::mul<4>(const SMatrix<float, 4, 4, RowMajor>& rhs)  // lhs(this) is RowMajor and rhs is RowMajor
+{
+    std::cout << "Specific RowMajor x RowMajor\n";
+    SMatrix<float, 4, 4> res;
+    mul4x4RowMajorFloat((float*)this->m_data, (float*)rhs.m_data, (float*)res.m_data);
+    return res;
+}
+//====================================================================================================
+template<>
+template<>
+SMatrix<float, 4, 4> SMatrix<float, 4, 4, ColMajor>::mul<4>(const SMatrix<float, 4, 4, RowMajor>& rhs)  // lhs(this) is ColMajor and rhs is RowMajor
+{
+    std::cout << "Specific ColMajor x RowMajor\n";
+    SMatrix<float, 4, 4> res;
+    mul4x4ColMajorFloat((float*)this->m_data, (float*)rhs.m_data, (float*)res.m_data);
+    return res;
+
+}
+//====================================================================================================
+template<>
+template<>
+SMatrix<float, 4, 4> SMatrix<float, 4, 4, RowMajor>::mul<4>(const SMatrix<float, 4, 4, ColMajor>& rhs)  // lhs(this) is RowMajor and rhs is ColMajor
+{
+    std::cout << "Specific RowMajor x ColMajor\n";
+    SMatrix<float, 4, 4> res;
+    mul4x4RowColFloat((float*)this->m_data, (float*)rhs.m_data, (float*)res.m_data);
+    return res;
+}
+//====================================================================================================
+template<>
+template<>
+SMatrix<float, 4, 4> SMatrix<float, 4, 4, ColMajor>::mul<4>(const SMatrix<float, 4, 4, ColMajor>& rhs)  // lhs(this) is ColMajor and rhs is ColMajor
+{
+    std::cout << "Specific ColMajor x ColMajor\n";
+    SMatrix<float, 4, 4> res;
+    mul4x4ColColFloat((float*)this->m_data, (float*)rhs.m_data, (float*)res.m_data);
+    return res;
+
+}
+//----------------------------------------------------------------------------------------------------//
+//----------------------------------------------------------------------------------------------------//
+//----------------------------------------------------------------------------------------------------//
 
 // Template specialization - multiplication of 9 by 9 double matrices
 //====================================================================================================
@@ -119,6 +201,59 @@ SMatrix<double, 9, 9> SMatrix<double, 9, 9, ColMajor>::mul<9>(const SMatrix<doub
     mul9x9ColMajor((double*)this->m_data, (double*)rhs.m_data, (double*)res.m_data);
     return res;
 }
+
+//----------------------------------------------------------------------------------------------------//
+//----------------------------------------------------------------------------------------------------//
+//----------------------------------------------------------------------------------------------------//
+
+// Template specialization - multiplication of 9 by 9 float matrices
+//====================================================================================================
+template<>
+template<>
+SMatrix<float, 9, 9> SMatrix<float, 9, 9, RowMajor>::mul<9>(const SMatrix<float, 9, 9>& rhs)  // lhs(this) is RowMajor and rhs is RowMajor
+{
+    SMatrix<float, 9, 9> res;
+    mul9x9RowMajorFloat((float*)this->m_data, (float*)rhs.m_data, (float*)res.m_data);
+    return res;
+}
+//====================================================================================================
+template<>
+template<>
+SMatrix<float, 9, 9> SMatrix<float, 9, 9, ColMajor>::mul<9>(const SMatrix<float, 9, 9>& rhs)  // lhs(this) is ColMajor and rhs is RowMajor
+{
+    SMatrix<float, 9, 9> res;
+    mul9x9ColMajorFloat((float*)this->m_data, (float*)rhs.m_data, (float*)res.m_data);
+    return res;
+
+}
+
+//====================================================================================================
+template<>
+template<>
+SMatrix<float, 9, 9> SMatrix<float, 9, 9, RowMajor>::mul<9>(const SMatrix<float, 9, 9, ColMajor>& rhs)  // lhs(this) is RowMajor and rhs is ColMajor
+{
+    std::cout << "Specific RowMajor x ColMajor\n";
+    SMatrix<float, 9, 9> res;
+    mul9x9RowColFloat((float*)this->m_data, (float*)rhs.m_data, (float*)res.m_data);
+    return res;
+}
+//====================================================================================================
+template<>
+template<>
+SMatrix<float, 9, 9> SMatrix<float, 9, 9, ColMajor>::mul<9>(const SMatrix<float, 9, 9, ColMajor>& rhs)  // lhs(this) is ColMajor and rhs is ColMajor
+{
+    std::cout << "Specific ColMajor x ColMajor\n";
+    SMatrix<float, 9, 9> res;
+    mul9x9ColColFloat((float*)this->m_data, (float*)rhs.m_data, (float*)res.m_data);
+    return res;
+
+}
+
+//----------------------------------------------------------------------------------------------------//
+//----------------------------------------------------------------------------------------------------//
+//----------------------------------------------------------------------------------------------------//
+
+// Template specialization - multiplication of 12 by 12 double matrices
 //====================================================================================================//
 template<>
 template<>
@@ -136,6 +271,55 @@ SMatrix<double, 12, 12> SMatrix<double, 12, 12, ColMajor>::mul<12>(const SMatrix
         SMatrix<double, 12, 12> res;
         mul12x12ColMajor((double*)this->m_data, (double*)rhs.m_data, (double*)res.m_data);
         return res;
+}
+
+//----------------------------------------------------------------------------------------------------//
+//----------------------------------------------------------------------------------------------------//
+//----------------------------------------------------------------------------------------------------//
+
+
+// Template specialization - multiplication of 12 by 12 float matrices
+//====================================================================================================
+template<>
+template<>
+SMatrix<float, 12, 12> SMatrix<float, 12, 12, RowMajor>::mul<12>(const SMatrix<float, 12, 12>& rhs)  // lhs(this) is RowMajor and rhs is RowMajor
+{
+    SMatrix<float, 12, 12> res;
+    mul12x12RowMajorFloat((float*)this->m_data, (float*)rhs.m_data, (float*)res.m_data);
+    return res;
+}
+//====================================================================================================
+template<>
+template<>
+SMatrix<float, 12, 12> SMatrix<float, 12, 12, ColMajor>::mul<12>(const SMatrix<float, 12, 12>& rhs)  // lhs(this) is ColMajor and rhs is RowMajor
+{
+    SMatrix<float, 12, 12> res;
+    mul12x12ColMajorFloat((float*)this->m_data, (float*)rhs.m_data, (float*)res.m_data);
+    return res;
+
+}
+
+
+//====================================================================================================
+template<>
+template<>
+SMatrix<float, 12, 12> SMatrix<float, 12, 12, RowMajor>::mul<12>(const SMatrix<float, 12, 12, ColMajor>& rhs)  // lhs(this) is RowMajor and rhs is ColMajor
+{
+    std::cout << "Specific RowMajor x ColMajor\n";
+    SMatrix<float, 12, 12> res;
+    mul12x12RowColFloat((float*)this->m_data, (float*)rhs.m_data, (float*)res.m_data);
+    return res;
+}
+//====================================================================================================
+template<>
+template<>
+SMatrix<float, 12, 12> SMatrix<float, 12, 12, ColMajor>::mul<12>(const SMatrix<float, 12, 12, ColMajor>& rhs)  // lhs(this) is ColMajor and rhs is ColMajor
+{
+    std::cout << "Specific ColMajor x ColMajor\n";
+    SMatrix<float, 12, 12> res;
+    mul12x12ColColFloat((float*)this->m_data, (float*)rhs.m_data, (float*)res.m_data);
+    return res;
+
 }
 
 //====================================================================================================//

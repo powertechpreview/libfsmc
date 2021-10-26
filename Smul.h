@@ -5,6 +5,4170 @@
 #include <stdio.h>
 #include <altivec.h>
 
+//col x col
+
+
+inline void mul4x4ColColFloat(const float* mLHS, const float* mRHS, float* const mResult){
+	
+	vector float mLHScol1,mLHScol2,mLHScol3,mLHScol4;
+	vector float mRHScol1,mRHScol2,mRHScol3,mRHScol4;
+
+
+	//====================================================
+	
+	mRHScol1 = vec_xl(0,mRHS);
+	mRHScol2 = vec_xl(0,mRHS+4);
+	mRHScol3 = vec_xl(0,mRHS+4*2);
+	mRHScol4 = vec_xl(0,mRHS+4*3);
+
+	mLHScol1 = vec_xl(0,mLHS);
+	mLHScol2 = vec_xl(0,mLHS+4);
+	mLHScol3 = vec_xl(0,mLHS+4*2);
+	mLHScol4 = vec_xl(0,mLHS+4*3);
+
+	//transpose RHS
+	vector float mRHSrow1 = {mRHScol1[0],mRHScol2[0],mRHScol3[0],mRHScol4[0]};
+	vector float mRHSrow2 = {mRHScol1[1],mRHScol2[1],mRHScol3[1],mRHScol4[1]};
+	vector float mRHSrow3 = {mRHScol1[2],mRHScol2[2],mRHScol3[2],mRHScol4[2]};
+	vector float mRHSrow4 = {mRHScol1[3],mRHScol2[3],mRHScol3[3],mRHScol4[3]};
+
+
+	//splat==============================================
+	
+	vector float auxLHS11 = {mLHScol1[0],mLHScol1[0],mLHScol1[0],mLHScol1[0]};
+	vector float auxLHS12 = {mLHScol1[1],mLHScol1[1],mLHScol1[1],mLHScol1[1]};
+	vector float auxLHS13 = {mLHScol1[2],mLHScol1[2],mLHScol1[2],mLHScol1[2]};
+	vector float auxLHS14 = {mLHScol1[3],mLHScol1[3],mLHScol1[3],mLHScol1[3]};
+	
+	vector float auxLHS21 = {mLHScol2[0],mLHScol2[0],mLHScol2[0],mLHScol2[0]};
+	vector float auxLHS22 = {mLHScol2[1],mLHScol2[1],mLHScol2[1],mLHScol2[1]};
+	vector float auxLHS23 = {mLHScol2[2],mLHScol2[2],mLHScol2[2],mLHScol2[2]};
+	vector float auxLHS24 = {mLHScol2[3],mLHScol2[3],mLHScol2[3],mLHScol2[3]};
+
+	vector float auxLHS31 = {mLHScol3[0],mLHScol3[0],mLHScol3[0],mLHScol3[0]};
+	vector float auxLHS32 = {mLHScol3[1],mLHScol3[1],mLHScol3[1],mLHScol3[1]};
+	vector float auxLHS33 = {mLHScol3[2],mLHScol3[2],mLHScol3[2],mLHScol3[2]};
+	vector float auxLHS34 = {mLHScol3[3],mLHScol3[3],mLHScol3[3],mLHScol3[3]};
+	
+	vector float auxLHS41 = {mLHScol4[0],mLHScol4[0],mLHScol4[0],mLHScol4[0]};
+	vector float auxLHS42 = {mLHScol4[1],mLHScol4[1],mLHScol4[1],mLHScol4[1]};
+	vector float auxLHS43 = {mLHScol4[2],mLHScol4[2],mLHScol4[2],mLHScol4[2]};
+	vector float auxLHS44 = {mLHScol4[3],mLHScol4[3],mLHScol4[3],mLHScol4[3]};
+	
+	
+ 	//row 1 
+	vec_xst(
+	vec_add(vec_add(vec_mul(auxLHS11,mRHSrow1),vec_mul(auxLHS12,mRHSrow2)),
+	vec_add(vec_mul(auxLHS13,mRHSrow3),vec_mul(auxLHS14,mRHSrow4))),0,
+	mResult
+	);
+
+	//row 2 
+	vec_xst(
+	vec_add(vec_add(vec_mul(auxLHS21,mRHSrow1),vec_mul(auxLHS22,mRHSrow2)),
+	vec_add(vec_mul(auxLHS23,mRHSrow3),vec_mul(auxLHS24,mRHSrow4))),0,mResult+4
+	);
+
+	//row 3
+	vec_xst(
+	vec_add(vec_add(vec_mul(auxLHS31,mRHSrow1),vec_mul(auxLHS32,mRHSrow2)),
+	vec_add(vec_mul(auxLHS33,mRHSrow3),vec_mul(auxLHS34,mRHSrow4))),0,mResult+8
+	);
+
+	//row 4
+	vec_xst(
+	vec_add(vec_add(vec_mul(auxLHS41,mRHSrow1),vec_mul(auxLHS42,mRHSrow2)),
+	vec_add(vec_mul(auxLHS43,mRHSrow3),vec_mul(auxLHS44,mRHSrow4))),0,mResult+12
+	);
+
+}
+
+inline void mul9x9ColColFloat(const float* mLHS, const float* mRHS, float* const mResult){
+
+	vector float mLHScol11, mLHScol12, mLHScol13, mLHScol21, mLHScol22, mLHScol23, mLHScol31, mLHScol32, mLHScol33,
+	      	     mLHScol41, mLHScol42, mLHScol43, mLHScol51, mLHScol52, mLHScol53, mLHScol61, mLHScol62, mLHScol63,
+		     mLHScol71, mLHScol72, mLHScol73, mLHScol81, mLHScol82, mLHScol83, mLHScol91, mLHScol92, mLHScol93;
+
+
+	vector float mRHScol11, mRHScol12, mRHScol13, mRHScol21, mRHScol22, mRHScol23, mRHScol31, mRHScol32, mRHScol33,
+	      	     mRHScol41, mRHScol42, mRHScol43, mRHScol51, mRHScol52, mRHScol53, mRHScol61, mRHScol62, mRHScol63,
+		     mRHScol71, mRHScol72, mRHScol73, mRHScol81, mRHScol82, mRHScol83, mRHScol91, mRHScol92, mRHScol93;
+
+//load
+// __8__17__26__35__44__53__62__71__80
+
+
+	mLHScol11 = vec_xl(0,mLHS);
+	mLHScol12 = vec_xl(0,mLHS+4);
+	mLHScol13 = vec_splats((float)0);
+	mLHScol13[0] = mLHS[8];
+
+	mLHScol21 = vec_xl(0,mLHS+4*2+1);
+	mLHScol22 = vec_xl(0,mLHS+4*3+1);
+	mLHScol23 = vec_splats((float)0);
+	mLHScol23[0] = mLHS[17];
+
+	mLHScol31 = vec_xl(0,mLHS+4*4+2);
+	mLHScol32 = vec_xl(0,mLHS+4*5+2);
+	mLHScol33 = vec_splats((float)0);
+	mLHScol33[0] = mLHS[26];
+
+	mLHScol41 = vec_xl(0,mLHS+4*6+3);
+	mLHScol42 = vec_xl(0,mLHS+4*7+3);
+	mLHScol43 = vec_splats((float)0);
+	mLHScol43[0] = mLHS[35];
+
+	mLHScol51 = vec_xl(0,mLHS+4*8+4);
+	mLHScol52 = vec_xl(0,mLHS+4*9+4);
+	mLHScol53 = vec_splats((float)0);
+	mLHScol53[0] = mLHS[44];
+
+	mLHScol61 = vec_xl(0,mLHS+4*10+5);
+	mLHScol62 = vec_xl(0,mLHS+4*11+5);
+	mLHScol63 = vec_splats((float)0);
+	mLHScol63[0] = mLHS[53];
+	
+	mLHScol71 = vec_xl(0,mLHS+4*12+6);
+	mLHScol72 = vec_xl(0,mLHS+4*13+6);
+	mLHScol73 = vec_splats((float)0);
+	mLHScol73[0] = mLHS[62];
+
+	mLHScol81 = vec_xl(0,mLHS+4*14+7);
+	mLHScol82 = vec_xl(0,mLHS+4*15+7);
+	mLHScol83 = vec_splats((float)0);
+	mLHScol83[0] = mLHS[71];
+
+	mLHScol91 = vec_xl(0,mLHS+4*16+8);
+	mLHScol92 = vec_xl(0,mLHS+4*17+8);
+	mLHScol93 = vec_splats((float)0);
+	mLHScol93[0] = mLHS[80];
+//-----------------------------------------------------
+
+	mRHScol11 = vec_xl(0,mRHS);
+	mRHScol12 = vec_xl(0,mRHS+4);
+
+	mRHScol21 = vec_xl(0,mRHS+4*2+1);
+	mRHScol22 = vec_xl(0,mRHS+4*3+1);
+
+	mRHScol31 = vec_xl(0,mRHS+4*4+2);
+	mRHScol32 = vec_xl(0,mRHS+4*5+2);
+
+	mRHScol41 = vec_xl(0,mRHS+4*6+3);
+	mRHScol42 = vec_xl(0,mRHS+4*7+3);
+
+	mRHScol51 = vec_xl(0,mRHS+4*8+4);
+	mRHScol52 = vec_xl(0,mRHS+4*9+4);
+
+	mRHScol61 = vec_xl(0,mRHS+4*10+5);
+	mRHScol62 = vec_xl(0,mRHS+4*11+5);
+	
+	mRHScol71 = vec_xl(0,mRHS+4*12+6);
+	mRHScol72 = vec_xl(0,mRHS+4*13+6);
+
+	mRHScol81 = vec_xl(0,mRHS+4*14+7);
+	mRHScol82 = vec_xl(0,mRHS+4*15+7);
+
+	mRHScol91 = vec_xl(0,mRHS+4*16+8);
+	mRHScol92 = vec_xl(0,mRHS+4*17+8);
+
+
+// transpose RHS
+
+	vector float mRHSrow11 = {mRHScol11[0],mRHScol21[0],mRHScol31[0],mRHScol41[0]};
+	vector float mRHSrow12 = {mRHScol51[0],mRHScol61[0],mRHScol71[0],mRHScol81[0]};
+	vector float mRHSrow13 = {mRHScol91[0],0,0,0};
+
+	vector float mRHSrow21 = {mRHScol11[1],mRHScol21[1],mRHScol31[1],mRHScol41[1]};
+	vector float mRHSrow22 = {mRHScol51[1],mRHScol61[1],mRHScol71[1],mRHScol81[1]};
+	vector float mRHSrow23 = {mRHScol91[1],0,0,0};
+
+	vector float mRHSrow31 = {mRHScol11[2],mRHScol21[2],mRHScol31[2],mRHScol41[2]};
+	vector float mRHSrow32 = {mRHScol51[2],mRHScol61[2],mRHScol71[2],mRHScol81[2]};
+	vector float mRHSrow33 = {mRHScol91[2],0,0,0};
+
+	vector float mRHSrow41 = {mRHScol11[3],mRHScol21[3],mRHScol31[3],mRHScol41[3]};
+	vector float mRHSrow42 = {mRHScol51[3],mRHScol61[3],mRHScol71[3],mRHScol81[3]};
+	vector float mRHSrow43 = {mRHScol91[3],0,0,0};
+
+	vector float mRHSrow51 = {mRHScol12[0],mRHScol22[0],mRHScol32[0],mRHScol42[0]};
+	vector float mRHSrow52 = {mRHScol52[0],mRHScol62[0],mRHScol72[0],mRHScol82[0]};
+	vector float mRHSrow53 = {mRHScol92[0],0,0,0};
+
+	vector float mRHSrow61 = {mRHScol12[1],mRHScol22[1],mRHScol32[1],mRHScol42[1]};
+	vector float mRHSrow62 = {mRHScol12[1],mRHScol62[1],mRHScol72[1],mRHScol82[1]};
+	vector float mRHSrow63 = {mRHScol12[1],0,0,0};
+
+	vector float mRHSrow71 = {mRHScol12[2],mRHScol22[2],mRHScol32[2],mRHScol42[2]};
+	vector float mRHSrow72 = {mRHScol52[2],mRHScol62[2],mRHScol72[2],mRHScol82[2]};
+	vector float mRHSrow73 = {mRHScol92[2],0,0,0};
+
+	vector float mRHSrow81 = {mRHScol12[3],mRHScol22[3],mRHScol32[3],mRHScol42[3]};
+	vector float mRHSrow82 = {mRHScol52[3],mRHScol62[3],mRHScol72[3],mRHScol82[3]};
+	vector float mRHSrow83 = {mRHScol92[3],0,0,0};
+
+	vector float mRHSrow91 = {mRHS[8],mRHS[17],mRHS[26],mRHS[35]};
+	vector float mRHSrow92 = {mRHS[44],mRHS[53],mRHS[62],mRHS[71]};
+	vector float mRHSrow93 = {mRHS[80],0,0,0};
+
+
+
+//===================================================================================
+//Splat
+//===================================================================================
+	
+	vector float aux11={mLHScol11[0],mLHScol11[0],mLHScol11[0],mLHScol11[0]};
+	vector float aux12={mLHScol11[1],mLHScol11[1],mLHScol11[1],mLHScol11[1]};
+	vector float aux13={mLHScol11[2],mLHScol11[2],mLHScol11[2],mLHScol11[2]};
+	vector float aux14={mLHScol11[3],mLHScol11[3],mLHScol11[3],mLHScol11[3]};
+
+	vector float aux15={mLHScol12[0],mLHScol12[0],mLHScol12[0],mLHScol12[0]};
+	vector float aux16={mLHScol12[1],mLHScol12[1],mLHScol12[1],mLHScol12[1]};
+	vector float aux17={mLHScol12[2],mLHScol12[2],mLHScol12[2],mLHScol12[2]};
+	vector float aux18={mLHScol12[3],mLHScol12[3],mLHScol12[3],mLHScol12[3]};
+
+	vector float aux19={mLHScol13[0],mLHScol13[0],mLHScol13[0],mLHScol13[0]};
+//----------------------------------------------------------------------------------
+	vector float aux21={mLHScol21[0],mLHScol21[0],mLHScol21[0],mLHScol21[0]};
+	vector float aux22={mLHScol21[1],mLHScol21[1],mLHScol21[1],mLHScol21[1]};
+	vector float aux23={mLHScol21[2],mLHScol21[2],mLHScol21[2],mLHScol21[2]};
+	vector float aux24={mLHScol21[3],mLHScol21[3],mLHScol21[3],mLHScol21[3]};
+
+	vector float aux25={mLHScol22[0],mLHScol22[0],mLHScol22[0],mLHScol22[0]};
+	vector float aux26={mLHScol22[1],mLHScol22[1],mLHScol22[1],mLHScol22[1]};
+	vector float aux27={mLHScol22[2],mLHScol22[2],mLHScol22[2],mLHScol22[2]};
+	vector float aux28={mLHScol22[3],mLHScol22[3],mLHScol22[3],mLHScol22[3]};
+
+	vector float aux29={mLHScol23[0],mLHScol23[0],mLHScol23[0],mLHScol23[0]};
+//----------------------------------------------------------------------------------
+	vector float aux31={mLHScol31[0],mLHScol31[0],mLHScol31[0],mLHScol31[0]};
+	vector float aux32={mLHScol31[1],mLHScol31[1],mLHScol31[1],mLHScol31[1]};
+	vector float aux33={mLHScol31[2],mLHScol31[2],mLHScol31[2],mLHScol31[2]};
+	vector float aux34={mLHScol31[3],mLHScol31[3],mLHScol31[3],mLHScol31[3]};
+
+	vector float aux35={mLHScol32[0],mLHScol32[0],mLHScol32[0],mLHScol32[0]};
+	vector float aux36={mLHScol32[1],mLHScol32[1],mLHScol32[1],mLHScol32[1]};
+	vector float aux37={mLHScol32[2],mLHScol32[2],mLHScol32[2],mLHScol32[2]};
+	vector float aux38={mLHScol32[3],mLHScol32[3],mLHScol32[3],mLHScol32[3]};
+
+	vector float aux39={mLHScol33[0],mLHScol33[0],mLHScol33[0],mLHScol33[0]};
+//----------------------------------------------------------------------------------
+	vector float aux41={mLHScol41[0],mLHScol41[0],mLHScol41[0],mLHScol41[0]};
+	vector float aux42={mLHScol41[1],mLHScol41[1],mLHScol41[1],mLHScol41[1]};
+	vector float aux43={mLHScol41[2],mLHScol41[2],mLHScol41[2],mLHScol41[2]};
+	vector float aux44={mLHScol41[3],mLHScol41[3],mLHScol41[3],mLHScol41[3]};
+
+	vector float aux45={mLHScol42[0],mLHScol42[0],mLHScol42[0],mLHScol42[0]};
+	vector float aux46={mLHScol42[1],mLHScol42[1],mLHScol42[1],mLHScol42[1]};
+	vector float aux47={mLHScol42[2],mLHScol42[2],mLHScol42[2],mLHScol42[2]};
+	vector float aux48={mLHScol42[3],mLHScol42[3],mLHScol42[3],mLHScol42[3]};
+
+	vector float aux49={mLHScol43[0],mLHScol43[0],mLHScol43[0],mLHScol43[0]};
+//----------------------------------------------------------------------------------
+	vector float aux51={mLHScol51[0],mLHScol51[0],mLHScol51[0],mLHScol51[0]};
+	vector float aux52={mLHScol51[1],mLHScol51[1],mLHScol51[1],mLHScol51[1]};
+	vector float aux53={mLHScol51[2],mLHScol51[2],mLHScol51[2],mLHScol51[2]};
+	vector float aux54={mLHScol51[3],mLHScol51[3],mLHScol51[3],mLHScol51[3]};
+
+	vector float aux55={mLHScol52[0],mLHScol52[0],mLHScol52[0],mLHScol52[0]};
+	vector float aux56={mLHScol52[1],mLHScol52[1],mLHScol52[1],mLHScol52[1]};
+	vector float aux57={mLHScol52[2],mLHScol52[2],mLHScol52[2],mLHScol52[2]};
+	vector float aux58={mLHScol52[3],mLHScol52[3],mLHScol52[3],mLHScol52[3]};
+
+	vector float aux59={mLHScol53[0],mLHScol53[0],mLHScol53[0],mLHScol53[0]};
+//----------------------------------------------------------------------------------
+	vector float aux61={mLHScol61[0],mLHScol61[0],mLHScol61[0],mLHScol61[0]};
+	vector float aux62={mLHScol61[1],mLHScol61[1],mLHScol61[1],mLHScol61[1]};
+	vector float aux63={mLHScol61[2],mLHScol61[2],mLHScol61[2],mLHScol61[2]};
+	vector float aux64={mLHScol61[3],mLHScol61[3],mLHScol61[3],mLHScol61[3]};
+
+	vector float aux65={mLHScol62[0],mLHScol62[0],mLHScol62[0],mLHScol62[0]};
+	vector float aux66={mLHScol62[1],mLHScol62[1],mLHScol62[1],mLHScol62[1]};
+	vector float aux67={mLHScol62[2],mLHScol62[2],mLHScol62[2],mLHScol62[2]};
+	vector float aux68={mLHScol62[3],mLHScol62[3],mLHScol62[3],mLHScol62[3]};
+
+	vector float aux69={mLHScol63[0],mLHScol63[0],mLHScol63[0],mLHScol63[0]};
+//----------------------------------------------------------------------------------
+	vector float aux71={mLHScol71[0],mLHScol71[0],mLHScol71[0],mLHScol71[0]};
+	vector float aux72={mLHScol71[1],mLHScol71[1],mLHScol71[1],mLHScol71[1]};
+	vector float aux73={mLHScol71[2],mLHScol71[2],mLHScol71[2],mLHScol71[2]};
+	vector float aux74={mLHScol71[3],mLHScol71[3],mLHScol71[3],mLHScol71[3]};
+
+	vector float aux75={mLHScol72[0],mLHScol72[0],mLHScol72[0],mLHScol72[0]};
+	vector float aux76={mLHScol72[1],mLHScol72[1],mLHScol72[1],mLHScol72[1]};
+	vector float aux77={mLHScol72[2],mLHScol72[2],mLHScol72[2],mLHScol72[2]};
+	vector float aux78={mLHScol72[3],mLHScol72[3],mLHScol72[3],mLHScol72[3]};
+
+	vector float aux79={mLHScol73[0],mLHScol73[0],mLHScol73[0],mLHScol73[0]};
+//----------------------------------------------------------------------------------
+	vector float aux81={mLHScol81[0],mLHScol81[0],mLHScol81[0],mLHScol81[0]};
+	vector float aux82={mLHScol81[1],mLHScol81[1],mLHScol81[1],mLHScol81[1]};
+	vector float aux83={mLHScol81[2],mLHScol81[2],mLHScol81[2],mLHScol81[2]};
+	vector float aux84={mLHScol81[3],mLHScol81[3],mLHScol81[3],mLHScol81[3]};
+
+	vector float aux85={mLHScol82[0],mLHScol82[0],mLHScol82[0],mLHScol82[0]};
+	vector float aux86={mLHScol82[1],mLHScol82[1],mLHScol82[1],mLHScol82[1]};
+	vector float aux87={mLHScol82[2],mLHScol82[2],mLHScol82[2],mLHScol82[2]};
+	vector float aux88={mLHScol82[3],mLHScol82[3],mLHScol82[3],mLHScol82[3]};
+
+	vector float aux89={mLHScol83[0],mLHScol83[0],mLHScol83[0],mLHScol83[0]};
+//----------------------------------------------------------------------------------
+	vector float aux91={mLHScol91[0],mLHScol91[0],mLHScol91[0],mLHScol91[0]};
+	vector float aux92={mLHScol91[1],mLHScol91[1],mLHScol91[1],mLHScol91[1]};
+	vector float aux93={mLHScol91[2],mLHScol91[2],mLHScol91[2],mLHScol91[2]};
+	vector float aux94={mLHScol91[3],mLHScol91[3],mLHScol91[3],mLHScol91[3]};
+
+	vector float aux95={mLHScol92[0],mLHScol92[0],mLHScol92[0],mLHScol92[0]};
+	vector float aux96={mLHScol92[1],mLHScol92[1],mLHScol92[1],mLHScol92[1]};
+	vector float aux97={mLHScol92[2],mLHScol92[2],mLHScol92[2],mLHScol92[2]};
+	vector float aux98={mLHScol92[3],mLHScol92[3],mLHScol92[3],mLHScol92[3]};
+
+	vector float aux99={mLHScol93[0],mLHScol93[0],mLHScol93[0],mLHScol93[0]};
+//----------------------------------------------------------------------------------
+
+
+//row1
+	vec_xst(vec_madd( mRHSrow91, aux91,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow21, aux21, vec_mul(mRHSrow11, aux11)),
+					vec_madd(mRHSrow41, aux41, vec_mul(mRHSrow31, aux31)) ),
+				vec_add(
+					vec_madd(mRHSrow61, aux61, vec_mul(mRHSrow51, aux51)),
+					vec_madd(mRHSrow81, aux81, vec_mul(mRHSrow71, aux71)) ) ) ),
+
+				0, mResult);	
+
+	
+	vec_xst(vec_madd( mRHSrow92, aux91,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow22, aux21, vec_mul(mRHSrow12, aux11)),
+					vec_madd(mRHSrow42, aux41, vec_mul(mRHSrow32, aux31)) ),
+				vec_add(
+					vec_madd(mRHSrow62, aux61, vec_mul(mRHSrow52, aux51)),
+					vec_madd(mRHSrow82, aux81, vec_mul(mRHSrow72, aux71)) ) ) ),
+
+				0, mResult+4);
+
+	vec_xst(vec_madd( mRHSrow93, aux91,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow23, aux21, vec_mul(mRHSrow13, aux11)),
+					vec_madd(mRHSrow43, aux41, vec_mul(mRHSrow33, aux31)) ),
+				vec_add(
+					vec_madd(mRHSrow63, aux61, vec_mul(mRHSrow53, aux51)),
+					vec_madd(mRHSrow83, aux81, vec_mul(mRHSrow73, aux71)) ) ) ),
+
+				0, mResult+8);	
+//row 2
+
+
+	vec_xst(vec_madd( mRHSrow91, aux92,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow21, aux22, vec_mul(mRHSrow11, aux12)),
+					vec_madd(mRHSrow41, aux42, vec_mul(mRHSrow31, aux32)) ),
+				vec_add(
+					vec_madd(mRHSrow61, aux62, vec_mul(mRHSrow51, aux52)),
+					vec_madd(mRHSrow81, aux82, vec_mul(mRHSrow71, aux72)) ) ) ),
+
+				0, mResult+4*2+1);
+
+	vec_xst(vec_madd( mRHSrow92, aux92,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow22, aux22, vec_mul(mRHSrow12, aux12)),
+					vec_madd(mRHSrow42, aux42, vec_mul(mRHSrow32, aux32)) ),
+				vec_add(
+					vec_madd(mRHSrow62, aux62, vec_mul(mRHSrow52, aux52)),
+					vec_madd(mRHSrow82, aux82, vec_mul(mRHSrow72, aux72)) ) ) ),
+
+				0, mResult+4*3+1);
+
+
+	vec_xst(vec_madd( mRHSrow93, aux92,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow23, aux22, vec_mul(mRHSrow13, aux12)),
+					vec_madd(mRHSrow43, aux42, vec_mul(mRHSrow33, aux32)) ),
+				vec_add(
+					vec_madd(mRHSrow63, aux62, vec_mul(mRHSrow53, aux52)),
+					vec_madd(mRHSrow83, aux82, vec_mul(mRHSrow73, aux72)) ) ) ),
+
+				0, mResult+17);
+
+//row 3
+
+	vec_xst(vec_madd( mRHSrow91, aux93,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow21, aux23, vec_mul(mRHSrow11, aux13)),
+					vec_madd(mRHSrow41, aux43, vec_mul(mRHSrow31, aux33)) ),
+				vec_add(
+					vec_madd(mRHSrow61, aux63, vec_mul(mRHSrow51, aux53)),
+					vec_madd(mRHSrow81, aux83, vec_mul(mRHSrow71, aux73)) ) ) ),
+
+				0, mResult+4*4+2);
+
+	vec_xst(vec_madd( mRHSrow92, aux93,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow22, aux23, vec_mul(mRHSrow12, aux13)),
+					vec_madd(mRHSrow42, aux43, vec_mul(mRHSrow32, aux33)) ),
+				vec_add(
+					vec_madd(mRHSrow62, aux63, vec_mul(mRHSrow52, aux53)),
+					vec_madd(mRHSrow82, aux83, vec_mul(mRHSrow72, aux73)) ) ) ),
+
+				0, mResult+4*5+2);
+
+
+	vec_xst(vec_madd( mRHSrow93, aux93,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow23, aux23, vec_mul(mRHSrow13, aux13)),
+					vec_madd(mRHSrow43, aux43, vec_mul(mRHSrow33, aux33)) ),
+				vec_add(
+					vec_madd(mRHSrow63, aux63, vec_mul(mRHSrow53, aux53)),
+					vec_madd(mRHSrow83, aux83, vec_mul(mRHSrow73, aux73)) ) ) ),
+
+				0, mResult+26);
+//row 4
+
+
+	vec_xst(vec_madd( mRHSrow91, aux94,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow21, aux24, vec_mul(mRHSrow11, aux14)),
+					vec_madd(mRHSrow41, aux44, vec_mul(mRHSrow31, aux34)) ),
+				vec_add(
+					vec_madd(mRHSrow61, aux64, vec_mul(mRHSrow51, aux54)),
+					vec_madd(mRHSrow81, aux84, vec_mul(mRHSrow71, aux74)) ) ) ),
+
+				0, mResult+4*6+3);
+
+	vec_xst(vec_madd( mRHSrow92, aux94,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow22, aux24, vec_mul(mRHSrow12, aux14)),
+					vec_madd(mRHSrow42, aux44, vec_mul(mRHSrow32, aux34)) ),
+				vec_add(
+					vec_madd(mRHSrow62, aux64, vec_mul(mRHSrow52, aux54)),
+					vec_madd(mRHSrow82, aux84, vec_mul(mRHSrow72, aux74)) ) ) ),
+
+				0, mResult+4*7+3);
+
+	vec_xst(vec_madd( mRHSrow93, aux94,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow23, aux24, vec_mul(mRHSrow13, aux14)),
+					vec_madd(mRHSrow43, aux44, vec_mul(mRHSrow33, aux34)) ),
+				vec_add(
+					vec_madd(mRHSrow63, aux64, vec_mul(mRHSrow53, aux54)),
+					vec_madd(mRHSrow83, aux84, vec_mul(mRHSrow73, aux74)) ) ) ),
+
+				0, mResult+35);
+//row 5
+
+
+	vec_xst(vec_madd( mRHSrow91, aux95,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow21, aux25, vec_mul(mRHSrow11, aux15)),
+					vec_madd(mRHSrow41, aux45, vec_mul(mRHSrow31, aux35)) ),
+				vec_add(
+					vec_madd(mRHSrow61, aux65, vec_mul(mRHSrow51, aux55)),
+					vec_madd(mRHSrow81, aux85, vec_mul(mRHSrow71, aux75)) ) ) ),
+
+				0, mResult+4*8+4);
+
+
+
+	vec_xst(vec_madd( mRHSrow92, aux95,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow22, aux25, vec_mul(mRHSrow12, aux15)),
+					vec_madd(mRHSrow42, aux45, vec_mul(mRHSrow32, aux35)) ),
+				vec_add(
+					vec_madd(mRHSrow62, aux65, vec_mul(mRHSrow52, aux55)),
+					vec_madd(mRHSrow82, aux85, vec_mul(mRHSrow72, aux75)) ) ) ),
+
+				0, mResult+4*9+4);
+
+
+	vec_xst(vec_madd( mRHSrow93, aux95,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow23, aux25, vec_mul(mRHSrow13, aux15)),
+					vec_madd(mRHSrow43, aux45, vec_mul(mRHSrow33, aux35)) ),
+				vec_add(
+					vec_madd(mRHSrow63, aux65, vec_mul(mRHSrow53, aux55)),
+					vec_madd(mRHSrow83, aux85, vec_mul(mRHSrow73, aux75)) ) ) ),
+
+				0, mResult+44);
+
+//row 6
+
+
+	vec_xst(vec_madd( mRHSrow91, aux96,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow21, aux26, vec_mul(mRHSrow11, aux16)),
+					vec_madd(mRHSrow41, aux46, vec_mul(mRHSrow31, aux36)) ),
+				vec_add(
+					vec_madd(mRHSrow61, aux66, vec_mul(mRHSrow51, aux56)),
+					vec_madd(mRHSrow81, aux86, vec_mul(mRHSrow71, aux76)) ) ) ),
+
+				0, mResult+4*10+5);
+
+
+	vec_xst(vec_madd( mRHSrow92, aux96,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow22, aux26, vec_mul(mRHSrow12, aux16)),
+					vec_madd(mRHSrow42, aux46, vec_mul(mRHSrow32, aux36)) ),
+				vec_add(
+					vec_madd(mRHSrow62, aux66, vec_mul(mRHSrow52, aux56)),
+					vec_madd(mRHSrow82, aux86, vec_mul(mRHSrow72, aux76)) ) ) ),
+
+				0, mResult+4*11+5);
+
+
+	vec_xst(vec_madd( mRHSrow93, aux96,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow23, aux26, vec_mul(mRHSrow13, aux16)),
+					vec_madd(mRHSrow43, aux46, vec_mul(mRHSrow33, aux36)) ),
+				vec_add(
+					vec_madd(mRHSrow63, aux66, vec_mul(mRHSrow53, aux56)),
+					vec_madd(mRHSrow83, aux86, vec_mul(mRHSrow73, aux76)) ) ) ),
+
+				0, mResult+53);
+
+//row 7
+
+	vec_xst(vec_madd( mRHSrow91, aux97,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow21, aux27, vec_mul(mRHSrow11, aux17)),
+					vec_madd(mRHSrow41, aux47, vec_mul(mRHSrow31, aux37)) ),
+				vec_add(
+					vec_madd(mRHSrow61, aux67, vec_mul(mRHSrow51, aux57)),
+					vec_madd(mRHSrow81, aux87, vec_mul(mRHSrow71, aux77)) ) ) ),
+
+				0, mResult+4*12+6);
+
+	vec_xst(vec_madd( mRHSrow92, aux97,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow22, aux27, vec_mul(mRHSrow12, aux17)),
+					vec_madd(mRHSrow42, aux47, vec_mul(mRHSrow32, aux37)) ),
+				vec_add(
+					vec_madd(mRHSrow62, aux67, vec_mul(mRHSrow52, aux57)),
+					vec_madd(mRHSrow82, aux87, vec_mul(mRHSrow72, aux77)) ) ) ),
+
+				0, mResult+4*13+6);
+
+
+	vec_xst(vec_madd( mRHSrow93, aux97,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow23, aux27, vec_mul(mRHSrow13, aux17)),
+					vec_madd(mRHSrow43, aux47, vec_mul(mRHSrow33, aux37)) ),
+				vec_add(
+					vec_madd(mRHSrow63, aux67, vec_mul(mRHSrow53, aux57)),
+					vec_madd(mRHSrow83, aux87, vec_mul(mRHSrow73, aux77)) ) ) ),
+
+				0, mResult+62);
+//row 8
+
+
+
+	vec_xst(vec_madd( mRHSrow91, aux98,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow21, aux28, vec_mul(mRHSrow11, aux18)),
+					vec_madd(mRHSrow41, aux48, vec_mul(mRHSrow31, aux38)) ),
+				vec_add(
+					vec_madd(mRHSrow61, aux68, vec_mul(mRHSrow51, aux58)),
+					vec_madd(mRHSrow81, aux88, vec_mul(mRHSrow71, aux78)) ) ) ),
+
+				0, mResult+4*14+7);
+
+
+	vec_xst(vec_madd( mRHSrow92, aux98,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow22, aux28, vec_mul(mRHSrow12, aux18)),
+					vec_madd(mRHSrow42, aux48, vec_mul(mRHSrow32, aux38)) ),
+				vec_add(
+					vec_madd(mRHSrow62, aux68, vec_mul(mRHSrow52, aux58)),
+					vec_madd(mRHSrow82, aux88, vec_mul(mRHSrow72, aux78)) ) ) ),
+
+				0, mResult+4*15+7);
+
+
+	vec_xst(vec_madd( mRHSrow93, aux98,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow23, aux28, vec_mul(mRHSrow13, aux18)),
+					vec_madd(mRHSrow43, aux48, vec_mul(mRHSrow33, aux38)) ),
+				vec_add(
+					vec_madd(mRHSrow63, aux68, vec_mul(mRHSrow53, aux58)),
+					vec_madd(mRHSrow83, aux88, vec_mul(mRHSrow73, aux78)) ) ) ),
+
+				0, mResult+71);
+
+//row 9
+
+
+
+	vec_xst(vec_madd( mRHSrow91, aux99,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow21, aux29, vec_mul(mRHSrow11, aux19)),
+					vec_madd(mRHSrow41, aux49, vec_mul(mRHSrow31, aux39)) ),
+				vec_add(
+					vec_madd(mRHSrow61, aux69, vec_mul(mRHSrow51, aux59)),
+					vec_madd(mRHSrow81, aux89, vec_mul(mRHSrow71, aux79)) ) ) ),
+
+				0, mResult+4*16+8);
+
+	vec_xst(vec_madd( mRHSrow92, aux99,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow22, aux29, vec_mul(mRHSrow12, aux19)),
+					vec_madd(mRHSrow42, aux49, vec_mul(mRHSrow32, aux39)) ),
+				vec_add(
+					vec_madd(mRHSrow62, aux69, vec_mul(mRHSrow52, aux59)),
+					vec_madd(mRHSrow82, aux89, vec_mul(mRHSrow72, aux79)) ) ) ),
+
+				0, mResult+4*17+8);
+
+
+	vector float mResultLastElem = 
+		
+		vec_madd( mRHSrow93, aux99,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow23, aux29, vec_mul(mRHSrow13, aux19)),
+					vec_madd(mRHSrow43, aux49, vec_mul(mRHSrow33, aux39)) ),
+				vec_add(
+					vec_madd(mRHSrow63, aux69, vec_mul(mRHSrow53, aux59)),
+					vec_madd(mRHSrow83, aux89, vec_mul(mRHSrow73, aux79)) ) ) );
+	mResult[80] = mResultLastElem[0];
+}
+
+
+
+
+
+
+inline void mul12x12ColColFloat(const float* mLHS, const float* mRHS, float* const mResult){
+
+	vector float mLHScol11, mLHScol12, mLHScol13, mLHScol21, mLHScol22, mLHScol23, mLHScol31, mLHScol32, mLHScol33,
+	      	     mLHScol41, mLHScol42, mLHScol43, mLHScol51, mLHScol52, mLHScol53, mLHScol61, mLHScol62, mLHScol63,
+		     mLHScol71, mLHScol72, mLHScol73, mLHScol81, mLHScol82, mLHScol83, mLHScol91, mLHScol92, mLHScol93, mLHScol101, mLHScol102, mLHScol103, mLHScol111,
+		     mLHScol112, mLHScol113,  mLHScol121, mLHScol122, mLHScol123;
+
+	vector float mRHScol11, mRHScol12, mRHScol13, mRHScol21, mRHScol22, mRHScol23, mRHScol31, mRHScol32, mRHScol33,
+	      	     mRHScol41, mRHScol42, mRHScol43, mRHScol51, mRHScol52, mRHScol53, mRHScol61, mRHScol62, mRHScol63,
+		     mRHScol71, mRHScol72, mRHScol73, mRHScol81, mRHScol82, mRHScol83, mRHScol91, mRHScol92, mRHScol93, mRHScol101, mRHScol102, mRHScol103, mRHScol111,
+		     mRHScol112, mRHScol113,  mRHScol121, mRHScol122, mRHScol123;
+//load
+
+
+	mRHScol11 = vec_xl(0,mRHS);
+	mRHScol12 = vec_xl(0,mRHS+4);
+	mRHScol13 = vec_xl(0,mRHS+4*2);
+
+	mRHScol21 = vec_xl(0,mRHS+4*3);
+	mRHScol22 = vec_xl(0,mRHS+4*4);
+	mRHScol23 = vec_xl(0,mRHS+4*5);
+
+	mRHScol31 = vec_xl(0,mRHS+4*6);
+	mRHScol32 = vec_xl(0,mRHS+4*7);
+	mRHScol33 = vec_xl(0,mRHS+4*8);
+
+	mRHScol41 = vec_xl(0,mRHS+4*9);
+	mRHScol42 = vec_xl(0,mRHS+4*10);
+	mRHScol43 = vec_xl(0,mRHS+4*11);
+
+	mRHScol51 = vec_xl(0,mRHS+4*12);
+	mRHScol52 = vec_xl(0,mRHS+4*13);
+	mRHScol53 = vec_xl(0,mRHS+4*14);
+
+	mRHScol61 = vec_xl(0,mRHS+4*15);
+	mRHScol62 = vec_xl(0,mRHS+4*16);
+	mRHScol63 = vec_xl(0,mRHS+4*17);
+
+	mRHScol71 = vec_xl(0,mRHS+4*18);
+	mRHScol72 = vec_xl(0,mRHS+4*19);
+	mRHScol73 = vec_xl(0,mRHS+4*20);
+
+	mRHScol81 = vec_xl(0,mRHS+4*21);
+	mRHScol82 = vec_xl(0,mRHS+4*22);
+	mRHScol83 = vec_xl(0,mRHS+4*23);
+
+	mRHScol91 = vec_xl(0,mRHS+4*24);
+	mRHScol92 = vec_xl(0,mRHS+4*25);
+	mRHScol93 = vec_xl(0,mRHS+4*26);
+
+	mRHScol101 = vec_xl(0,mRHS+4*27);
+	mRHScol102 = vec_xl(0,mRHS+4*28);
+	mRHScol103 = vec_xl(0,mRHS+4*29);
+
+	mRHScol111 = vec_xl(0,mRHS+4*30);
+	mRHScol112 = vec_xl(0,mRHS+4*31);
+	mRHScol113 = vec_xl(0,mRHS+4*32);
+
+	mRHScol121 = vec_xl(0,mRHS+4*33);
+	mRHScol122 = vec_xl(0,mRHS+4*34);
+	mRHScol123 = vec_xl(0,mRHS+4*35);
+
+//transpose RHS
+	vector float mRHSrow11 = {mRHScol11[0], mRHScol21[0], mRHScol31[0], mRHScol41[0]};	
+	vector float mRHSrow12 = {mRHScol51[0], mRHScol61[0], mRHScol71[0], mRHScol81[0]};	
+	vector float mRHSrow13 = {mRHScol91[0],mRHScol101[0],mRHScol111[0],mRHScol121[0]};	
+
+	vector float mRHSrow21 = {mRHScol11[1], mRHScol21[1], mRHScol31[1], mRHScol41[1]};	
+	vector float mRHSrow22 = {mRHScol51[1], mRHScol61[1], mRHScol71[1], mRHScol81[1]};	
+	vector float mRHSrow23 = {mRHScol91[1],mRHScol101[1],mRHScol111[1],mRHScol121[1]};	
+
+	vector float mRHSrow31 = {mRHScol11[2], mRHScol21[2], mRHScol31[2], mRHScol41[2]};	
+	vector float mRHSrow32 = {mRHScol51[2], mRHScol61[2], mRHScol71[2], mRHScol81[2]};	
+	vector float mRHSrow33 = {mRHScol91[2],mRHScol101[2],mRHScol111[2],mRHScol121[2]};	
+
+	vector float mRHSrow41 = {mRHScol11[3], mRHScol21[3], mRHScol31[3], mRHScol41[3]};	
+	vector float mRHSrow42 = {mRHScol51[3], mRHScol61[3], mRHScol71[3], mRHScol81[3]};	
+	vector float mRHSrow43 = {mRHScol91[3],mRHScol101[3],mRHScol111[3],mRHScol121[3]};	
+
+	vector float mRHSrow51 = {mRHScol12[0], mRHScol22[0], mRHScol32[0], mRHScol42[0]};	
+	vector float mRHSrow52 = {mRHScol52[0], mRHScol62[0], mRHScol72[0], mRHScol82[0]};	
+	vector float mRHSrow53 = {mRHScol92[0],mRHScol102[0],mRHScol112[0],mRHScol122[0]};	
+
+	vector float mRHSrow61 = {mRHScol12[1], mRHScol22[1], mRHScol32[1], mRHScol42[1]};	
+	vector float mRHSrow62 = {mRHScol52[1], mRHScol62[1], mRHScol72[1], mRHScol82[1]};	
+	vector float mRHSrow63 = {mRHScol92[1],mRHScol102[1],mRHScol112[1],mRHScol122[1]};	
+
+	vector float mRHSrow71 = {mRHScol12[2], mRHScol22[2], mRHScol32[2], mRHScol42[2]};	
+	vector float mRHSrow72 = {mRHScol52[2], mRHScol62[2], mRHScol72[2], mRHScol82[2]};	
+	vector float mRHSrow73 = {mRHScol92[2],mRHScol102[2],mRHScol112[2],mRHScol122[2]};	
+
+	vector float mRHSrow81 = {mRHScol12[3], mRHScol22[3], mRHScol32[3], mRHScol42[3]};	
+	vector float mRHSrow82 = {mRHScol52[3], mRHScol62[3], mRHScol72[3], mRHScol82[3]};	
+	vector float mRHSrow83 = {mRHScol92[3],mRHScol102[3],mRHScol112[3],mRHScol122[3]};	
+
+	vector float mRHSrow91 = {mRHScol13[0], mRHScol23[0], mRHScol33[0], mRHScol43[0]};	
+	vector float mRHSrow92 = {mRHScol53[0], mRHScol63[0], mRHScol73[0], mRHScol83[0]};	
+	vector float mRHSrow93 = {mRHScol93[0],mRHScol103[0],mRHScol113[0],mRHScol123[0]};	
+
+	vector float mRHSrow101 = {mRHScol12[1], mRHScol22[1], mRHScol32[1], mRHScol42[1]};	
+	vector float mRHSrow102 = {mRHScol52[1], mRHScol62[1], mRHScol72[1], mRHScol82[1]};	
+	vector float mRHSrow103 = {mRHScol92[1],mRHScol102[1],mRHScol112[1],mRHScol122[1]};	
+
+	vector float mRHSrow111 = {mRHScol12[2], mRHScol22[2], mRHScol32[2], mRHScol42[2]};	
+	vector float mRHSrow112 = {mRHScol52[2], mRHScol62[2], mRHScol72[2], mRHScol82[2]};	
+	vector float mRHSrow113 = {mRHScol92[2],mRHScol102[2],mRHScol112[2],mRHScol122[2]};	
+
+	vector float mRHSrow121 = {mRHScol12[3], mRHScol22[3], mRHScol32[3], mRHScol42[3]};	
+	vector float mRHSrow122 = {mRHScol52[3], mRHScol62[3], mRHScol72[3], mRHScol82[3]};	
+	vector float mRHSrow123 = {mRHScol92[3],mRHScol102[3],mRHScol112[3],mRHScol122[3]};	
+
+
+
+
+	//--------------------------------------------------
+	mLHScol11 = vec_xl(0,mLHS);
+	mLHScol12 = vec_xl(0,mLHS+4);
+	mLHScol13 = vec_xl(0,mLHS+4*2);
+
+	mLHScol21 = vec_xl(0,mLHS+4*3);
+	mLHScol22 = vec_xl(0,mLHS+4*4);
+	mLHScol23 = vec_xl(0,mLHS+4*5);
+
+	mLHScol31 = vec_xl(0,mLHS+4*6);
+	mLHScol32 = vec_xl(0,mLHS+4*7);
+	mLHScol33 = vec_xl(0,mLHS+4*8);
+
+	mLHScol41 = vec_xl(0,mLHS+4*9);
+	mLHScol42 = vec_xl(0,mLHS+4*10);
+	mLHScol43 = vec_xl(0,mLHS+4*11);
+
+	mLHScol51 = vec_xl(0,mLHS+4*12);
+	mLHScol52 = vec_xl(0,mLHS+4*13);
+	mLHScol53 = vec_xl(0,mLHS+4*14);
+
+	mLHScol61 = vec_xl(0,mLHS+4*15);
+	mLHScol62 = vec_xl(0,mLHS+4*16);
+	mLHScol63 = vec_xl(0,mLHS+4*17);
+
+	mLHScol71 = vec_xl(0,mLHS+4*18);
+	mLHScol72 = vec_xl(0,mLHS+4*19);
+	mLHScol73 = vec_xl(0,mLHS+4*20);
+
+	mLHScol81 = vec_xl(0,mLHS+4*21);
+	mLHScol82 = vec_xl(0,mLHS+4*22);
+	mLHScol83 = vec_xl(0,mLHS+4*23);
+
+	mLHScol91 = vec_xl(0,mLHS+4*24);
+	mLHScol92 = vec_xl(0,mLHS+4*25);
+	mLHScol93 = vec_xl(0,mLHS+4*26);
+
+	mLHScol101 = vec_xl(0,mLHS+4*27);
+	mLHScol102 = vec_xl(0,mLHS+4*28);
+	mLHScol103 = vec_xl(0,mLHS+4*29);
+
+	mLHScol111 = vec_xl(0,mLHS+4*30);
+	mLHScol112 = vec_xl(0,mLHS+4*31);
+	mLHScol113 = vec_xl(0,mLHS+4*32);
+
+	mLHScol121 = vec_xl(0,mLHS+4*33);
+	mLHScol122 = vec_xl(0,mLHS+4*34);
+	mLHScol123 = vec_xl(0,mLHS+4*35);
+
+//-------------------------------------------------------------------------
+
+	vector float aux11={mLHScol11[0],mLHScol11[0],mLHScol11[0],mLHScol11[0]};
+	vector float aux12={mLHScol11[1],mLHScol11[1],mLHScol11[1],mLHScol11[1]};
+	vector float aux13={mLHScol11[2],mLHScol11[2],mLHScol11[2],mLHScol11[2]};
+	vector float aux14={mLHScol11[3],mLHScol11[3],mLHScol11[3],mLHScol11[3]};
+
+	vector float aux15={mLHScol12[0],mLHScol12[0],mLHScol12[0],mLHScol12[0]};
+	vector float aux16={mLHScol12[1],mLHScol12[1],mLHScol12[1],mLHScol12[1]};
+	vector float aux17={mLHScol12[2],mLHScol12[2],mLHScol12[2],mLHScol12[2]};
+	vector float aux18={mLHScol12[3],mLHScol12[3],mLHScol12[3],mLHScol12[3]};
+
+	vector float aux19= {mLHScol13[0],mLHScol13[0],mLHScol13[0],mLHScol13[0]};
+	vector float aux110={mLHScol13[1],mLHScol13[1],mLHScol13[1],mLHScol13[1]};
+	vector float aux0111={mLHScol13[2],mLHScol13[2],mLHScol13[2],mLHScol13[2]};
+	vector float aux0112={mLHScol13[3],mLHScol13[3],mLHScol13[3],mLHScol13[3]};
+
+//-------------------------------------------------------------------------
+	vector float aux21= {mLHScol21[0],mLHScol21[0],mLHScol21[0],mLHScol21[0]};
+	vector float aux22= {mLHScol21[1],mLHScol21[1],mLHScol21[1],mLHScol21[1]};
+	vector float aux23= {mLHScol21[2],mLHScol21[2],mLHScol21[2],mLHScol21[2]};
+	vector float aux24= {mLHScol21[3],mLHScol21[3],mLHScol21[3],mLHScol21[3]};
+
+	vector float aux25= {mLHScol22[0],mLHScol22[0],mLHScol22[0],mLHScol22[0]};
+	vector float aux26= {mLHScol22[1],mLHScol22[1],mLHScol22[1],mLHScol22[1]};
+	vector float aux27= {mLHScol22[2],mLHScol22[2],mLHScol22[2],mLHScol22[2]};
+	vector float aux28= {mLHScol22[3],mLHScol22[3],mLHScol22[3],mLHScol22[3]};
+
+	vector float aux29= {mLHScol23[0],mLHScol23[0],mLHScol23[0],mLHScol23[0]};
+	vector float aux210={mLHScol23[1],mLHScol23[1],mLHScol23[1],mLHScol23[1]};
+	vector float aux211={mLHScol23[2],mLHScol23[2],mLHScol23[2],mLHScol23[2]};
+	vector float aux212={mLHScol23[3],mLHScol23[3],mLHScol23[3],mLHScol23[3]};
+
+//-------------------------------------------------------------------------
+	vector float aux31= {mLHScol31[0],mLHScol31[0],mLHScol31[0],mLHScol31[0]};
+	vector float aux32= {mLHScol31[1],mLHScol31[1],mLHScol31[1],mLHScol31[1]};
+	vector float aux33= {mLHScol31[2],mLHScol31[2],mLHScol31[2],mLHScol31[2]};
+	vector float aux34= {mLHScol31[3],mLHScol31[3],mLHScol31[3],mLHScol31[3]};
+
+	vector float aux35= {mLHScol32[0],mLHScol32[0],mLHScol32[0],mLHScol32[0]};
+	vector float aux36= {mLHScol32[1],mLHScol32[1],mLHScol32[1],mLHScol32[1]};
+	vector float aux37= {mLHScol32[2],mLHScol32[2],mLHScol32[2],mLHScol32[2]};
+	vector float aux38= {mLHScol32[3],mLHScol32[3],mLHScol32[3],mLHScol32[3]};
+
+	vector float aux39= {mLHScol33[0],mLHScol33[0],mLHScol33[0],mLHScol33[0]};
+	vector float aux310={mLHScol33[1],mLHScol33[1],mLHScol33[1],mLHScol33[1]};
+	vector float aux311={mLHScol33[2],mLHScol33[2],mLHScol33[2],mLHScol33[2]};
+	vector float aux312={mLHScol33[3],mLHScol33[3],mLHScol33[3],mLHScol33[3]};
+
+//-------------------------------------------------------------------------
+	vector float aux41= {mLHScol41[0],mLHScol41[0],mLHScol41[0],mLHScol41[0]};
+	vector float aux42= {mLHScol41[1],mLHScol41[1],mLHScol41[1],mLHScol41[1]};
+	vector float aux43= {mLHScol41[2],mLHScol41[2],mLHScol41[2],mLHScol41[2]};
+	vector float aux44= {mLHScol41[3],mLHScol41[3],mLHScol41[3],mLHScol41[3]};
+
+	vector float aux45= {mLHScol42[0],mLHScol42[0],mLHScol42[0],mLHScol42[0]};
+	vector float aux46= {mLHScol42[1],mLHScol42[1],mLHScol42[1],mLHScol42[1]};
+	vector float aux47= {mLHScol42[2],mLHScol42[2],mLHScol42[2],mLHScol42[2]};
+	vector float aux48= {mLHScol42[3],mLHScol42[3],mLHScol42[3],mLHScol42[3]};
+
+	vector float aux49= {mLHScol43[0],mLHScol43[0],mLHScol43[0],mLHScol43[0]};
+	vector float aux410={mLHScol43[1],mLHScol43[1],mLHScol43[1],mLHScol43[1]};
+	vector float aux411={mLHScol43[2],mLHScol43[2],mLHScol43[2],mLHScol43[2]};
+	vector float aux412={mLHScol43[3],mLHScol43[3],mLHScol43[3],mLHScol43[3]};
+
+//-------------------------------------------------------------------------
+	vector float aux51= {mLHScol51[0],mLHScol51[0],mLHScol51[0],mLHScol51[0]};
+	vector float aux52= {mLHScol51[1],mLHScol51[1],mLHScol51[1],mLHScol51[1]};
+	vector float aux53= {mLHScol51[2],mLHScol51[2],mLHScol51[2],mLHScol51[2]};
+	vector float aux54= {mLHScol51[3],mLHScol51[3],mLHScol51[3],mLHScol51[3]};
+
+	vector float aux55= {mLHScol52[0],mLHScol52[0],mLHScol52[0],mLHScol52[0]};
+	vector float aux56= {mLHScol52[1],mLHScol52[1],mLHScol52[1],mLHScol52[1]};
+	vector float aux57= {mLHScol52[2],mLHScol52[2],mLHScol52[2],mLHScol52[2]};
+	vector float aux58= {mLHScol52[3],mLHScol52[3],mLHScol52[3],mLHScol52[3]};
+
+	vector float aux59= {mLHScol53[0],mLHScol53[0],mLHScol53[0],mLHScol53[0]};
+	vector float aux510={mLHScol53[1],mLHScol53[1],mLHScol53[1],mLHScol53[1]};
+	vector float aux511={mLHScol53[2],mLHScol53[2],mLHScol53[2],mLHScol53[2]};
+	vector float aux512={mLHScol53[3],mLHScol53[3],mLHScol53[3],mLHScol53[3]};
+//-------------------------------------------------------------------------
+	vector float aux61= {mLHScol61[0],mLHScol61[0],mLHScol61[0],mLHScol61[0]};
+	vector float aux62= {mLHScol61[1],mLHScol61[1],mLHScol61[1],mLHScol61[1]};
+	vector float aux63= {mLHScol61[2],mLHScol61[2],mLHScol61[2],mLHScol61[2]};
+	vector float aux64= {mLHScol61[3],mLHScol61[3],mLHScol61[3],mLHScol61[3]};
+
+	vector float aux65= {mLHScol62[0],mLHScol62[0],mLHScol62[0],mLHScol62[0]};
+	vector float aux66= {mLHScol62[1],mLHScol62[1],mLHScol62[1],mLHScol62[1]};
+	vector float aux67= {mLHScol62[2],mLHScol62[2],mLHScol62[2],mLHScol62[2]};
+	vector float aux68= {mLHScol62[3],mLHScol62[3],mLHScol62[3],mLHScol62[3]};
+
+	vector float aux69= {mLHScol63[0],mLHScol63[0],mLHScol63[0],mLHScol63[0]};
+	vector float aux610={mLHScol63[1],mLHScol63[1],mLHScol63[1],mLHScol63[1]};
+	vector float aux611={mLHScol63[2],mLHScol63[2],mLHScol63[2],mLHScol63[2]};
+	vector float aux612={mLHScol63[3],mLHScol63[3],mLHScol63[3],mLHScol63[3]};
+//-------------------------------------------------------------------------
+	vector float aux71= {mLHScol71[0],mLHScol71[0],mLHScol71[0],mLHScol71[0]};
+	vector float aux72= {mLHScol71[1],mLHScol71[1],mLHScol71[1],mLHScol71[1]};
+	vector float aux73= {mLHScol71[2],mLHScol71[2],mLHScol71[2],mLHScol71[2]};
+	vector float aux74= {mLHScol71[3],mLHScol71[3],mLHScol71[3],mLHScol71[3]};
+
+	vector float aux75= {mLHScol72[0],mLHScol72[0],mLHScol72[0],mLHScol72[0]};
+	vector float aux76= {mLHScol72[1],mLHScol72[1],mLHScol72[1],mLHScol72[1]};
+	vector float aux77= {mLHScol72[2],mLHScol72[2],mLHScol72[2],mLHScol72[2]};
+	vector float aux78= {mLHScol72[3],mLHScol72[3],mLHScol72[3],mLHScol72[3]};
+
+	vector float aux79= {mLHScol73[0],mLHScol73[0],mLHScol73[0],mLHScol73[0]};
+	vector float aux710={mLHScol73[1],mLHScol73[1],mLHScol73[1],mLHScol73[1]};
+	vector float aux711={mLHScol73[2],mLHScol73[2],mLHScol73[2],mLHScol73[2]};
+	vector float aux712={mLHScol73[3],mLHScol73[3],mLHScol73[3],mLHScol73[3]};
+//-------------------------------------------------------------------------
+	vector float aux81= {mLHScol81[0],mLHScol81[0],mLHScol81[0],mLHScol81[0]};
+	vector float aux82= {mLHScol81[1],mLHScol81[1],mLHScol81[1],mLHScol81[1]};
+	vector float aux83= {mLHScol81[2],mLHScol81[2],mLHScol81[2],mLHScol81[2]};
+	vector float aux84= {mLHScol81[3],mLHScol81[3],mLHScol81[3],mLHScol81[3]};
+
+	vector float aux85= {mLHScol82[0],mLHScol82[0],mLHScol82[0],mLHScol82[0]};
+	vector float aux86= {mLHScol82[1],mLHScol82[1],mLHScol82[1],mLHScol82[1]};
+	vector float aux87= {mLHScol82[2],mLHScol82[2],mLHScol82[2],mLHScol82[2]};
+	vector float aux88= {mLHScol82[3],mLHScol82[3],mLHScol82[3],mLHScol82[3]};
+
+	vector float aux89= {mLHScol83[0],mLHScol83[0],mLHScol83[0],mLHScol83[0]};
+	vector float aux810={mLHScol83[1],mLHScol83[1],mLHScol83[1],mLHScol83[1]};
+	vector float aux811={mLHScol83[2],mLHScol83[2],mLHScol83[2],mLHScol83[2]};
+	vector float aux812={mLHScol83[3],mLHScol83[3],mLHScol83[3],mLHScol83[3]};
+//-------------------------------------------------------------------------
+	vector float aux91= {mLHScol91[0],mLHScol91[0],mLHScol91[0],mLHScol91[0]};
+	vector float aux92= {mLHScol91[1],mLHScol91[1],mLHScol91[1],mLHScol91[1]};
+	vector float aux93= {mLHScol91[2],mLHScol91[2],mLHScol91[2],mLHScol91[2]};
+	vector float aux94= {mLHScol91[3],mLHScol91[3],mLHScol91[3],mLHScol91[3]};
+
+	vector float aux95= {mLHScol92[0],mLHScol92[0],mLHScol92[0],mLHScol92[0]};
+	vector float aux96= {mLHScol92[1],mLHScol92[1],mLHScol92[1],mLHScol92[1]};
+	vector float aux97= {mLHScol92[2],mLHScol92[2],mLHScol92[2],mLHScol92[2]};
+	vector float aux98= {mLHScol92[3],mLHScol92[3],mLHScol92[3],mLHScol92[3]};
+
+	vector float aux99= {mLHScol93[0],mLHScol93[0],mLHScol93[0],mLHScol93[0]};
+	vector float aux910={mLHScol93[1],mLHScol93[1],mLHScol93[1],mLHScol93[1]};
+	vector float aux911={mLHScol93[2],mLHScol93[2],mLHScol93[2],mLHScol93[2]};
+	vector float aux912={mLHScol93[3],mLHScol93[3],mLHScol93[3],mLHScol93[3]};
+//-------------------------------------------------------------------------
+	vector float aux101= {mLHScol101[0],mLHScol101[0],mLHScol101[0],mLHScol101[0]};
+	vector float aux102= {mLHScol101[1],mLHScol101[1],mLHScol101[1],mLHScol101[1]};
+	vector float aux103= {mLHScol101[2],mLHScol101[2],mLHScol101[2],mLHScol101[2]};
+	vector float aux104= {mLHScol101[3],mLHScol101[3],mLHScol101[3],mLHScol101[3]};
+
+	vector float aux105= {mLHScol102[0],mLHScol102[0],mLHScol102[0],mLHScol102[0]};
+	vector float aux106= {mLHScol102[1],mLHScol102[1],mLHScol102[1],mLHScol102[1]};
+	vector float aux107= {mLHScol102[2],mLHScol102[2],mLHScol102[2],mLHScol102[2]};
+	vector float aux108= {mLHScol102[3],mLHScol102[3],mLHScol102[3],mLHScol102[3]};
+
+	vector float aux109= {mLHScol103[0],mLHScol103[0],mLHScol103[0],mLHScol103[0]};
+	vector float aux1010={mLHScol103[1],mLHScol103[1],mLHScol103[1],mLHScol103[1]};
+	vector float aux1011={mLHScol103[2],mLHScol103[2],mLHScol103[2],mLHScol103[2]};
+	vector float aux1012={mLHScol103[3],mLHScol103[3],mLHScol103[3],mLHScol103[3]};
+//-------------------------------------------------------------------------
+	vector float aux111= {mLHScol111[0],mLHScol111[0],mLHScol111[0],mLHScol111[0]};
+	vector float aux112= {mLHScol111[1],mLHScol111[1],mLHScol111[1],mLHScol111[1]};
+	vector float aux113= {mLHScol111[2],mLHScol111[2],mLHScol111[2],mLHScol111[2]};
+	vector float aux114= {mLHScol111[3],mLHScol111[3],mLHScol111[3],mLHScol111[3]};
+
+	vector float aux115= {mLHScol112[0],mLHScol112[0],mLHScol112[0],mLHScol112[0]};
+	vector float aux116= {mLHScol112[1],mLHScol112[1],mLHScol112[1],mLHScol112[1]};
+	vector float aux117= {mLHScol112[2],mLHScol112[2],mLHScol112[2],mLHScol112[2]};
+	vector float aux118= {mLHScol112[3],mLHScol112[3],mLHScol112[3],mLHScol112[3]};
+
+	vector float aux119= {mLHScol113[0],mLHScol113[0],mLHScol113[0],mLHScol113[0]};
+	vector float aux1110={mLHScol113[1],mLHScol113[1],mLHScol113[1],mLHScol113[1]};
+	vector float aux1111={mLHScol113[2],mLHScol113[2],mLHScol113[2],mLHScol113[2]};
+	vector float aux1112={mLHScol113[3],mLHScol113[3],mLHScol113[3],mLHScol113[3]};
+//-------------------------------------------------------------------------
+	vector float aux121= {mLHScol121[0],mLHScol121[0],mLHScol121[0],mLHScol121[0]};
+	vector float aux122= {mLHScol121[1],mLHScol121[1],mLHScol121[1],mLHScol121[1]};
+	vector float aux123= {mLHScol121[2],mLHScol121[2],mLHScol121[2],mLHScol121[2]};
+	vector float aux124= {mLHScol121[3],mLHScol121[3],mLHScol121[3],mLHScol121[3]};
+
+	vector float aux125= {mLHScol122[0],mLHScol122[0],mLHScol122[0],mLHScol122[0]};
+	vector float aux126= {mLHScol122[1],mLHScol122[1],mLHScol122[1],mLHScol122[1]};
+	vector float aux127= {mLHScol122[2],mLHScol122[2],mLHScol122[2],mLHScol122[2]};
+	vector float aux128= {mLHScol122[3],mLHScol122[3],mLHScol122[3],mLHScol122[3]};
+
+	vector float aux129= {mLHScol123[0],mLHScol123[0],mLHScol123[0],mLHScol123[0]};
+	vector float aux1210={mLHScol123[1],mLHScol123[1],mLHScol123[1],mLHScol123[1]};
+	vector float aux1211={mLHScol123[2],mLHScol123[2],mLHScol123[2],mLHScol123[2]};
+	vector float aux1212={mLHScol123[3],mLHScol123[3],mLHScol123[3],mLHScol123[3]};
+//-------------------------------------------------------------------------
+//-------------------------------------------------------------------------
+//-------------------------------------------------------------------------
+//-------------------------------------------------------------------------
+		//row 1 of result
+	vec_xst(vec_madd(aux121, mRHSrow121, vec_madd(aux111, mRHSrow111, vec_madd(aux101, mRHSrow101, vec_madd(aux91, mRHSrow91, vec_madd(aux81, mRHSrow81, vec_madd(aux71, mRHSrow71, vec_madd(aux61, mRHSrow61, vec_madd(aux51, mRHSrow51, vec_madd(aux41, mRHSrow41, vec_madd(aux31, mRHSrow31, vec_madd(aux21, mRHSrow21, vec_mul(aux11, mRHSrow11)))))))))))), 0, mResult);
+	vec_xst(vec_madd(aux121, mRHSrow122, vec_madd(aux111, mRHSrow112, vec_madd(aux101, mRHSrow102, vec_madd(aux91, mRHSrow92, vec_madd(aux81, mRHSrow82, vec_madd(aux71, mRHSrow72, vec_madd(aux61, mRHSrow62, vec_madd(aux51, mRHSrow52, vec_madd(aux41, mRHSrow42, vec_madd(aux31, mRHSrow32, vec_madd(aux21, mRHSrow22, vec_mul(aux11, mRHSrow12)))))))))))), 0, mResult + 4);
+	vec_xst(vec_madd(aux121, mRHSrow123, vec_madd(aux111, mRHSrow113, vec_madd(aux101, mRHSrow103, vec_madd(aux91, mRHSrow93, vec_madd(aux81, mRHSrow83, vec_madd(aux71, mRHSrow73, vec_madd(aux61, mRHSrow63, vec_madd(aux51, mRHSrow53, vec_madd(aux41, mRHSrow43, vec_madd(aux31, mRHSrow33, vec_madd(aux21, mRHSrow23, vec_mul(aux11, mRHSrow13)))))))))))), 0, mResult + 4*2);
+
+	//row 2 of result
+	vec_xst(vec_madd(aux122, mRHSrow121, vec_madd(aux112, mRHSrow111, vec_madd(aux102, mRHSrow101, vec_madd(aux92, mRHSrow91, vec_madd(aux82, mRHSrow81, vec_madd(aux72, mRHSrow71, vec_madd(aux62, mRHSrow61, vec_madd(aux52, mRHSrow51, vec_madd(aux42, mRHSrow41, vec_madd(aux32, mRHSrow31, vec_madd(aux22, mRHSrow21, vec_mul(aux12, mRHSrow11)))))))))))), 0, mResult + 4*3);
+	vec_xst(vec_madd(aux122, mRHSrow122, vec_madd(aux112, mRHSrow112, vec_madd(aux102, mRHSrow102, vec_madd(aux92, mRHSrow92, vec_madd(aux82, mRHSrow82, vec_madd(aux72, mRHSrow72, vec_madd(aux62, mRHSrow62, vec_madd(aux52, mRHSrow52, vec_madd(aux42, mRHSrow42, vec_madd(aux32, mRHSrow32, vec_madd(aux22, mRHSrow22, vec_mul(aux12, mRHSrow12)))))))))))), 0, mResult + 4*4);
+	vec_xst(vec_madd(aux122, mRHSrow123, vec_madd(aux112, mRHSrow113, vec_madd(aux102, mRHSrow103, vec_madd(aux92, mRHSrow93, vec_madd(aux82, mRHSrow83, vec_madd(aux72, mRHSrow73, vec_madd(aux62, mRHSrow63, vec_madd(aux52, mRHSrow53, vec_madd(aux42, mRHSrow43, vec_madd(aux32, mRHSrow33, vec_madd(aux22, mRHSrow23, vec_mul(aux12, mRHSrow13)))))))))))), 0, mResult + 4*5);
+
+	// row 3 of mResult
+
+	vec_xst(vec_madd(aux123, mRHSrow121, vec_madd(aux113, mRHSrow111, vec_madd(aux103, mRHSrow101, vec_madd(aux93, mRHSrow91, vec_madd(aux83, mRHSrow81, vec_madd(aux73, mRHSrow71, vec_madd(aux63, mRHSrow61, vec_madd(aux53, mRHSrow51, vec_madd(aux43, mRHSrow41, vec_madd(aux33, mRHSrow31, vec_madd(aux23, mRHSrow21, vec_mul(aux13, mRHSrow11)))))))))))), 0, mResult + 4*6);
+	vec_xst(vec_madd(aux123, mRHSrow122, vec_madd(aux113, mRHSrow112, vec_madd(aux103, mRHSrow102, vec_madd(aux93, mRHSrow92, vec_madd(aux83, mRHSrow82, vec_madd(aux73, mRHSrow72, vec_madd(aux63, mRHSrow62, vec_madd(aux53, mRHSrow52, vec_madd(aux43, mRHSrow42, vec_madd(aux33, mRHSrow32, vec_madd(aux23, mRHSrow22, vec_mul(aux13, mRHSrow12)))))))))))), 0, mResult + 4*7);
+	vec_xst(vec_madd(aux123, mRHSrow123, vec_madd(aux113, mRHSrow113, vec_madd(aux103, mRHSrow103, vec_madd(aux93, mRHSrow93, vec_madd(aux83, mRHSrow83, vec_madd(aux73, mRHSrow73, vec_madd(aux63, mRHSrow63, vec_madd(aux53, mRHSrow53, vec_madd(aux43, mRHSrow43, vec_madd(aux33, mRHSrow33, vec_madd(aux23, mRHSrow23, vec_mul(aux13, mRHSrow13)))))))))))), 0, mResult + 4*8);
+	
+	// row 4 of mResult
+	vec_xst(vec_madd(aux124, mRHSrow121, vec_madd(aux114, mRHSrow111, vec_madd(aux104, mRHSrow101, vec_madd(aux94, mRHSrow91, vec_madd(aux84, mRHSrow81, vec_madd(aux74, mRHSrow71, vec_madd(aux64, mRHSrow61, vec_madd(aux54, mRHSrow51, vec_madd(aux44, mRHSrow41, vec_madd(aux34, mRHSrow31, vec_madd(aux24, mRHSrow21, vec_mul(aux14, mRHSrow11)))))))))))), 0, mResult + 4*9);
+	vec_xst(vec_madd(aux124, mRHSrow122, vec_madd(aux114, mRHSrow112, vec_madd(aux104, mRHSrow102, vec_madd(aux94, mRHSrow92, vec_madd(aux84, mRHSrow82, vec_madd(aux74, mRHSrow72, vec_madd(aux64, mRHSrow62, vec_madd(aux54, mRHSrow52, vec_madd(aux44, mRHSrow42, vec_madd(aux34, mRHSrow32, vec_madd(aux24, mRHSrow22, vec_mul(aux14, mRHSrow12)))))))))))), 0, mResult + 4*10);
+	vec_xst(vec_madd(aux124, mRHSrow123, vec_madd(aux114, mRHSrow113, vec_madd(aux104, mRHSrow103, vec_madd(aux94, mRHSrow93, vec_madd(aux84, mRHSrow83, vec_madd(aux74, mRHSrow73, vec_madd(aux64, mRHSrow63, vec_madd(aux54, mRHSrow53, vec_madd(aux44, mRHSrow43, vec_madd(aux34, mRHSrow33, vec_madd(aux24, mRHSrow23, vec_mul(aux14, mRHSrow13)))))))))))), 0, mResult + 4*11);
+	
+	// row 5 of mResult
+	vec_xst(vec_madd(aux125, mRHSrow121, vec_madd(aux115, mRHSrow111, vec_madd(aux105, mRHSrow101, vec_madd(aux95, mRHSrow91, vec_madd(aux85, mRHSrow81, vec_madd(aux75, mRHSrow71, vec_madd(aux65, mRHSrow61, vec_madd(aux55, mRHSrow51, vec_madd(aux45, mRHSrow41, vec_madd(aux35, mRHSrow31, vec_madd(aux25, mRHSrow21, vec_mul(aux15, mRHSrow11)))))))))))), 0, mResult + 4*12);
+	vec_xst(vec_madd(aux125, mRHSrow122, vec_madd(aux115, mRHSrow112, vec_madd(aux105, mRHSrow102, vec_madd(aux95, mRHSrow92, vec_madd(aux85, mRHSrow82, vec_madd(aux75, mRHSrow72, vec_madd(aux65, mRHSrow62, vec_madd(aux55, mRHSrow52, vec_madd(aux45, mRHSrow42, vec_madd(aux35, mRHSrow32, vec_madd(aux25, mRHSrow22, vec_mul(aux15, mRHSrow12)))))))))))), 0, mResult + 4*13);
+	vec_xst(vec_madd(aux125, mRHSrow123, vec_madd(aux115, mRHSrow113, vec_madd(aux105, mRHSrow103, vec_madd(aux95, mRHSrow93, vec_madd(aux85, mRHSrow83, vec_madd(aux75, mRHSrow73, vec_madd(aux65, mRHSrow63, vec_madd(aux55, mRHSrow53, vec_madd(aux45, mRHSrow43, vec_madd(aux35, mRHSrow33, vec_madd(aux25, mRHSrow23, vec_mul(aux15, mRHSrow13)))))))))))), 0, mResult + 4*14);
+	
+	// row 6 of mResult
+	vec_xst(vec_madd(aux126, mRHSrow121, vec_madd(aux116, mRHSrow111, vec_madd(aux106, mRHSrow101, vec_madd(aux96, mRHSrow91, vec_madd(aux86, mRHSrow81, vec_madd(aux76, mRHSrow71, vec_madd(aux66, mRHSrow61, vec_madd(aux56, mRHSrow51, vec_madd(aux46, mRHSrow41, vec_madd(aux36, mRHSrow31, vec_madd(aux26, mRHSrow21, vec_mul(aux16, mRHSrow11)))))))))))), 0, mResult + 4*15);
+	vec_xst(vec_madd(aux126, mRHSrow122, vec_madd(aux116, mRHSrow112, vec_madd(aux106, mRHSrow102, vec_madd(aux96, mRHSrow92, vec_madd(aux86, mRHSrow82, vec_madd(aux76, mRHSrow72, vec_madd(aux66, mRHSrow62, vec_madd(aux56, mRHSrow52, vec_madd(aux46, mRHSrow42, vec_madd(aux36, mRHSrow32, vec_madd(aux26, mRHSrow22, vec_mul(aux16, mRHSrow12)))))))))))), 0, mResult + 4*16);
+	vec_xst(vec_madd(aux126, mRHSrow123, vec_madd(aux116, mRHSrow113, vec_madd(aux106, mRHSrow103, vec_madd(aux96, mRHSrow93, vec_madd(aux86, mRHSrow83, vec_madd(aux76, mRHSrow73, vec_madd(aux66, mRHSrow63, vec_madd(aux56, mRHSrow53, vec_madd(aux46, mRHSrow43, vec_madd(aux36, mRHSrow33, vec_madd(aux26, mRHSrow23, vec_mul(aux16, mRHSrow13)))))))))))), 0, mResult + 4*17);
+	
+	// row 7 of mResult
+	vec_xst(vec_madd(aux127, mRHSrow121, vec_madd(aux117, mRHSrow111, vec_madd(aux107, mRHSrow101, vec_madd(aux97, mRHSrow91, vec_madd(aux87, mRHSrow81, vec_madd(aux77, mRHSrow71, vec_madd(aux67, mRHSrow61, vec_madd(aux57, mRHSrow51, vec_madd(aux47, mRHSrow41, vec_madd(aux37, mRHSrow31, vec_madd(aux27, mRHSrow21, vec_mul(aux17, mRHSrow11)))))))))))), 0, mResult + 4*18);
+	vec_xst(vec_madd(aux127, mRHSrow122, vec_madd(aux117, mRHSrow112, vec_madd(aux107, mRHSrow102, vec_madd(aux97, mRHSrow92, vec_madd(aux87, mRHSrow82, vec_madd(aux77, mRHSrow72, vec_madd(aux67, mRHSrow62, vec_madd(aux57, mRHSrow52, vec_madd(aux47, mRHSrow42, vec_madd(aux37, mRHSrow32, vec_madd(aux27, mRHSrow22, vec_mul(aux17, mRHSrow12)))))))))))), 0, mResult + 4*19);
+	vec_xst(vec_madd(aux127, mRHSrow123, vec_madd(aux117, mRHSrow113, vec_madd(aux107, mRHSrow103, vec_madd(aux97, mRHSrow93, vec_madd(aux87, mRHSrow83, vec_madd(aux77, mRHSrow73, vec_madd(aux67, mRHSrow63, vec_madd(aux57, mRHSrow53, vec_madd(aux47, mRHSrow43, vec_madd(aux37, mRHSrow33, vec_madd(aux27, mRHSrow23, vec_mul(aux17, mRHSrow13)))))))))))), 0, mResult + 4*20);
+	
+	// row 8 of mResult
+	vec_xst(vec_madd(aux128, mRHSrow121, vec_madd(aux118, mRHSrow111, vec_madd(aux108, mRHSrow101, vec_madd(aux98, mRHSrow91, vec_madd(aux88, mRHSrow81, vec_madd(aux78, mRHSrow71, vec_madd(aux68, mRHSrow61, vec_madd(aux58, mRHSrow51, vec_madd(aux48, mRHSrow41, vec_madd(aux38, mRHSrow31, vec_madd(aux28, mRHSrow21, vec_mul(aux18, mRHSrow11)))))))))))), 0, mResult + 4*21);
+	vec_xst(vec_madd(aux128, mRHSrow122, vec_madd(aux118, mRHSrow112, vec_madd(aux108, mRHSrow102, vec_madd(aux98, mRHSrow92, vec_madd(aux88, mRHSrow82, vec_madd(aux78, mRHSrow72, vec_madd(aux68, mRHSrow62, vec_madd(aux58, mRHSrow52, vec_madd(aux48, mRHSrow42, vec_madd(aux38, mRHSrow32, vec_madd(aux28, mRHSrow22, vec_mul(aux18, mRHSrow12)))))))))))), 0, mResult + 4*22);
+	vec_xst(vec_madd(aux128, mRHSrow123, vec_madd(aux118, mRHSrow113, vec_madd(aux108, mRHSrow103, vec_madd(aux98, mRHSrow93, vec_madd(aux88, mRHSrow83, vec_madd(aux78, mRHSrow73, vec_madd(aux68, mRHSrow63, vec_madd(aux58, mRHSrow53, vec_madd(aux48, mRHSrow43, vec_madd(aux38, mRHSrow33, vec_madd(aux28, mRHSrow23, vec_mul(aux18, mRHSrow13)))))))))))), 0, mResult + 4*23);
+	
+	// row 9 of mResult
+	vec_xst(vec_madd(aux129, mRHSrow121, vec_madd(aux119, mRHSrow111, vec_madd(aux109, mRHSrow101, vec_madd(aux99, mRHSrow91, vec_madd(aux89, mRHSrow81, vec_madd(aux79, mRHSrow71, vec_madd(aux69, mRHSrow61, vec_madd(aux59, mRHSrow51, vec_madd(aux49, mRHSrow41, vec_madd(aux39, mRHSrow31, vec_madd(aux29, mRHSrow21, vec_mul(aux19, mRHSrow11)))))))))))), 0, mResult + 4*24);
+	vec_xst(vec_madd(aux129, mRHSrow122, vec_madd(aux119, mRHSrow112, vec_madd(aux109, mRHSrow102, vec_madd(aux99, mRHSrow92, vec_madd(aux89, mRHSrow82, vec_madd(aux79, mRHSrow72, vec_madd(aux69, mRHSrow62, vec_madd(aux59, mRHSrow52, vec_madd(aux49, mRHSrow42, vec_madd(aux39, mRHSrow32, vec_madd(aux29, mRHSrow22, vec_mul(aux19, mRHSrow12)))))))))))), 0, mResult + 4*25);
+	vec_xst(vec_madd(aux129, mRHSrow123, vec_madd(aux119, mRHSrow113, vec_madd(aux109, mRHSrow103, vec_madd(aux99, mRHSrow93, vec_madd(aux89, mRHSrow83, vec_madd(aux79, mRHSrow73, vec_madd(aux69, mRHSrow63, vec_madd(aux59, mRHSrow53, vec_madd(aux49, mRHSrow43, vec_madd(aux39, mRHSrow33, vec_madd(aux29, mRHSrow23, vec_mul(aux19, mRHSrow13)))))))))))), 0, mResult + 4*26);
+	
+	// row 10 of mResult
+	vec_xst(vec_madd(aux1210, mRHSrow121, vec_madd(aux1110, mRHSrow111, vec_madd(aux1010, mRHSrow101, vec_madd(aux910, mRHSrow91, vec_madd(aux810, mRHSrow81, vec_madd(aux710, mRHSrow71, vec_madd(aux610, mRHSrow61, vec_madd(aux510, mRHSrow51, vec_madd(aux410, mRHSrow41, vec_madd(aux310, mRHSrow31, vec_madd(aux210, mRHSrow21, vec_mul(aux110, mRHSrow11)))))))))))), 0, mResult + 4*27);
+	vec_xst(vec_madd(aux1210, mRHSrow122, vec_madd(aux1110, mRHSrow112, vec_madd(aux1010, mRHSrow102, vec_madd(aux910, mRHSrow92, vec_madd(aux810, mRHSrow82, vec_madd(aux710, mRHSrow72, vec_madd(aux610, mRHSrow62, vec_madd(aux510, mRHSrow52, vec_madd(aux410, mRHSrow42, vec_madd(aux310, mRHSrow32, vec_madd(aux210, mRHSrow22, vec_mul(aux110, mRHSrow12)))))))))))), 0, mResult + 4*28);
+	vec_xst(vec_madd(aux1210, mRHSrow123, vec_madd(aux1110, mRHSrow113, vec_madd(aux1010, mRHSrow103, vec_madd(aux910, mRHSrow93, vec_madd(aux810, mRHSrow83, vec_madd(aux710, mRHSrow73, vec_madd(aux610, mRHSrow63, vec_madd(aux510, mRHSrow53, vec_madd(aux410, mRHSrow43, vec_madd(aux310, mRHSrow33, vec_madd(aux210, mRHSrow23, vec_mul(aux110, mRHSrow13)))))))))))), 0, mResult + 4*29);
+	
+
+	// row 11 of mResult
+	vec_xst(vec_madd(aux1211, mRHSrow121, vec_madd(aux1111, mRHSrow111, vec_madd(aux1011, mRHSrow101, vec_madd(aux911, mRHSrow91, vec_madd(aux811, mRHSrow81, vec_madd(aux711, mRHSrow71, vec_madd(aux611, mRHSrow61, vec_madd(aux511, mRHSrow51, vec_madd(aux411, mRHSrow41, vec_madd(aux311, mRHSrow31, vec_madd(aux211, mRHSrow21, vec_mul(aux0111, mRHSrow11)))))))))))), 0, mResult + 4*30);
+	vec_xst(vec_madd(aux1211, mRHSrow122, vec_madd(aux1111, mRHSrow112, vec_madd(aux1011, mRHSrow102, vec_madd(aux911, mRHSrow92, vec_madd(aux811, mRHSrow82, vec_madd(aux711, mRHSrow72, vec_madd(aux611, mRHSrow62, vec_madd(aux511, mRHSrow52, vec_madd(aux411, mRHSrow42, vec_madd(aux311, mRHSrow32, vec_madd(aux211, mRHSrow22, vec_mul(aux0111, mRHSrow12)))))))))))), 0, mResult + 4*31);
+	vec_xst(vec_madd(aux1211, mRHSrow123, vec_madd(aux1111, mRHSrow113, vec_madd(aux1011, mRHSrow103, vec_madd(aux911, mRHSrow93, vec_madd(aux811, mRHSrow83, vec_madd(aux711, mRHSrow73, vec_madd(aux611, mRHSrow63, vec_madd(aux511, mRHSrow53, vec_madd(aux411, mRHSrow43, vec_madd(aux311, mRHSrow33, vec_madd(aux211, mRHSrow23, vec_mul(aux0111, mRHSrow13)))))))))))), 0, mResult + 4*32);
+	
+	// row 12 of mResult
+	vec_xst(vec_madd(aux1212, mRHSrow121, vec_madd(aux1112, mRHSrow111, vec_madd(aux1012, mRHSrow101, vec_madd(aux912, mRHSrow91, vec_madd(aux812, mRHSrow81, vec_madd(aux712, mRHSrow71, vec_madd(aux612, mRHSrow61, vec_madd(aux512, mRHSrow51, vec_madd(aux412, mRHSrow41, vec_madd(aux312, mRHSrow31, vec_madd(aux212, mRHSrow21, vec_mul(aux0112, mRHSrow11)))))))))))), 0, mResult + 4*33);
+	vec_xst(vec_madd(aux1212, mRHSrow122, vec_madd(aux1112, mRHSrow112, vec_madd(aux1012, mRHSrow102, vec_madd(aux912, mRHSrow92, vec_madd(aux812, mRHSrow82, vec_madd(aux712, mRHSrow72, vec_madd(aux612, mRHSrow62, vec_madd(aux512, mRHSrow52, vec_madd(aux412, mRHSrow42, vec_madd(aux312, mRHSrow32, vec_madd(aux212, mRHSrow22, vec_mul(aux0112, mRHSrow12)))))))))))), 0, mResult + 4*34);
+	vec_xst(vec_madd(aux1212, mRHSrow123, vec_madd(aux1112, mRHSrow113, vec_madd(aux1012, mRHSrow103, vec_madd(aux912, mRHSrow93, vec_madd(aux812, mRHSrow83, vec_madd(aux712, mRHSrow73, vec_madd(aux612, mRHSrow63, vec_madd(aux512, mRHSrow53, vec_madd(aux412, mRHSrow43, vec_madd(aux312, mRHSrow33, vec_madd(aux212, mRHSrow23, vec_mul(aux0112, mRHSrow13)))))))))))), 0, mResult + 4*35);
+	
+
+}
+//row x col
+
+inline void mul4x4RowColFloat(const float* mLHS, const float* mRHS, float* const mResult){
+	
+	vector float mLHSrow1,mLHSrow2,mLHSrow3,mLHSrow4;
+	vector float mRHScol1,mRHScol2,mRHScol3,mRHScol4;
+
+
+	//====================================================
+	
+	mRHScol1 = vec_xl(0,mRHS);
+	mRHScol2 = vec_xl(0,mRHS+4);
+	mRHScol3 = vec_xl(0,mRHS+4*2);
+	mRHScol4 = vec_xl(0,mRHS+4*3);
+
+	mLHSrow1 = vec_xl(0,mLHS);
+	mLHSrow2 = vec_xl(0,mLHS+4);
+	mLHSrow3 = vec_xl(0,mLHS+4*2);
+	mLHSrow4 = vec_xl(0,mLHS+4*3);
+
+	//transpose RHS
+	vector float mRHSrow1 = {mRHScol1[0],mRHScol2[0],mRHScol3[0],mRHScol4[0]};
+	vector float mRHSrow2 = {mRHScol1[1],mRHScol2[1],mRHScol3[1],mRHScol4[1]};
+	vector float mRHSrow3 = {mRHScol1[2],mRHScol2[2],mRHScol3[2],mRHScol4[2]};
+	vector float mRHSrow4 = {mRHScol1[3],mRHScol2[3],mRHScol3[3],mRHScol4[3]};
+
+
+	//splat==============================================
+	
+	vector float auxLHS11 = {mLHSrow1[0],mLHSrow1[0],mLHSrow1[0],mLHSrow1[0]};
+	vector float auxLHS12 = {mLHSrow2[0],mLHSrow2[0],mLHSrow2[0],mLHSrow2[0]};
+	vector float auxLHS13 = {mLHSrow3[0],mLHSrow3[0],mLHSrow3[0],mLHSrow3[0]};
+	vector float auxLHS14 = {mLHSrow4[0],mLHSrow4[0],mLHSrow4[0],mLHSrow4[0]};
+	
+	vector float auxLHS21 = {mLHSrow1[1],mLHSrow1[1],mLHSrow1[1],mLHSrow1[1]};
+	vector float auxLHS22 = {mLHSrow2[1],mLHSrow2[1],mLHSrow2[1],mLHSrow2[1]};
+	vector float auxLHS23 = {mLHSrow3[1],mLHSrow3[1],mLHSrow3[1],mLHSrow3[1]};
+	vector float auxLHS24 = {mLHSrow4[1],mLHSrow4[1],mLHSrow4[1],mLHSrow4[1]};
+	
+	vector float auxLHS31 = {mLHSrow1[2],mLHSrow1[2],mLHSrow1[2],mLHSrow1[2]};
+	vector float auxLHS32 = {mLHSrow2[2],mLHSrow2[2],mLHSrow2[2],mLHSrow2[2]};
+	vector float auxLHS33 = {mLHSrow3[2],mLHSrow3[2],mLHSrow3[2],mLHSrow3[2]};
+	vector float auxLHS34 = {mLHSrow4[2],mLHSrow4[2],mLHSrow4[2],mLHSrow4[2]};
+	
+	vector float auxLHS41 = {mLHSrow1[3],mLHSrow1[3],mLHSrow1[3],mLHSrow1[3]};
+	vector float auxLHS42 = {mLHSrow2[3],mLHSrow2[3],mLHSrow2[3],mLHSrow2[3]};
+	vector float auxLHS43 = {mLHSrow3[3],mLHSrow3[3],mLHSrow3[3],mLHSrow3[3]};
+	vector float auxLHS44 = {mLHSrow4[3],mLHSrow4[3],mLHSrow4[3],mLHSrow4[3]};
+	
+
+ 	//row 1 
+	vec_xst(
+	vec_add(vec_add(vec_mul(auxLHS11,mRHSrow1),vec_mul(auxLHS12,mRHSrow2)),
+	vec_add(vec_mul(auxLHS13,mRHSrow3),vec_mul(auxLHS14,mRHSrow4))),0,
+	mResult
+	);
+
+	//row 2 
+	vec_xst(
+	vec_add(vec_add(vec_mul(auxLHS21,mRHSrow1),vec_mul(auxLHS22,mRHSrow2)),
+	vec_add(vec_mul(auxLHS23,mRHSrow3),vec_mul(auxLHS24,mRHSrow4))),0,mResult+4
+	);
+
+	//row 3
+	vec_xst(
+	vec_add(vec_add(vec_mul(auxLHS31,mRHSrow1),vec_mul(auxLHS32,mRHSrow2)),
+	vec_add(vec_mul(auxLHS33,mRHSrow3),vec_mul(auxLHS34,mRHSrow4))),0,mResult+8
+	);
+
+	//row 4
+	vec_xst(
+	vec_add(vec_add(vec_mul(auxLHS41,mRHSrow1),vec_mul(auxLHS42,mRHSrow2)),
+	vec_add(vec_mul(auxLHS43,mRHSrow3),vec_mul(auxLHS44,mRHSrow4))),0,mResult+12
+	);
+
+
+
+}
+
+
+
+inline void mul9x9RowColFloat(const float* mLHS, const float* mRHS, float* const mResult){
+
+	vector float mLHSrow11, mLHSrow12, mLHSrow13, mLHSrow21, mLHSrow22, mLHSrow23, mLHSrow31, mLHSrow32, mLHSrow33,
+	      	     mLHSrow41, mLHSrow42, mLHSrow43, mLHSrow51, mLHSrow52, mLHSrow53, mLHSrow61, mLHSrow62, mLHSrow63,
+		     mLHSrow71, mLHSrow72, mLHSrow73, mLHSrow81, mLHSrow82, mLHSrow83, mLHSrow91, mLHSrow92, mLHSrow93;
+
+	vector float mRHScol11, mRHScol12, mRHScol13, mRHScol21, mRHScol22, mRHScol23, mRHScol31, mRHScol32, mRHScol33,
+	      	     mRHScol41, mRHScol42, mRHScol43, mRHScol51, mRHScol52, mRHScol53, mRHScol61, mRHScol62, mRHScol63,
+		     mRHScol71, mRHScol72, mRHScol73, mRHScol81, mRHScol82, mRHScol83, mRHScol91, mRHScol92, mRHScol93;
+
+//load
+// __8__17__26__35__44__53__62__71__80
+
+
+	mLHSrow11 = vec_xl(0,mLHS);
+	mLHSrow12 = vec_xl(0,mLHS+4);
+	mLHSrow13 = vec_splats((float)0);
+	mLHSrow13[0] = mLHS[8];
+
+	mLHSrow21 = vec_xl(0,mLHS+4*2+1);
+	mLHSrow22 = vec_xl(0,mLHS+4*3+1);
+	mLHSrow23 = vec_splats((float)0);
+	mLHSrow23[0] = mLHS[17];
+
+	mLHSrow31 = vec_xl(0,mLHS+4*4+2);
+	mLHSrow32 = vec_xl(0,mLHS+4*5+2);
+	mLHSrow33 = vec_splats((float)0);
+	mLHSrow33[0] = mLHS[26];
+
+	mLHSrow41 = vec_xl(0,mLHS+4*6+3);
+	mLHSrow42 = vec_xl(0,mLHS+4*7+3);
+	mLHSrow43 = vec_splats((float)0);
+	mLHSrow43[0] = mLHS[35];
+
+	mLHSrow51 = vec_xl(0,mLHS+4*8+4);
+	mLHSrow52 = vec_xl(0,mLHS+4*9+4);
+	mLHSrow53 = vec_splats((float)0);
+	mLHSrow53[0] = mLHS[44];
+
+	mLHSrow61 = vec_xl(0,mLHS+4*10+5);
+	mLHSrow62 = vec_xl(0,mLHS+4*11+5);
+	mLHSrow63 = vec_splats((float)0);
+	mLHSrow63[0] = mLHS[53];
+	
+	mLHSrow71 = vec_xl(0,mLHS+4*12+6);
+	mLHSrow72 = vec_xl(0,mLHS+4*13+6);
+	mLHSrow73 = vec_splats((float)0);
+	mLHSrow73[0] = mLHS[62];
+
+	mLHSrow81 = vec_xl(0,mLHS+4*14+7);
+	mLHSrow82 = vec_xl(0,mLHS+4*15+7);
+	mLHSrow83 = vec_splats((float)0);
+	mLHSrow83[0] = mLHS[71];
+
+	mLHSrow91 = vec_xl(0,mLHS+4*16+8);
+	mLHSrow92 = vec_xl(0,mLHS+4*17+8);
+	mLHSrow93 = vec_splats((float)0);
+	mLHSrow93[0] = mLHS[80];
+//-----------------------------------------------------
+
+	mRHScol11 = vec_xl(0,mRHS);
+	mRHScol12 = vec_xl(0,mRHS+4);
+
+	mRHScol21 = vec_xl(0,mRHS+4*2+1);
+	mRHScol22 = vec_xl(0,mRHS+4*3+1);
+
+	mRHScol31 = vec_xl(0,mRHS+4*4+2);
+	mRHScol32 = vec_xl(0,mRHS+4*5+2);
+
+	mRHScol41 = vec_xl(0,mRHS+4*6+3);
+	mRHScol42 = vec_xl(0,mRHS+4*7+3);
+
+	mRHScol51 = vec_xl(0,mRHS+4*8+4);
+	mRHScol52 = vec_xl(0,mRHS+4*9+4);
+
+	mRHScol61 = vec_xl(0,mRHS+4*10+5);
+	mRHScol62 = vec_xl(0,mRHS+4*11+5);
+	
+	mRHScol71 = vec_xl(0,mRHS+4*12+6);
+	mRHScol72 = vec_xl(0,mRHS+4*13+6);
+
+	mRHScol81 = vec_xl(0,mRHS+4*14+7);
+	mRHScol82 = vec_xl(0,mRHS+4*15+7);
+
+	mRHScol91 = vec_xl(0,mRHS+4*16+8);
+	mRHScol92 = vec_xl(0,mRHS+4*17+8);
+
+
+// transpose RHS
+
+	vector float mRHSrow11 = {mRHScol11[0],mRHScol21[0],mRHScol31[0],mRHScol41[0]};
+	vector float mRHSrow12 = {mRHScol51[0],mRHScol61[0],mRHScol71[0],mRHScol81[0]};
+	vector float mRHSrow13 = {mRHScol91[0],0,0,0};
+
+	vector float mRHSrow21 = {mRHScol11[1],mRHScol21[1],mRHScol31[1],mRHScol41[1]};
+	vector float mRHSrow22 = {mRHScol51[1],mRHScol61[1],mRHScol71[1],mRHScol81[1]};
+	vector float mRHSrow23 = {mRHScol91[1],0,0,0};
+
+	vector float mRHSrow31 = {mRHScol11[2],mRHScol21[2],mRHScol31[2],mRHScol41[2]};
+	vector float mRHSrow32 = {mRHScol51[2],mRHScol61[2],mRHScol71[2],mRHScol81[2]};
+	vector float mRHSrow33 = {mRHScol91[2],0,0,0};
+
+	vector float mRHSrow41 = {mRHScol11[3],mRHScol21[3],mRHScol31[3],mRHScol41[3]};
+	vector float mRHSrow42 = {mRHScol51[3],mRHScol61[3],mRHScol71[3],mRHScol81[3]};
+	vector float mRHSrow43 = {mRHScol91[3],0,0,0};
+
+	vector float mRHSrow51 = {mRHScol12[0],mRHScol22[0],mRHScol32[0],mRHScol42[0]};
+	vector float mRHSrow52 = {mRHScol52[0],mRHScol62[0],mRHScol72[0],mRHScol82[0]};
+	vector float mRHSrow53 = {mRHScol92[0],0,0,0};
+
+	vector float mRHSrow61 = {mRHScol12[1],mRHScol22[1],mRHScol32[1],mRHScol42[1]};
+	vector float mRHSrow62 = {mRHScol12[1],mRHScol62[1],mRHScol72[1],mRHScol82[1]};
+	vector float mRHSrow63 = {mRHScol12[1],0,0,0};
+
+	vector float mRHSrow71 = {mRHScol12[2],mRHScol22[2],mRHScol32[2],mRHScol42[2]};
+	vector float mRHSrow72 = {mRHScol52[2],mRHScol62[2],mRHScol72[2],mRHScol82[2]};
+	vector float mRHSrow73 = {mRHScol92[2],0,0,0};
+
+	vector float mRHSrow81 = {mRHScol12[3],mRHScol22[3],mRHScol32[3],mRHScol42[3]};
+	vector float mRHSrow82 = {mRHScol52[3],mRHScol62[3],mRHScol72[3],mRHScol82[3]};
+	vector float mRHSrow83 = {mRHScol92[3],0,0,0};
+
+	vector float mRHSrow91 = {mRHS[8],mRHS[17],mRHS[26],mRHS[35]};
+	vector float mRHSrow92 = {mRHS[44],mRHS[53],mRHS[62],mRHS[71]};
+	vector float mRHSrow93 = {mRHS[80],0,0,0};
+
+
+
+//===================================================================================
+//Splat
+//===================================================================================
+	
+	vector float aux11={mLHSrow11[0],mLHSrow11[0],mLHSrow11[0],mLHSrow11[0]};
+	vector float aux12={mLHSrow21[0],mLHSrow21[0],mLHSrow21[0],mLHSrow21[0]};
+	vector float aux13={mLHSrow31[0],mLHSrow31[0],mLHSrow31[0],mLHSrow31[0]};
+	vector float aux14={mLHSrow41[0],mLHSrow41[0],mLHSrow41[0],mLHSrow41[0]};
+
+	vector float aux15={mLHSrow51[0],mLHSrow51[0],mLHSrow51[0],mLHSrow51[0]};
+	vector float aux16={mLHSrow61[0],mLHSrow61[0],mLHSrow61[0],mLHSrow61[0]};
+	vector float aux17={mLHSrow71[0],mLHSrow71[0],mLHSrow71[0],mLHSrow71[0]};
+	vector float aux18={mLHSrow81[0],mLHSrow81[0],mLHSrow81[0],mLHSrow81[0]};
+	
+	vector float aux19={mLHSrow91[0],mLHSrow91[0],mLHSrow91[0],mLHSrow91[0]};
+//----------------------------------------------------------------------------------
+	vector float aux21={mLHSrow11[1],mLHSrow11[1],mLHSrow11[1],mLHSrow11[1]};
+	vector float aux22={mLHSrow21[1],mLHSrow21[1],mLHSrow21[1],mLHSrow21[1]};
+	vector float aux23={mLHSrow31[1],mLHSrow31[1],mLHSrow31[1],mLHSrow31[1]};
+	vector float aux24={mLHSrow41[1],mLHSrow41[1],mLHSrow41[1],mLHSrow41[1]};
+
+	vector float aux25={mLHSrow51[1],mLHSrow51[1],mLHSrow51[1],mLHSrow51[1]};
+	vector float aux26={mLHSrow61[1],mLHSrow61[1],mLHSrow61[1],mLHSrow61[1]};
+	vector float aux27={mLHSrow71[1],mLHSrow71[1],mLHSrow71[1],mLHSrow71[1]};
+	vector float aux28={mLHSrow81[1],mLHSrow81[1],mLHSrow81[1],mLHSrow81[1]};
+	
+	vector float aux29={mLHSrow91[1],mLHSrow91[1],mLHSrow91[1],mLHSrow91[1]};
+//----------------------------------------------------------------------------------
+	vector float aux31={mLHSrow11[2],mLHSrow11[2],mLHSrow11[2],mLHSrow11[2]};
+	vector float aux32={mLHSrow21[2],mLHSrow21[2],mLHSrow21[2],mLHSrow21[2]};
+	vector float aux33={mLHSrow31[2],mLHSrow31[2],mLHSrow31[2],mLHSrow31[2]};
+	vector float aux34={mLHSrow41[2],mLHSrow41[2],mLHSrow41[2],mLHSrow41[2]};
+
+	vector float aux35={mLHSrow51[2],mLHSrow51[2],mLHSrow51[2],mLHSrow51[2]};
+	vector float aux36={mLHSrow61[2],mLHSrow61[2],mLHSrow61[2],mLHSrow61[2]};
+	vector float aux37={mLHSrow71[2],mLHSrow71[2],mLHSrow71[2],mLHSrow71[2]};
+	vector float aux38={mLHSrow81[2],mLHSrow81[2],mLHSrow81[2],mLHSrow81[2]};
+	
+	vector float aux39={mLHSrow91[2],mLHSrow91[2],mLHSrow91[2],mLHSrow91[2]};
+//----------------------------------------------------------------------------------
+	vector float aux41={mLHSrow11[3],mLHSrow11[3],mLHSrow11[3],mLHSrow11[3]};
+	vector float aux42={mLHSrow21[3],mLHSrow21[3],mLHSrow21[3],mLHSrow21[3]};
+	vector float aux43={mLHSrow31[3],mLHSrow31[3],mLHSrow31[3],mLHSrow31[3]};
+	vector float aux44={mLHSrow41[3],mLHSrow41[3],mLHSrow41[3],mLHSrow41[3]};
+
+	vector float aux45={mLHSrow51[3],mLHSrow51[3],mLHSrow51[3],mLHSrow51[3]};
+	vector float aux46={mLHSrow61[3],mLHSrow61[3],mLHSrow61[3],mLHSrow61[3]};
+	vector float aux47={mLHSrow71[3],mLHSrow71[3],mLHSrow71[3],mLHSrow71[3]};
+	vector float aux48={mLHSrow81[3],mLHSrow81[3],mLHSrow81[3],mLHSrow81[3]};
+	
+	vector float aux49={mLHSrow91[3],mLHSrow91[3],mLHSrow91[3],mLHSrow91[3]};
+//----------------------------------------------------------------------------------
+	vector float aux51={mLHSrow12[0],mLHSrow12[0],mLHSrow12[0],mLHSrow12[0]};
+	vector float aux52={mLHSrow22[0],mLHSrow22[0],mLHSrow22[0],mLHSrow22[0]};
+	vector float aux53={mLHSrow32[0],mLHSrow32[0],mLHSrow32[0],mLHSrow32[0]};
+	vector float aux54={mLHSrow42[0],mLHSrow42[0],mLHSrow42[0],mLHSrow42[0]};
+
+	vector float aux55={mLHSrow52[0],mLHSrow52[0],mLHSrow52[0],mLHSrow52[0]};
+	vector float aux56={mLHSrow62[0],mLHSrow62[0],mLHSrow62[0],mLHSrow62[0]};
+	vector float aux57={mLHSrow72[0],mLHSrow72[0],mLHSrow72[0],mLHSrow72[0]};
+	vector float aux58={mLHSrow82[0],mLHSrow82[0],mLHSrow82[0],mLHSrow82[0]};
+	
+	vector float aux59={mLHSrow92[0],mLHSrow92[0],mLHSrow92[0],mLHSrow92[0]};
+//----------------------------------------------------------------------------------
+	vector float aux61={mLHSrow12[1],mLHSrow12[1],mLHSrow12[1],mLHSrow12[1]};
+	vector float aux62={mLHSrow22[1],mLHSrow22[1],mLHSrow22[1],mLHSrow22[1]};
+	vector float aux63={mLHSrow32[1],mLHSrow32[1],mLHSrow32[1],mLHSrow32[1]};
+	vector float aux64={mLHSrow42[1],mLHSrow42[1],mLHSrow42[1],mLHSrow42[1]};
+
+	vector float aux65={mLHSrow52[1],mLHSrow52[1],mLHSrow52[1],mLHSrow52[1]};
+	vector float aux66={mLHSrow62[1],mLHSrow62[1],mLHSrow62[1],mLHSrow62[1]};
+	vector float aux67={mLHSrow72[1],mLHSrow72[1],mLHSrow72[1],mLHSrow72[1]};
+	vector float aux68={mLHSrow82[1],mLHSrow82[1],mLHSrow82[1],mLHSrow82[1]};
+	
+	vector float aux69={mLHSrow92[1],mLHSrow92[1],mLHSrow92[1],mLHSrow92[1]};
+//----------------------------------------------------------------------------------
+	vector float aux71={mLHSrow12[2],mLHSrow12[2],mLHSrow12[2],mLHSrow12[2]};
+	vector float aux72={mLHSrow22[2],mLHSrow22[2],mLHSrow22[2],mLHSrow22[2]};
+	vector float aux73={mLHSrow32[2],mLHSrow32[2],mLHSrow32[2],mLHSrow32[2]};
+	vector float aux74={mLHSrow42[2],mLHSrow42[2],mLHSrow42[2],mLHSrow42[2]};
+
+	vector float aux75={mLHSrow52[2],mLHSrow52[2],mLHSrow52[2],mLHSrow52[2]};
+	vector float aux76={mLHSrow62[2],mLHSrow62[2],mLHSrow62[2],mLHSrow62[2]};
+	vector float aux77={mLHSrow72[2],mLHSrow72[2],mLHSrow72[2],mLHSrow72[2]};
+	vector float aux78={mLHSrow82[2],mLHSrow82[2],mLHSrow82[2],mLHSrow82[2]};
+	
+	vector float aux79={mLHSrow92[2],mLHSrow92[2],mLHSrow92[2],mLHSrow92[2]};
+//----------------------------------------------------------------------------------
+	vector float aux81={mLHSrow12[3],mLHSrow12[3],mLHSrow12[3],mLHSrow12[3]};
+	vector float aux82={mLHSrow22[3],mLHSrow22[3],mLHSrow22[3],mLHSrow22[3]};
+	vector float aux83={mLHSrow32[3],mLHSrow32[3],mLHSrow32[3],mLHSrow32[3]};
+	vector float aux84={mLHSrow42[3],mLHSrow42[3],mLHSrow42[3],mLHSrow42[3]};
+
+	vector float aux85={mLHSrow52[3],mLHSrow52[3],mLHSrow52[3],mLHSrow52[3]};
+	vector float aux86={mLHSrow62[3],mLHSrow62[3],mLHSrow62[3],mLHSrow62[3]};
+	vector float aux87={mLHSrow72[3],mLHSrow72[3],mLHSrow72[3],mLHSrow72[3]};
+	vector float aux88={mLHSrow82[3],mLHSrow82[3],mLHSrow82[3],mLHSrow82[3]};
+	
+	vector float aux89={mLHSrow92[3],mLHSrow92[3],mLHSrow92[3],mLHSrow92[3]};
+//----------------------------------------------------------------------------------
+	vector float aux91={mLHSrow13[0],mLHSrow13[0],mLHSrow13[0],mLHSrow13[0]};
+	vector float aux92={mLHSrow23[0],mLHSrow23[0],mLHSrow23[0],mLHSrow23[0]};
+	vector float aux93={mLHSrow33[0],mLHSrow33[0],mLHSrow33[0],mLHSrow33[0]};
+	vector float aux94={mLHSrow43[0],mLHSrow43[0],mLHSrow43[0],mLHSrow43[0]};
+
+	vector float aux95={mLHSrow53[0],mLHSrow53[0],mLHSrow53[0],mLHSrow53[0]};
+	vector float aux96={mLHSrow63[0],mLHSrow63[0],mLHSrow63[0],mLHSrow63[0]};
+	vector float aux97={mLHSrow73[0],mLHSrow73[0],mLHSrow73[0],mLHSrow73[0]};
+	vector float aux98={mLHSrow83[0],mLHSrow83[0],mLHSrow83[0],mLHSrow83[0]};
+	
+	vector float aux99={mLHSrow93[0],mLHSrow93[0],mLHSrow93[0],mLHSrow93[0]};
+//----------------------------------------------------------------------------------
+
+
+//row1
+	vec_xst(vec_madd( mRHSrow91, aux91,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow21, aux21, vec_mul(mRHSrow11, aux11)),
+					vec_madd(mRHSrow41, aux41, vec_mul(mRHSrow31, aux31)) ),
+				vec_add(
+					vec_madd(mRHSrow61, aux61, vec_mul(mRHSrow51, aux51)),
+					vec_madd(mRHSrow81, aux81, vec_mul(mRHSrow71, aux71)) ) ) ),
+
+				0, mResult);	
+
+	
+	vec_xst(vec_madd( mRHSrow92, aux91,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow22, aux21, vec_mul(mRHSrow12, aux11)),
+					vec_madd(mRHSrow42, aux41, vec_mul(mRHSrow32, aux31)) ),
+				vec_add(
+					vec_madd(mRHSrow62, aux61, vec_mul(mRHSrow52, aux51)),
+					vec_madd(mRHSrow82, aux81, vec_mul(mRHSrow72, aux71)) ) ) ),
+
+				0, mResult+4);
+
+	vec_xst(vec_madd( mRHSrow93, aux91,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow23, aux21, vec_mul(mRHSrow13, aux11)),
+					vec_madd(mRHSrow43, aux41, vec_mul(mRHSrow33, aux31)) ),
+				vec_add(
+					vec_madd(mRHSrow63, aux61, vec_mul(mRHSrow53, aux51)),
+					vec_madd(mRHSrow83, aux81, vec_mul(mRHSrow73, aux71)) ) ) ),
+
+				0, mResult+8);	
+//row 2
+
+
+	vec_xst(vec_madd( mRHSrow91, aux92,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow21, aux22, vec_mul(mRHSrow11, aux12)),
+					vec_madd(mRHSrow41, aux42, vec_mul(mRHSrow31, aux32)) ),
+				vec_add(
+					vec_madd(mRHSrow61, aux62, vec_mul(mRHSrow51, aux52)),
+					vec_madd(mRHSrow81, aux82, vec_mul(mRHSrow71, aux72)) ) ) ),
+
+				0, mResult+4*2+1);
+
+	vec_xst(vec_madd( mRHSrow92, aux92,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow22, aux22, vec_mul(mRHSrow12, aux12)),
+					vec_madd(mRHSrow42, aux42, vec_mul(mRHSrow32, aux32)) ),
+				vec_add(
+					vec_madd(mRHSrow62, aux62, vec_mul(mRHSrow52, aux52)),
+					vec_madd(mRHSrow82, aux82, vec_mul(mRHSrow72, aux72)) ) ) ),
+
+				0, mResult+4*3+1);
+
+
+	vec_xst(vec_madd( mRHSrow93, aux92,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow23, aux22, vec_mul(mRHSrow13, aux12)),
+					vec_madd(mRHSrow43, aux42, vec_mul(mRHSrow33, aux32)) ),
+				vec_add(
+					vec_madd(mRHSrow63, aux62, vec_mul(mRHSrow53, aux52)),
+					vec_madd(mRHSrow83, aux82, vec_mul(mRHSrow73, aux72)) ) ) ),
+
+				0, mResult+17);
+
+//row 3
+
+	vec_xst(vec_madd( mRHSrow91, aux93,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow21, aux23, vec_mul(mRHSrow11, aux13)),
+					vec_madd(mRHSrow41, aux43, vec_mul(mRHSrow31, aux33)) ),
+				vec_add(
+					vec_madd(mRHSrow61, aux63, vec_mul(mRHSrow51, aux53)),
+					vec_madd(mRHSrow81, aux83, vec_mul(mRHSrow71, aux73)) ) ) ),
+
+				0, mResult+4*4+2);
+
+	vec_xst(vec_madd( mRHSrow92, aux93,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow22, aux23, vec_mul(mRHSrow12, aux13)),
+					vec_madd(mRHSrow42, aux43, vec_mul(mRHSrow32, aux33)) ),
+				vec_add(
+					vec_madd(mRHSrow62, aux63, vec_mul(mRHSrow52, aux53)),
+					vec_madd(mRHSrow82, aux83, vec_mul(mRHSrow72, aux73)) ) ) ),
+
+				0, mResult+4*5+2);
+
+
+	vec_xst(vec_madd( mRHSrow93, aux93,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow23, aux23, vec_mul(mRHSrow13, aux13)),
+					vec_madd(mRHSrow43, aux43, vec_mul(mRHSrow33, aux33)) ),
+				vec_add(
+					vec_madd(mRHSrow63, aux63, vec_mul(mRHSrow53, aux53)),
+					vec_madd(mRHSrow83, aux83, vec_mul(mRHSrow73, aux73)) ) ) ),
+
+				0, mResult+26);
+//row 4
+
+
+	vec_xst(vec_madd( mRHSrow91, aux94,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow21, aux24, vec_mul(mRHSrow11, aux14)),
+					vec_madd(mRHSrow41, aux44, vec_mul(mRHSrow31, aux34)) ),
+				vec_add(
+					vec_madd(mRHSrow61, aux64, vec_mul(mRHSrow51, aux54)),
+					vec_madd(mRHSrow81, aux84, vec_mul(mRHSrow71, aux74)) ) ) ),
+
+				0, mResult+4*6+3);
+
+	vec_xst(vec_madd( mRHSrow92, aux94,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow22, aux24, vec_mul(mRHSrow12, aux14)),
+					vec_madd(mRHSrow42, aux44, vec_mul(mRHSrow32, aux34)) ),
+				vec_add(
+					vec_madd(mRHSrow62, aux64, vec_mul(mRHSrow52, aux54)),
+					vec_madd(mRHSrow82, aux84, vec_mul(mRHSrow72, aux74)) ) ) ),
+
+				0, mResult+4*7+3);
+
+	vec_xst(vec_madd( mRHSrow93, aux94,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow23, aux24, vec_mul(mRHSrow13, aux14)),
+					vec_madd(mRHSrow43, aux44, vec_mul(mRHSrow33, aux34)) ),
+				vec_add(
+					vec_madd(mRHSrow63, aux64, vec_mul(mRHSrow53, aux54)),
+					vec_madd(mRHSrow83, aux84, vec_mul(mRHSrow73, aux74)) ) ) ),
+
+				0, mResult+35);
+//row 5
+
+
+	vec_xst(vec_madd( mRHSrow91, aux95,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow21, aux25, vec_mul(mRHSrow11, aux15)),
+					vec_madd(mRHSrow41, aux45, vec_mul(mRHSrow31, aux35)) ),
+				vec_add(
+					vec_madd(mRHSrow61, aux65, vec_mul(mRHSrow51, aux55)),
+					vec_madd(mRHSrow81, aux85, vec_mul(mRHSrow71, aux75)) ) ) ),
+
+				0, mResult+4*8+4);
+
+
+
+	vec_xst(vec_madd( mRHSrow92, aux95,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow22, aux25, vec_mul(mRHSrow12, aux15)),
+					vec_madd(mRHSrow42, aux45, vec_mul(mRHSrow32, aux35)) ),
+				vec_add(
+					vec_madd(mRHSrow62, aux65, vec_mul(mRHSrow52, aux55)),
+					vec_madd(mRHSrow82, aux85, vec_mul(mRHSrow72, aux75)) ) ) ),
+
+				0, mResult+4*9+4);
+
+
+	vec_xst(vec_madd( mRHSrow93, aux95,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow23, aux25, vec_mul(mRHSrow13, aux15)),
+					vec_madd(mRHSrow43, aux45, vec_mul(mRHSrow33, aux35)) ),
+				vec_add(
+					vec_madd(mRHSrow63, aux65, vec_mul(mRHSrow53, aux55)),
+					vec_madd(mRHSrow83, aux85, vec_mul(mRHSrow73, aux75)) ) ) ),
+
+				0, mResult+44);
+
+//row 6
+
+
+	vec_xst(vec_madd( mRHSrow91, aux96,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow21, aux26, vec_mul(mRHSrow11, aux16)),
+					vec_madd(mRHSrow41, aux46, vec_mul(mRHSrow31, aux36)) ),
+				vec_add(
+					vec_madd(mRHSrow61, aux66, vec_mul(mRHSrow51, aux56)),
+					vec_madd(mRHSrow81, aux86, vec_mul(mRHSrow71, aux76)) ) ) ),
+
+				0, mResult+4*10+5);
+
+
+	vec_xst(vec_madd( mRHSrow92, aux96,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow22, aux26, vec_mul(mRHSrow12, aux16)),
+					vec_madd(mRHSrow42, aux46, vec_mul(mRHSrow32, aux36)) ),
+				vec_add(
+					vec_madd(mRHSrow62, aux66, vec_mul(mRHSrow52, aux56)),
+					vec_madd(mRHSrow82, aux86, vec_mul(mRHSrow72, aux76)) ) ) ),
+
+				0, mResult+4*11+5);
+
+
+	vec_xst(vec_madd( mRHSrow93, aux96,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow23, aux26, vec_mul(mRHSrow13, aux16)),
+					vec_madd(mRHSrow43, aux46, vec_mul(mRHSrow33, aux36)) ),
+				vec_add(
+					vec_madd(mRHSrow63, aux66, vec_mul(mRHSrow53, aux56)),
+					vec_madd(mRHSrow83, aux86, vec_mul(mRHSrow73, aux76)) ) ) ),
+
+				0, mResult+53);
+
+//row 7
+
+	vec_xst(vec_madd( mRHSrow91, aux97,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow21, aux27, vec_mul(mRHSrow11, aux17)),
+					vec_madd(mRHSrow41, aux47, vec_mul(mRHSrow31, aux37)) ),
+				vec_add(
+					vec_madd(mRHSrow61, aux67, vec_mul(mRHSrow51, aux57)),
+					vec_madd(mRHSrow81, aux87, vec_mul(mRHSrow71, aux77)) ) ) ),
+
+				0, mResult+4*12+6);
+
+	vec_xst(vec_madd( mRHSrow92, aux97,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow22, aux27, vec_mul(mRHSrow12, aux17)),
+					vec_madd(mRHSrow42, aux47, vec_mul(mRHSrow32, aux37)) ),
+				vec_add(
+					vec_madd(mRHSrow62, aux67, vec_mul(mRHSrow52, aux57)),
+					vec_madd(mRHSrow82, aux87, vec_mul(mRHSrow72, aux77)) ) ) ),
+
+				0, mResult+4*13+6);
+
+
+	vec_xst(vec_madd( mRHSrow93, aux97,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow23, aux27, vec_mul(mRHSrow13, aux17)),
+					vec_madd(mRHSrow43, aux47, vec_mul(mRHSrow33, aux37)) ),
+				vec_add(
+					vec_madd(mRHSrow63, aux67, vec_mul(mRHSrow53, aux57)),
+					vec_madd(mRHSrow83, aux87, vec_mul(mRHSrow73, aux77)) ) ) ),
+
+				0, mResult+62);
+//row 8
+
+
+
+	vec_xst(vec_madd( mRHSrow91, aux98,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow21, aux28, vec_mul(mRHSrow11, aux18)),
+					vec_madd(mRHSrow41, aux48, vec_mul(mRHSrow31, aux38)) ),
+				vec_add(
+					vec_madd(mRHSrow61, aux68, vec_mul(mRHSrow51, aux58)),
+					vec_madd(mRHSrow81, aux88, vec_mul(mRHSrow71, aux78)) ) ) ),
+
+				0, mResult+4*14+7);
+
+
+	vec_xst(vec_madd( mRHSrow92, aux98,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow22, aux28, vec_mul(mRHSrow12, aux18)),
+					vec_madd(mRHSrow42, aux48, vec_mul(mRHSrow32, aux38)) ),
+				vec_add(
+					vec_madd(mRHSrow62, aux68, vec_mul(mRHSrow52, aux58)),
+					vec_madd(mRHSrow82, aux88, vec_mul(mRHSrow72, aux78)) ) ) ),
+
+				0, mResult+4*15+7);
+
+
+	vec_xst(vec_madd( mRHSrow93, aux98,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow23, aux28, vec_mul(mRHSrow13, aux18)),
+					vec_madd(mRHSrow43, aux48, vec_mul(mRHSrow33, aux38)) ),
+				vec_add(
+					vec_madd(mRHSrow63, aux68, vec_mul(mRHSrow53, aux58)),
+					vec_madd(mRHSrow83, aux88, vec_mul(mRHSrow73, aux78)) ) ) ),
+
+				0, mResult+71);
+
+//row 9
+
+
+	vec_xst(vec_madd( mRHSrow91, aux99,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow21, aux29, vec_mul(mRHSrow11, aux19)),
+					vec_madd(mRHSrow41, aux49, vec_mul(mRHSrow31, aux39)) ),
+				vec_add(
+					vec_madd(mRHSrow61, aux69, vec_mul(mRHSrow51, aux59)),
+					vec_madd(mRHSrow81, aux89, vec_mul(mRHSrow71, aux79)) ) ) ),
+
+				0, mResult+4*16+8);
+
+	vec_xst(vec_madd( mRHSrow92, aux99,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow22, aux29, vec_mul(mRHSrow12, aux19)),
+					vec_madd(mRHSrow42, aux49, vec_mul(mRHSrow32, aux39)) ),
+				vec_add(
+					vec_madd(mRHSrow62, aux69, vec_mul(mRHSrow52, aux59)),
+					vec_madd(mRHSrow82, aux89, vec_mul(mRHSrow72, aux79)) ) ) ),
+
+				0, mResult+4*17+8);
+
+
+	vector float mResultLastElem = 
+		
+		vec_madd( mRHSrow93, aux99,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow23, aux29, vec_mul(mRHSrow13, aux19)),
+					vec_madd(mRHSrow43, aux49, vec_mul(mRHSrow33, aux39)) ),
+				vec_add(
+					vec_madd(mRHSrow63, aux69, vec_mul(mRHSrow53, aux59)),
+					vec_madd(mRHSrow83, aux89, vec_mul(mRHSrow73, aux79)) ) ) );
+	mResult[80] = mResultLastElem[0];
+
+
+
+}
+
+
+inline void mul12x12RowColFloat(const float* mLHS, const float* mRHS, float* const mResult){
+
+	vector float mLHSrow11, mLHSrow12, mLHSrow13, mLHSrow21, mLHSrow22, mLHSrow23, mLHSrow31, mLHSrow32, mLHSrow33,
+	      	     mLHSrow41, mLHSrow42, mLHSrow43, mLHSrow51, mLHSrow52, mLHSrow53, mLHSrow61, mLHSrow62, mLHSrow63,
+		     mLHSrow71, mLHSrow72, mLHSrow73, mLHSrow81, mLHSrow82, mLHSrow83, mLHSrow91, mLHSrow92, mLHSrow93, mLHSrow101, mLHSrow102, mLHSrow103, mLHSrow111,
+		     mLHSrow112,mLHSrow113,mLHSrow121,mLHSrow122, mLHSrow123;
+
+	vector float mRHScol11, mRHScol12, mRHScol13, mRHScol21, mRHScol22, mRHScol23, mRHScol31, mRHScol32, mRHScol33,
+	      	     mRHScol41, mRHScol42, mRHScol43, mRHScol51, mRHScol52, mRHScol53, mRHScol61, mRHScol62, mRHScol63,
+		     mRHScol71, mRHScol72, mRHScol73, mRHScol81, mRHScol82, mRHScol83, mRHScol91, mRHScol92, mRHScol93, mRHScol101, mRHScol102, mRHScol103, mRHScol111,
+		     mRHScol112, mRHScol113,  mRHScol121, mRHScol122, mRHScol123;
+//load
+
+
+	mRHScol11 = vec_xl(0,mRHS);
+	mRHScol12 = vec_xl(0,mRHS+4);
+	mRHScol13 = vec_xl(0,mRHS+4*2);
+
+	mRHScol21 = vec_xl(0,mRHS+4*3);
+	mRHScol22 = vec_xl(0,mRHS+4*4);
+	mRHScol23 = vec_xl(0,mRHS+4*5);
+
+	mRHScol31 = vec_xl(0,mRHS+4*6);
+	mRHScol32 = vec_xl(0,mRHS+4*7);
+	mRHScol33 = vec_xl(0,mRHS+4*8);
+
+	mRHScol41 = vec_xl(0,mRHS+4*9);
+	mRHScol42 = vec_xl(0,mRHS+4*10);
+	mRHScol43 = vec_xl(0,mRHS+4*11);
+
+	mRHScol51 = vec_xl(0,mRHS+4*12);
+	mRHScol52 = vec_xl(0,mRHS+4*13);
+	mRHScol53 = vec_xl(0,mRHS+4*14);
+
+	mRHScol61 = vec_xl(0,mRHS+4*15);
+	mRHScol62 = vec_xl(0,mRHS+4*16);
+	mRHScol63 = vec_xl(0,mRHS+4*17);
+
+	mRHScol71 = vec_xl(0,mRHS+4*18);
+	mRHScol72 = vec_xl(0,mRHS+4*19);
+	mRHScol73 = vec_xl(0,mRHS+4*20);
+
+	mRHScol81 = vec_xl(0,mRHS+4*21);
+	mRHScol82 = vec_xl(0,mRHS+4*22);
+	mRHScol83 = vec_xl(0,mRHS+4*23);
+
+	mRHScol91 = vec_xl(0,mRHS+4*24);
+	mRHScol92 = vec_xl(0,mRHS+4*25);
+	mRHScol93 = vec_xl(0,mRHS+4*26);
+
+	mRHScol101 = vec_xl(0,mRHS+4*27);
+	mRHScol102 = vec_xl(0,mRHS+4*28);
+	mRHScol103 = vec_xl(0,mRHS+4*29);
+
+	mRHScol111 = vec_xl(0,mRHS+4*30);
+	mRHScol112 = vec_xl(0,mRHS+4*31);
+	mRHScol113 = vec_xl(0,mRHS+4*32);
+
+	mRHScol121 = vec_xl(0,mRHS+4*33);
+	mRHScol122 = vec_xl(0,mRHS+4*34);
+	mRHScol123 = vec_xl(0,mRHS+4*35);
+
+//transpose RHS
+	vector float mRHSrow11 = {mRHScol11[0], mRHScol21[0], mRHScol31[0], mRHScol41[0]};	
+	vector float mRHSrow12 = {mRHScol51[0], mRHScol61[0], mRHScol71[0], mRHScol81[0]};	
+	vector float mRHSrow13 = {mRHScol91[0],mRHScol101[0],mRHScol111[0],mRHScol121[0]};	
+
+	vector float mRHSrow21 = {mRHScol11[1], mRHScol21[1], mRHScol31[1], mRHScol41[1]};	
+	vector float mRHSrow22 = {mRHScol51[1], mRHScol61[1], mRHScol71[1], mRHScol81[1]};	
+	vector float mRHSrow23 = {mRHScol91[1],mRHScol101[1],mRHScol111[1],mRHScol121[1]};	
+
+	vector float mRHSrow31 = {mRHScol11[2], mRHScol21[2], mRHScol31[2], mRHScol41[2]};	
+	vector float mRHSrow32 = {mRHScol51[2], mRHScol61[2], mRHScol71[2], mRHScol81[2]};	
+	vector float mRHSrow33 = {mRHScol91[2],mRHScol101[2],mRHScol111[2],mRHScol121[2]};	
+
+	vector float mRHSrow41 = {mRHScol11[3], mRHScol21[3], mRHScol31[3], mRHScol41[3]};	
+	vector float mRHSrow42 = {mRHScol51[3], mRHScol61[3], mRHScol71[3], mRHScol81[3]};	
+	vector float mRHSrow43 = {mRHScol91[3],mRHScol101[3],mRHScol111[3],mRHScol121[3]};	
+
+	vector float mRHSrow51 = {mRHScol12[0], mRHScol22[0], mRHScol32[0], mRHScol42[0]};	
+	vector float mRHSrow52 = {mRHScol52[0], mRHScol62[0], mRHScol72[0], mRHScol82[0]};	
+	vector float mRHSrow53 = {mRHScol92[0],mRHScol102[0],mRHScol112[0],mRHScol122[0]};	
+
+	vector float mRHSrow61 = {mRHScol12[1], mRHScol22[1], mRHScol32[1], mRHScol42[1]};	
+	vector float mRHSrow62 = {mRHScol52[1], mRHScol62[1], mRHScol72[1], mRHScol82[1]};	
+	vector float mRHSrow63 = {mRHScol92[1],mRHScol102[1],mRHScol112[1],mRHScol122[1]};	
+
+	vector float mRHSrow71 = {mRHScol12[2], mRHScol22[2], mRHScol32[2], mRHScol42[2]};	
+	vector float mRHSrow72 = {mRHScol52[2], mRHScol62[2], mRHScol72[2], mRHScol82[2]};	
+	vector float mRHSrow73 = {mRHScol92[2],mRHScol102[2],mRHScol112[2],mRHScol122[2]};	
+
+	vector float mRHSrow81 = {mRHScol12[3], mRHScol22[3], mRHScol32[3], mRHScol42[3]};	
+	vector float mRHSrow82 = {mRHScol52[3], mRHScol62[3], mRHScol72[3], mRHScol82[3]};	
+	vector float mRHSrow83 = {mRHScol92[3],mRHScol102[3],mRHScol112[3],mRHScol122[3]};	
+
+	vector float mRHSrow91 = {mRHScol13[0], mRHScol23[0], mRHScol33[0], mRHScol43[0]};	
+	vector float mRHSrow92 = {mRHScol53[0], mRHScol63[0], mRHScol73[0], mRHScol83[0]};	
+	vector float mRHSrow93 = {mRHScol93[0],mRHScol103[0],mRHScol113[0],mRHScol123[0]};	
+
+	vector float mRHSrow101 = {mRHScol12[1], mRHScol22[1], mRHScol32[1], mRHScol42[1]};	
+	vector float mRHSrow102 = {mRHScol52[1], mRHScol62[1], mRHScol72[1], mRHScol82[1]};	
+	vector float mRHSrow103 = {mRHScol92[1],mRHScol102[1],mRHScol112[1],mRHScol122[1]};	
+
+	vector float mRHSrow111 = {mRHScol12[2], mRHScol22[2], mRHScol32[2], mRHScol42[2]};	
+	vector float mRHSrow112 = {mRHScol52[2], mRHScol62[2], mRHScol72[2], mRHScol82[2]};	
+	vector float mRHSrow113 = {mRHScol92[2],mRHScol102[2],mRHScol112[2],mRHScol122[2]};	
+
+	vector float mRHSrow121 = {mRHScol12[3], mRHScol22[3], mRHScol32[3], mRHScol42[3]};	
+	vector float mRHSrow122 = {mRHScol52[3], mRHScol62[3], mRHScol72[3], mRHScol82[3]};	
+	vector float mRHSrow123 = {mRHScol92[3],mRHScol102[3],mRHScol112[3],mRHScol122[3]};	
+
+
+
+
+	//--------------------------------------------------
+	mLHSrow11 = vec_xl(0,mLHS);
+	mLHSrow12 = vec_xl(0,mLHS+4);
+	mLHSrow13 = vec_xl(0,mLHS+4*2);
+
+	mLHSrow21 = vec_xl(0,mLHS+4*3);
+	mLHSrow22 = vec_xl(0,mLHS+4*4);
+	mLHSrow23 = vec_xl(0,mLHS+4*5);
+
+	mLHSrow31 = vec_xl(0,mLHS+4*6);
+	mLHSrow32 = vec_xl(0,mLHS+4*7);
+	mLHSrow33 = vec_xl(0,mLHS+4*8);
+
+	mLHSrow41 = vec_xl(0,mLHS+4*9);
+	mLHSrow42 = vec_xl(0,mLHS+4*10);
+	mLHSrow43 = vec_xl(0,mLHS+4*11);
+
+	mLHSrow51 = vec_xl(0,mLHS+4*12);
+	mLHSrow52 = vec_xl(0,mLHS+4*13);
+	mLHSrow53 = vec_xl(0,mLHS+4*14);
+
+	mLHSrow61 = vec_xl(0,mLHS+4*15);
+	mLHSrow62 = vec_xl(0,mLHS+4*16);
+	mLHSrow63 = vec_xl(0,mLHS+4*17);
+
+	mLHSrow71 = vec_xl(0,mLHS+4*18);
+	mLHSrow72 = vec_xl(0,mLHS+4*19);
+	mLHSrow73 = vec_xl(0,mLHS+4*20);
+
+	mLHSrow81 = vec_xl(0,mLHS+4*21);
+	mLHSrow82 = vec_xl(0,mLHS+4*22);
+	mLHSrow83 = vec_xl(0,mLHS+4*23);
+
+	mLHSrow91 = vec_xl(0,mLHS+4*24);
+	mLHSrow92 = vec_xl(0,mLHS+4*25);
+	mLHSrow93 = vec_xl(0,mLHS+4*26);
+
+	mLHSrow101 = vec_xl(0,mLHS+4*27);
+	mLHSrow102 = vec_xl(0,mLHS+4*28);
+	mLHSrow103 = vec_xl(0,mLHS+4*29);
+
+	mLHSrow111 = vec_xl(0,mLHS+4*30);
+	mLHSrow112 = vec_xl(0,mLHS+4*31);
+	mLHSrow113 = vec_xl(0,mLHS+4*32);
+
+	mLHSrow121 = vec_xl(0,mLHS+4*33);
+	mLHSrow122 = vec_xl(0,mLHS+4*34);
+	mLHSrow123 = vec_xl(0,mLHS+4*35);
+
+//-------------------------------------------------------------------------
+
+	vector float aux11={mLHSrow11[0],mLHSrow11[0],mLHSrow11[0],mLHSrow11[0]};
+	vector float aux12={mLHSrow21[0],mLHSrow21[0],mLHSrow21[0],mLHSrow21[0]};
+	vector float aux13={mLHSrow31[0],mLHSrow31[0],mLHSrow31[0],mLHSrow31[0]};
+	vector float aux14={mLHSrow41[0],mLHSrow41[0],mLHSrow41[0],mLHSrow41[0]};
+
+	vector float aux15={mLHSrow51[0],mLHSrow51[0],mLHSrow51[0],mLHSrow51[0]};
+	vector float aux16={mLHSrow61[0],mLHSrow61[0],mLHSrow61[0],mLHSrow61[0]};
+	vector float aux17={mLHSrow71[0],mLHSrow71[0],mLHSrow71[0],mLHSrow71[0]};
+	vector float aux18={mLHSrow81[0],mLHSrow81[0],mLHSrow81[0],mLHSrow81[0]};
+
+	vector float aux19={mLHSrow91[0],mLHSrow91[0],mLHSrow91[0],mLHSrow91[0]};
+	vector float aux110={mLHSrow101[0],mLHSrow101[0],mLHSrow101[0],mLHSrow101[0]};
+	vector float aux0111={mLHSrow111[0],mLHSrow111[0],mLHSrow111[0],mLHSrow111[0]};
+	vector float aux0112={mLHSrow121[0],mLHSrow121[0],mLHSrow121[0],mLHSrow121[0]};
+
+//-------------------------------------------------------------------------
+	vector float aux21={mLHSrow11[1],mLHSrow11[1],mLHSrow11[1],mLHSrow11[1]};
+	vector float aux22={mLHSrow21[1],mLHSrow21[1],mLHSrow21[1],mLHSrow21[1]};
+	vector float aux23={mLHSrow31[1],mLHSrow31[1],mLHSrow31[1],mLHSrow31[1]};
+	vector float aux24={mLHSrow41[1],mLHSrow41[1],mLHSrow41[1],mLHSrow41[1]};
+
+	vector float aux25={mLHSrow51[1],mLHSrow51[1],mLHSrow51[1],mLHSrow51[1]};
+	vector float aux26={mLHSrow61[1],mLHSrow61[1],mLHSrow61[1],mLHSrow61[1]};
+	vector float aux27={mLHSrow71[1],mLHSrow71[1],mLHSrow71[1],mLHSrow71[1]};
+	vector float aux28={mLHSrow81[1],mLHSrow81[1],mLHSrow81[1],mLHSrow81[1]};
+
+	vector float aux29={mLHSrow91[1],mLHSrow91[1],mLHSrow91[1],mLHSrow91[1]};
+	vector float aux210={mLHSrow101[1],mLHSrow101[1],mLHSrow101[1],mLHSrow101[1]};
+	vector float aux211={mLHSrow111[1],mLHSrow111[1],mLHSrow111[1],mLHSrow111[1]};
+	vector float aux212={mLHSrow121[1],mLHSrow121[1],mLHSrow121[1],mLHSrow121[1]};
+
+//-------------------------------------------------------------------------
+	vector float aux31={mLHSrow11[2],mLHSrow11[2],mLHSrow11[2],mLHSrow11[2]};
+	vector float aux32={mLHSrow21[2],mLHSrow21[2],mLHSrow21[2],mLHSrow21[2]};
+	vector float aux33={mLHSrow31[2],mLHSrow31[2],mLHSrow31[2],mLHSrow31[2]};
+	vector float aux34={mLHSrow41[2],mLHSrow41[2],mLHSrow41[2],mLHSrow41[2]};
+
+	vector float aux35={mLHSrow51[2],mLHSrow51[2],mLHSrow51[2],mLHSrow51[2]};
+	vector float aux36={mLHSrow61[2],mLHSrow61[2],mLHSrow61[2],mLHSrow61[2]};
+	vector float aux37={mLHSrow71[2],mLHSrow71[2],mLHSrow71[2],mLHSrow71[2]};
+	vector float aux38={mLHSrow81[2],mLHSrow81[2],mLHSrow81[2],mLHSrow81[2]};
+
+	vector float aux39={mLHSrow91[2],mLHSrow91[2],mLHSrow91[2],mLHSrow91[2]};
+	vector float aux310={mLHSrow101[2],mLHSrow101[2],mLHSrow101[2],mLHSrow101[2]};
+	vector float aux311={mLHSrow111[2],mLHSrow111[2],mLHSrow111[2],mLHSrow111[2]};
+	vector float aux312={mLHSrow121[2],mLHSrow121[2],mLHSrow121[2],mLHSrow121[2]};
+
+//-------------------------------------------------------------------------
+	vector float aux41={mLHSrow11[3],mLHSrow11[3],mLHSrow11[3],mLHSrow11[3]};
+	vector float aux42={mLHSrow21[3],mLHSrow21[3],mLHSrow21[3],mLHSrow21[3]};
+	vector float aux43={mLHSrow31[3],mLHSrow31[3],mLHSrow31[3],mLHSrow31[3]};
+	vector float aux44={mLHSrow41[3],mLHSrow41[3],mLHSrow41[3],mLHSrow41[3]};
+
+	vector float aux45={mLHSrow51[3],mLHSrow51[3],mLHSrow51[3],mLHSrow51[3]};
+	vector float aux46={mLHSrow61[3],mLHSrow61[3],mLHSrow61[3],mLHSrow61[3]};
+	vector float aux47={mLHSrow71[3],mLHSrow71[3],mLHSrow71[3],mLHSrow71[3]};
+	vector float aux48={mLHSrow81[3],mLHSrow81[3],mLHSrow81[3],mLHSrow81[3]};
+
+	vector float aux49={mLHSrow91[3],mLHSrow91[3],mLHSrow91[3],mLHSrow91[3]};
+	vector float aux410={mLHSrow101[3],mLHSrow101[3],mLHSrow101[3],mLHSrow101[3]};
+	vector float aux411={mLHSrow111[3],mLHSrow111[3],mLHSrow111[3],mLHSrow111[3]};
+	vector float aux412={mLHSrow121[3],mLHSrow121[3],mLHSrow121[3],mLHSrow121[3]};
+
+//-------------------------------------------------------------------------
+
+	vector float aux51={mLHSrow12[0],mLHSrow12[0],mLHSrow12[0],mLHSrow12[0]};
+	vector float aux52={mLHSrow22[0],mLHSrow22[0],mLHSrow22[0],mLHSrow22[0]};
+	vector float aux53={mLHSrow32[0],mLHSrow32[0],mLHSrow32[0],mLHSrow32[0]};
+	vector float aux54={mLHSrow42[0],mLHSrow42[0],mLHSrow42[0],mLHSrow42[0]};
+
+	vector float aux55={mLHSrow52[0],mLHSrow52[0],mLHSrow52[0],mLHSrow52[0]};
+	vector float aux56={mLHSrow62[0],mLHSrow62[0],mLHSrow62[0],mLHSrow62[0]};
+	vector float aux57={mLHSrow72[0],mLHSrow72[0],mLHSrow72[0],mLHSrow72[0]};
+	vector float aux58={mLHSrow82[0],mLHSrow82[0],mLHSrow82[0],mLHSrow82[0]};
+
+	vector float aux59={mLHSrow92[0],mLHSrow92[0],mLHSrow92[0],mLHSrow92[0]};
+	vector float aux510={mLHSrow102[0],mLHSrow102[0],mLHSrow102[0],mLHSrow102[0]};
+	vector float aux511={mLHSrow112[0],mLHSrow112[0],mLHSrow112[0],mLHSrow112[0]};
+	vector float aux512={mLHSrow122[0],mLHSrow122[0],mLHSrow122[0],mLHSrow122[0]};
+
+//-------------------------------------------------------------------------
+	vector float aux61={mLHSrow12[1],mLHSrow12[1],mLHSrow12[1],mLHSrow12[1]};
+	vector float aux62={mLHSrow22[1],mLHSrow22[1],mLHSrow22[1],mLHSrow22[1]};
+	vector float aux63={mLHSrow32[1],mLHSrow32[1],mLHSrow32[1],mLHSrow32[1]};
+	vector float aux64={mLHSrow42[1],mLHSrow42[1],mLHSrow42[1],mLHSrow42[1]};
+
+	vector float aux65={mLHSrow52[1],mLHSrow52[1],mLHSrow52[1],mLHSrow52[1]};
+	vector float aux66={mLHSrow62[1],mLHSrow62[1],mLHSrow62[1],mLHSrow62[1]};
+	vector float aux67={mLHSrow72[1],mLHSrow72[1],mLHSrow72[1],mLHSrow72[1]};
+	vector float aux68={mLHSrow82[1],mLHSrow82[1],mLHSrow82[1],mLHSrow82[1]};
+
+	vector float aux69={mLHSrow92[1],mLHSrow92[1],mLHSrow92[1],mLHSrow92[1]};
+	vector float aux610={mLHSrow102[1],mLHSrow102[1],mLHSrow102[1],mLHSrow102[1]};
+	vector float aux611={mLHSrow112[1],mLHSrow112[1],mLHSrow112[1],mLHSrow112[1]};
+	vector float aux612={mLHSrow122[1],mLHSrow122[1],mLHSrow122[1],mLHSrow122[1]};
+
+//-------------------------------------------------------------------------
+	vector float aux71={mLHSrow12[2],mLHSrow12[2],mLHSrow12[2],mLHSrow12[2]};
+	vector float aux72={mLHSrow22[2],mLHSrow22[2],mLHSrow22[2],mLHSrow22[2]};
+	vector float aux73={mLHSrow32[2],mLHSrow32[2],mLHSrow32[2],mLHSrow32[2]};
+	vector float aux74={mLHSrow42[2],mLHSrow42[2],mLHSrow42[2],mLHSrow42[2]};
+
+	vector float aux75={mLHSrow52[2],mLHSrow52[2],mLHSrow52[2],mLHSrow52[2]};
+	vector float aux76={mLHSrow62[2],mLHSrow62[2],mLHSrow62[2],mLHSrow62[2]};
+	vector float aux77={mLHSrow72[2],mLHSrow72[2],mLHSrow72[2],mLHSrow72[2]};
+	vector float aux78={mLHSrow82[2],mLHSrow82[2],mLHSrow82[2],mLHSrow82[2]};
+
+	vector float aux79={mLHSrow92[2],mLHSrow92[2],mLHSrow92[2],mLHSrow92[2]};
+	vector float aux710={mLHSrow102[2],mLHSrow102[2],mLHSrow102[2],mLHSrow102[2]};
+	vector float aux711={mLHSrow112[2],mLHSrow112[2],mLHSrow112[2],mLHSrow112[2]};
+	vector float aux712={mLHSrow122[2],mLHSrow122[2],mLHSrow122[2],mLHSrow122[2]};
+
+//-------------------------------------------------------------------------
+	vector float aux81={mLHSrow12[3],mLHSrow12[3],mLHSrow12[3],mLHSrow12[3]};
+	vector float aux82={mLHSrow22[3],mLHSrow22[3],mLHSrow22[3],mLHSrow22[3]};
+	vector float aux83={mLHSrow32[3],mLHSrow32[3],mLHSrow32[3],mLHSrow32[3]};
+	vector float aux84={mLHSrow42[3],mLHSrow42[3],mLHSrow42[3],mLHSrow42[3]};
+
+	vector float aux85={mLHSrow52[3],mLHSrow52[3],mLHSrow52[3],mLHSrow52[3]};
+	vector float aux86={mLHSrow62[3],mLHSrow62[3],mLHSrow62[3],mLHSrow62[3]};
+	vector float aux87={mLHSrow72[3],mLHSrow72[3],mLHSrow72[3],mLHSrow72[3]};
+	vector float aux88={mLHSrow82[3],mLHSrow82[3],mLHSrow82[3],mLHSrow82[3]};
+
+	vector float aux89={mLHSrow92[3],mLHSrow92[3],mLHSrow92[3],mLHSrow92[3]};
+	vector float aux810={mLHSrow102[3],mLHSrow102[3],mLHSrow102[3],mLHSrow102[3]};
+	vector float aux811={mLHSrow112[3],mLHSrow112[3],mLHSrow112[3],mLHSrow112[3]};
+	vector float aux812={mLHSrow122[3],mLHSrow122[3],mLHSrow122[3],mLHSrow122[3]};
+
+//-------------------------------------------------------------------------
+	vector float aux91={mLHSrow13[0],mLHSrow13[0],mLHSrow13[0],mLHSrow13[0]};
+	vector float aux92={mLHSrow23[0],mLHSrow23[0],mLHSrow23[0],mLHSrow23[0]};
+	vector float aux93={mLHSrow33[0],mLHSrow33[0],mLHSrow33[0],mLHSrow33[0]};
+	vector float aux94={mLHSrow43[0],mLHSrow43[0],mLHSrow43[0],mLHSrow43[0]};
+
+	vector float aux95={mLHSrow53[0],mLHSrow53[0],mLHSrow53[0],mLHSrow53[0]};
+	vector float aux96={mLHSrow63[0],mLHSrow63[0],mLHSrow63[0],mLHSrow63[0]};
+	vector float aux97={mLHSrow73[0],mLHSrow73[0],mLHSrow73[0],mLHSrow73[0]};
+	vector float aux98={mLHSrow83[0],mLHSrow83[0],mLHSrow83[0],mLHSrow83[0]};
+
+	vector float aux99={mLHSrow93[0],mLHSrow93[0],mLHSrow93[0],mLHSrow93[0]};
+	vector float aux910={mLHSrow103[0],mLHSrow103[0],mLHSrow103[0],mLHSrow103[0]};
+	vector float aux911={mLHSrow113[0],mLHSrow113[0],mLHSrow113[0],mLHSrow113[0]};
+	vector float aux912={mLHSrow123[0],mLHSrow123[0],mLHSrow123[0],mLHSrow123[0]};
+
+//-------------------------------------------------------------------------
+	vector float aux101={mLHSrow13[1],mLHSrow13[1],mLHSrow13[1],mLHSrow13[1]};
+	vector float aux102={mLHSrow23[1],mLHSrow23[1],mLHSrow23[1],mLHSrow23[1]};
+	vector float aux103={mLHSrow33[1],mLHSrow33[1],mLHSrow33[1],mLHSrow33[1]};
+	vector float aux104={mLHSrow43[1],mLHSrow43[1],mLHSrow43[1],mLHSrow43[1]};
+
+	vector float aux105={mLHSrow53[1],mLHSrow53[1],mLHSrow53[1],mLHSrow53[1]};
+	vector float aux106={mLHSrow63[1],mLHSrow63[1],mLHSrow63[1],mLHSrow63[1]};
+	vector float aux107={mLHSrow73[1],mLHSrow73[1],mLHSrow73[1],mLHSrow73[1]};
+	vector float aux108={mLHSrow83[1],mLHSrow83[1],mLHSrow83[1],mLHSrow83[1]};
+
+	vector float aux109={mLHSrow93[1],mLHSrow93[1],mLHSrow93[1],mLHSrow93[1]};
+	vector float aux1010={mLHSrow103[1],mLHSrow103[1],mLHSrow103[1],mLHSrow103[1]};
+	vector float aux1011={mLHSrow113[1],mLHSrow113[1],mLHSrow113[1],mLHSrow113[1]};
+	vector float aux1012={mLHSrow123[1],mLHSrow123[1],mLHSrow123[1],mLHSrow123[1]};
+
+//-------------------------------------------------------------------------
+	vector float aux111={mLHSrow13[2],mLHSrow13[2],mLHSrow13[2],mLHSrow13[2]};
+	vector float aux112={mLHSrow23[2],mLHSrow23[2],mLHSrow23[2],mLHSrow23[2]};
+	vector float aux113={mLHSrow33[2],mLHSrow33[2],mLHSrow33[2],mLHSrow33[2]};
+	vector float aux114={mLHSrow43[2],mLHSrow43[2],mLHSrow43[2],mLHSrow43[2]};
+
+	vector float aux115={mLHSrow53[2],mLHSrow53[2],mLHSrow53[2],mLHSrow53[2]};
+	vector float aux116={mLHSrow63[2],mLHSrow63[2],mLHSrow63[2],mLHSrow63[2]};
+	vector float aux117={mLHSrow73[2],mLHSrow73[2],mLHSrow73[2],mLHSrow73[2]};
+	vector float aux118={mLHSrow83[2],mLHSrow83[2],mLHSrow83[2],mLHSrow83[2]};
+
+	vector float aux119={mLHSrow93[2],mLHSrow93[2],mLHSrow93[2],mLHSrow93[2]};
+	vector float aux1110={mLHSrow103[2],mLHSrow103[2],mLHSrow103[2],mLHSrow103[2]};
+	vector float aux1111={mLHSrow113[2],mLHSrow113[2],mLHSrow113[2],mLHSrow113[2]};
+	vector float aux1112={mLHSrow123[2],mLHSrow123[2],mLHSrow123[2],mLHSrow123[2]};
+
+//-------------------------------------------------------------------------
+	vector float aux121={mLHSrow13[3],mLHSrow13[3],mLHSrow13[3],mLHSrow13[3]};
+	vector float aux122={mLHSrow23[3],mLHSrow23[3],mLHSrow23[3],mLHSrow23[3]};
+	vector float aux123={mLHSrow33[3],mLHSrow33[3],mLHSrow33[3],mLHSrow33[3]};
+	vector float aux124={mLHSrow43[3],mLHSrow43[3],mLHSrow43[3],mLHSrow43[3]};
+
+	vector float aux125={mLHSrow53[3],mLHSrow53[3],mLHSrow53[3],mLHSrow53[3]};
+	vector float aux126={mLHSrow63[3],mLHSrow63[3],mLHSrow63[3],mLHSrow63[3]};
+	vector float aux127={mLHSrow73[3],mLHSrow73[3],mLHSrow73[3],mLHSrow73[3]};
+	vector float aux128={mLHSrow83[3],mLHSrow83[3],mLHSrow83[3],mLHSrow83[3]};
+
+	vector float aux129={mLHSrow93[3],mLHSrow93[3],mLHSrow93[3],mLHSrow93[3]};
+	vector float aux1210={mLHSrow103[3],mLHSrow103[3],mLHSrow103[3],mLHSrow103[3]};
+	vector float aux1211={mLHSrow113[3],mLHSrow113[3],mLHSrow113[3],mLHSrow113[3]};
+	vector float aux1212={mLHSrow123[3],mLHSrow123[3],mLHSrow123[3],mLHSrow123[3]};
+
+//-------------------------------------------------------------------------
+		//row 1 of result
+	vec_xst(vec_madd(aux121, mRHSrow121, vec_madd(aux111, mRHSrow111, vec_madd(aux101, mRHSrow101, vec_madd(aux91, mRHSrow91, vec_madd(aux81, mRHSrow81, vec_madd(aux71, mRHSrow71, vec_madd(aux61, mRHSrow61, vec_madd(aux51, mRHSrow51, vec_madd(aux41, mRHSrow41, vec_madd(aux31, mRHSrow31, vec_madd(aux21, mRHSrow21, vec_mul(aux11, mRHSrow11)))))))))))), 0, mResult);
+	vec_xst(vec_madd(aux121, mRHSrow122, vec_madd(aux111, mRHSrow112, vec_madd(aux101, mRHSrow102, vec_madd(aux91, mRHSrow92, vec_madd(aux81, mRHSrow82, vec_madd(aux71, mRHSrow72, vec_madd(aux61, mRHSrow62, vec_madd(aux51, mRHSrow52, vec_madd(aux41, mRHSrow42, vec_madd(aux31, mRHSrow32, vec_madd(aux21, mRHSrow22, vec_mul(aux11, mRHSrow12)))))))))))), 0, mResult + 4);
+	vec_xst(vec_madd(aux121, mRHSrow123, vec_madd(aux111, mRHSrow113, vec_madd(aux101, mRHSrow103, vec_madd(aux91, mRHSrow93, vec_madd(aux81, mRHSrow83, vec_madd(aux71, mRHSrow73, vec_madd(aux61, mRHSrow63, vec_madd(aux51, mRHSrow53, vec_madd(aux41, mRHSrow43, vec_madd(aux31, mRHSrow33, vec_madd(aux21, mRHSrow23, vec_mul(aux11, mRHSrow13)))))))))))), 0, mResult + 4*2);
+
+	//row 2 of result
+	vec_xst(vec_madd(aux122, mRHSrow121, vec_madd(aux112, mRHSrow111, vec_madd(aux102, mRHSrow101, vec_madd(aux92, mRHSrow91, vec_madd(aux82, mRHSrow81, vec_madd(aux72, mRHSrow71, vec_madd(aux62, mRHSrow61, vec_madd(aux52, mRHSrow51, vec_madd(aux42, mRHSrow41, vec_madd(aux32, mRHSrow31, vec_madd(aux22, mRHSrow21, vec_mul(aux12, mRHSrow11)))))))))))), 0, mResult + 4*3);
+	vec_xst(vec_madd(aux122, mRHSrow122, vec_madd(aux112, mRHSrow112, vec_madd(aux102, mRHSrow102, vec_madd(aux92, mRHSrow92, vec_madd(aux82, mRHSrow82, vec_madd(aux72, mRHSrow72, vec_madd(aux62, mRHSrow62, vec_madd(aux52, mRHSrow52, vec_madd(aux42, mRHSrow42, vec_madd(aux32, mRHSrow32, vec_madd(aux22, mRHSrow22, vec_mul(aux12, mRHSrow12)))))))))))), 0, mResult + 4*4);
+	vec_xst(vec_madd(aux122, mRHSrow123, vec_madd(aux112, mRHSrow113, vec_madd(aux102, mRHSrow103, vec_madd(aux92, mRHSrow93, vec_madd(aux82, mRHSrow83, vec_madd(aux72, mRHSrow73, vec_madd(aux62, mRHSrow63, vec_madd(aux52, mRHSrow53, vec_madd(aux42, mRHSrow43, vec_madd(aux32, mRHSrow33, vec_madd(aux22, mRHSrow23, vec_mul(aux12, mRHSrow13)))))))))))), 0, mResult + 4*5);
+
+	// row 3 of mResult
+	vec_xst(vec_madd(aux123, mRHSrow121, vec_madd(aux113, mRHSrow111, vec_madd(aux103, mRHSrow101, vec_madd(aux93, mRHSrow91, vec_madd(aux83, mRHSrow81, vec_madd(aux73, mRHSrow71, vec_madd(aux63, mRHSrow61, vec_madd(aux53, mRHSrow51, vec_madd(aux43, mRHSrow41, vec_madd(aux33, mRHSrow31, vec_madd(aux23, mRHSrow21, vec_mul(aux13, mRHSrow11)))))))))))), 0, mResult + 4*6);
+	vec_xst(vec_madd(aux123, mRHSrow122, vec_madd(aux113, mRHSrow112, vec_madd(aux103, mRHSrow102, vec_madd(aux93, mRHSrow92, vec_madd(aux83, mRHSrow82, vec_madd(aux73, mRHSrow72, vec_madd(aux63, mRHSrow62, vec_madd(aux53, mRHSrow52, vec_madd(aux43, mRHSrow42, vec_madd(aux33, mRHSrow32, vec_madd(aux23, mRHSrow22, vec_mul(aux13, mRHSrow12)))))))))))), 0, mResult + 4*7);
+	vec_xst(vec_madd(aux123, mRHSrow123, vec_madd(aux113, mRHSrow113, vec_madd(aux103, mRHSrow103, vec_madd(aux93, mRHSrow93, vec_madd(aux83, mRHSrow83, vec_madd(aux73, mRHSrow73, vec_madd(aux63, mRHSrow63, vec_madd(aux53, mRHSrow53, vec_madd(aux43, mRHSrow43, vec_madd(aux33, mRHSrow33, vec_madd(aux23, mRHSrow23, vec_mul(aux13, mRHSrow13)))))))))))), 0, mResult + 4*8);
+	
+	// row 4 of mResult
+	vec_xst(vec_madd(aux124, mRHSrow121, vec_madd(aux114, mRHSrow111, vec_madd(aux104, mRHSrow101, vec_madd(aux94, mRHSrow91, vec_madd(aux84, mRHSrow81, vec_madd(aux74, mRHSrow71, vec_madd(aux64, mRHSrow61, vec_madd(aux54, mRHSrow51, vec_madd(aux44, mRHSrow41, vec_madd(aux34, mRHSrow31, vec_madd(aux24, mRHSrow21, vec_mul(aux14, mRHSrow11)))))))))))), 0, mResult + 4*9);
+	vec_xst(vec_madd(aux124, mRHSrow122, vec_madd(aux114, mRHSrow112, vec_madd(aux104, mRHSrow102, vec_madd(aux94, mRHSrow92, vec_madd(aux84, mRHSrow82, vec_madd(aux74, mRHSrow72, vec_madd(aux64, mRHSrow62, vec_madd(aux54, mRHSrow52, vec_madd(aux44, mRHSrow42, vec_madd(aux34, mRHSrow32, vec_madd(aux24, mRHSrow22, vec_mul(aux14, mRHSrow12)))))))))))), 0, mResult + 4*10);
+	vec_xst(vec_madd(aux124, mRHSrow123, vec_madd(aux114, mRHSrow113, vec_madd(aux104, mRHSrow103, vec_madd(aux94, mRHSrow93, vec_madd(aux84, mRHSrow83, vec_madd(aux74, mRHSrow73, vec_madd(aux64, mRHSrow63, vec_madd(aux54, mRHSrow53, vec_madd(aux44, mRHSrow43, vec_madd(aux34, mRHSrow33, vec_madd(aux24, mRHSrow23, vec_mul(aux14, mRHSrow13)))))))))))), 0, mResult + 4*11);
+	
+	// row 5 of mResult
+	vec_xst(vec_madd(aux125, mRHSrow121, vec_madd(aux115, mRHSrow111, vec_madd(aux105, mRHSrow101, vec_madd(aux95, mRHSrow91, vec_madd(aux85, mRHSrow81, vec_madd(aux75, mRHSrow71, vec_madd(aux65, mRHSrow61, vec_madd(aux55, mRHSrow51, vec_madd(aux45, mRHSrow41, vec_madd(aux35, mRHSrow31, vec_madd(aux25, mRHSrow21, vec_mul(aux15, mRHSrow11)))))))))))), 0, mResult + 4*12);
+	vec_xst(vec_madd(aux125, mRHSrow122, vec_madd(aux115, mRHSrow112, vec_madd(aux105, mRHSrow102, vec_madd(aux95, mRHSrow92, vec_madd(aux85, mRHSrow82, vec_madd(aux75, mRHSrow72, vec_madd(aux65, mRHSrow62, vec_madd(aux55, mRHSrow52, vec_madd(aux45, mRHSrow42, vec_madd(aux35, mRHSrow32, vec_madd(aux25, mRHSrow22, vec_mul(aux15, mRHSrow12)))))))))))), 0, mResult + 4*13);
+	vec_xst(vec_madd(aux125, mRHSrow123, vec_madd(aux115, mRHSrow113, vec_madd(aux105, mRHSrow103, vec_madd(aux95, mRHSrow93, vec_madd(aux85, mRHSrow83, vec_madd(aux75, mRHSrow73, vec_madd(aux65, mRHSrow63, vec_madd(aux55, mRHSrow53, vec_madd(aux45, mRHSrow43, vec_madd(aux35, mRHSrow33, vec_madd(aux25, mRHSrow23, vec_mul(aux15, mRHSrow13)))))))))))), 0, mResult + 4*14);
+	
+	// row 6 of mResult
+	vec_xst(vec_madd(aux126, mRHSrow121, vec_madd(aux116, mRHSrow111, vec_madd(aux106, mRHSrow101, vec_madd(aux96, mRHSrow91, vec_madd(aux86, mRHSrow81, vec_madd(aux76, mRHSrow71, vec_madd(aux66, mRHSrow61, vec_madd(aux56, mRHSrow51, vec_madd(aux46, mRHSrow41, vec_madd(aux36, mRHSrow31, vec_madd(aux26, mRHSrow21, vec_mul(aux16, mRHSrow11)))))))))))), 0, mResult + 4*15);
+	vec_xst(vec_madd(aux126, mRHSrow122, vec_madd(aux116, mRHSrow112, vec_madd(aux106, mRHSrow102, vec_madd(aux96, mRHSrow92, vec_madd(aux86, mRHSrow82, vec_madd(aux76, mRHSrow72, vec_madd(aux66, mRHSrow62, vec_madd(aux56, mRHSrow52, vec_madd(aux46, mRHSrow42, vec_madd(aux36, mRHSrow32, vec_madd(aux26, mRHSrow22, vec_mul(aux16, mRHSrow12)))))))))))), 0, mResult + 4*16);
+	vec_xst(vec_madd(aux126, mRHSrow123, vec_madd(aux116, mRHSrow113, vec_madd(aux106, mRHSrow103, vec_madd(aux96, mRHSrow93, vec_madd(aux86, mRHSrow83, vec_madd(aux76, mRHSrow73, vec_madd(aux66, mRHSrow63, vec_madd(aux56, mRHSrow53, vec_madd(aux46, mRHSrow43, vec_madd(aux36, mRHSrow33, vec_madd(aux26, mRHSrow23, vec_mul(aux16, mRHSrow13)))))))))))), 0, mResult + 4*17);
+	
+	// row 7 of mResult
+	vec_xst(vec_madd(aux127, mRHSrow121, vec_madd(aux117, mRHSrow111, vec_madd(aux107, mRHSrow101, vec_madd(aux97, mRHSrow91, vec_madd(aux87, mRHSrow81, vec_madd(aux77, mRHSrow71, vec_madd(aux67, mRHSrow61, vec_madd(aux57, mRHSrow51, vec_madd(aux47, mRHSrow41, vec_madd(aux37, mRHSrow31, vec_madd(aux27, mRHSrow21, vec_mul(aux17, mRHSrow11)))))))))))), 0, mResult + 4*18);
+	vec_xst(vec_madd(aux127, mRHSrow122, vec_madd(aux117, mRHSrow112, vec_madd(aux107, mRHSrow102, vec_madd(aux97, mRHSrow92, vec_madd(aux87, mRHSrow82, vec_madd(aux77, mRHSrow72, vec_madd(aux67, mRHSrow62, vec_madd(aux57, mRHSrow52, vec_madd(aux47, mRHSrow42, vec_madd(aux37, mRHSrow32, vec_madd(aux27, mRHSrow22, vec_mul(aux17, mRHSrow12)))))))))))), 0, mResult + 4*19);
+	vec_xst(vec_madd(aux127, mRHSrow123, vec_madd(aux117, mRHSrow113, vec_madd(aux107, mRHSrow103, vec_madd(aux97, mRHSrow93, vec_madd(aux87, mRHSrow83, vec_madd(aux77, mRHSrow73, vec_madd(aux67, mRHSrow63, vec_madd(aux57, mRHSrow53, vec_madd(aux47, mRHSrow43, vec_madd(aux37, mRHSrow33, vec_madd(aux27, mRHSrow23, vec_mul(aux17, mRHSrow13)))))))))))), 0, mResult + 4*20);
+	
+	// row 8 of mResult
+	vec_xst(vec_madd(aux128, mRHSrow121, vec_madd(aux118, mRHSrow111, vec_madd(aux108, mRHSrow101, vec_madd(aux98, mRHSrow91, vec_madd(aux88, mRHSrow81, vec_madd(aux78, mRHSrow71, vec_madd(aux68, mRHSrow61, vec_madd(aux58, mRHSrow51, vec_madd(aux48, mRHSrow41, vec_madd(aux38, mRHSrow31, vec_madd(aux28, mRHSrow21, vec_mul(aux18, mRHSrow11)))))))))))), 0, mResult + 4*21);
+	vec_xst(vec_madd(aux128, mRHSrow122, vec_madd(aux118, mRHSrow112, vec_madd(aux108, mRHSrow102, vec_madd(aux98, mRHSrow92, vec_madd(aux88, mRHSrow82, vec_madd(aux78, mRHSrow72, vec_madd(aux68, mRHSrow62, vec_madd(aux58, mRHSrow52, vec_madd(aux48, mRHSrow42, vec_madd(aux38, mRHSrow32, vec_madd(aux28, mRHSrow22, vec_mul(aux18, mRHSrow12)))))))))))), 0, mResult + 4*22);
+	vec_xst(vec_madd(aux128, mRHSrow123, vec_madd(aux118, mRHSrow113, vec_madd(aux108, mRHSrow103, vec_madd(aux98, mRHSrow93, vec_madd(aux88, mRHSrow83, vec_madd(aux78, mRHSrow73, vec_madd(aux68, mRHSrow63, vec_madd(aux58, mRHSrow53, vec_madd(aux48, mRHSrow43, vec_madd(aux38, mRHSrow33, vec_madd(aux28, mRHSrow23, vec_mul(aux18, mRHSrow13)))))))))))), 0, mResult + 4*23);
+	
+	// row 9 of mResult
+	vec_xst(vec_madd(aux129, mRHSrow121, vec_madd(aux119, mRHSrow111, vec_madd(aux109, mRHSrow101, vec_madd(aux99, mRHSrow91, vec_madd(aux89, mRHSrow81, vec_madd(aux79, mRHSrow71, vec_madd(aux69, mRHSrow61, vec_madd(aux59, mRHSrow51, vec_madd(aux49, mRHSrow41, vec_madd(aux39, mRHSrow31, vec_madd(aux29, mRHSrow21, vec_mul(aux19, mRHSrow11)))))))))))), 0, mResult + 4*24);
+	vec_xst(vec_madd(aux129, mRHSrow122, vec_madd(aux119, mRHSrow112, vec_madd(aux109, mRHSrow102, vec_madd(aux99, mRHSrow92, vec_madd(aux89, mRHSrow82, vec_madd(aux79, mRHSrow72, vec_madd(aux69, mRHSrow62, vec_madd(aux59, mRHSrow52, vec_madd(aux49, mRHSrow42, vec_madd(aux39, mRHSrow32, vec_madd(aux29, mRHSrow22, vec_mul(aux19, mRHSrow12)))))))))))), 0, mResult + 4*25);
+	vec_xst(vec_madd(aux129, mRHSrow123, vec_madd(aux119, mRHSrow113, vec_madd(aux109, mRHSrow103, vec_madd(aux99, mRHSrow93, vec_madd(aux89, mRHSrow83, vec_madd(aux79, mRHSrow73, vec_madd(aux69, mRHSrow63, vec_madd(aux59, mRHSrow53, vec_madd(aux49, mRHSrow43, vec_madd(aux39, mRHSrow33, vec_madd(aux29, mRHSrow23, vec_mul(aux19, mRHSrow13)))))))))))), 0, mResult + 4*26);
+	
+	// row 10 of mResult
+	vec_xst(vec_madd(aux1210, mRHSrow121, vec_madd(aux1110, mRHSrow111, vec_madd(aux1010, mRHSrow101, vec_madd(aux910, mRHSrow91, vec_madd(aux810, mRHSrow81, vec_madd(aux710, mRHSrow71, vec_madd(aux610, mRHSrow61, vec_madd(aux510, mRHSrow51, vec_madd(aux410, mRHSrow41, vec_madd(aux310, mRHSrow31, vec_madd(aux210, mRHSrow21, vec_mul(aux110, mRHSrow11)))))))))))), 0, mResult + 4*27);
+	vec_xst(vec_madd(aux1210, mRHSrow122, vec_madd(aux1110, mRHSrow112, vec_madd(aux1010, mRHSrow102, vec_madd(aux910, mRHSrow92, vec_madd(aux810, mRHSrow82, vec_madd(aux710, mRHSrow72, vec_madd(aux610, mRHSrow62, vec_madd(aux510, mRHSrow52, vec_madd(aux410, mRHSrow42, vec_madd(aux310, mRHSrow32, vec_madd(aux210, mRHSrow22, vec_mul(aux110, mRHSrow12)))))))))))), 0, mResult + 4*28);
+	vec_xst(vec_madd(aux1210, mRHSrow123, vec_madd(aux1110, mRHSrow113, vec_madd(aux1010, mRHSrow103, vec_madd(aux910, mRHSrow93, vec_madd(aux810, mRHSrow83, vec_madd(aux710, mRHSrow73, vec_madd(aux610, mRHSrow63, vec_madd(aux510, mRHSrow53, vec_madd(aux410, mRHSrow43, vec_madd(aux310, mRHSrow33, vec_madd(aux210, mRHSrow23, vec_mul(aux110, mRHSrow13)))))))))))), 0, mResult + 4*29);
+	
+
+	// row 11 of mResult
+	vec_xst(vec_madd(aux1211, mRHSrow121, vec_madd(aux1111, mRHSrow111, vec_madd(aux1011, mRHSrow101, vec_madd(aux911, mRHSrow91, vec_madd(aux811, mRHSrow81, vec_madd(aux711, mRHSrow71, vec_madd(aux611, mRHSrow61, vec_madd(aux511, mRHSrow51, vec_madd(aux411, mRHSrow41, vec_madd(aux311, mRHSrow31, vec_madd(aux211, mRHSrow21, vec_mul(aux0111, mRHSrow11)))))))))))), 0, mResult + 4*30);
+	vec_xst(vec_madd(aux1211, mRHSrow122, vec_madd(aux1111, mRHSrow112, vec_madd(aux1011, mRHSrow102, vec_madd(aux911, mRHSrow92, vec_madd(aux811, mRHSrow82, vec_madd(aux711, mRHSrow72, vec_madd(aux611, mRHSrow62, vec_madd(aux511, mRHSrow52, vec_madd(aux411, mRHSrow42, vec_madd(aux311, mRHSrow32, vec_madd(aux211, mRHSrow22, vec_mul(aux0111, mRHSrow12)))))))))))), 0, mResult + 4*31);
+	vec_xst(vec_madd(aux1211, mRHSrow123, vec_madd(aux1111, mRHSrow113, vec_madd(aux1011, mRHSrow103, vec_madd(aux911, mRHSrow93, vec_madd(aux811, mRHSrow83, vec_madd(aux711, mRHSrow73, vec_madd(aux611, mRHSrow63, vec_madd(aux511, mRHSrow53, vec_madd(aux411, mRHSrow43, vec_madd(aux311, mRHSrow33, vec_madd(aux211, mRHSrow23, vec_mul(aux0111, mRHSrow13)))))))))))), 0, mResult + 4*32);
+	
+	// row 12 of mResult
+	vec_xst(vec_madd(aux1212, mRHSrow121, vec_madd(aux1112, mRHSrow111, vec_madd(aux1012, mRHSrow101, vec_madd(aux912, mRHSrow91, vec_madd(aux812, mRHSrow81, vec_madd(aux712, mRHSrow71, vec_madd(aux612, mRHSrow61, vec_madd(aux512, mRHSrow51, vec_madd(aux412, mRHSrow41, vec_madd(aux312, mRHSrow31, vec_madd(aux212, mRHSrow21, vec_mul(aux0112, mRHSrow11)))))))))))), 0, mResult + 4*33);
+	vec_xst(vec_madd(aux1212, mRHSrow122, vec_madd(aux1112, mRHSrow112, vec_madd(aux1012, mRHSrow102, vec_madd(aux912, mRHSrow92, vec_madd(aux812, mRHSrow82, vec_madd(aux712, mRHSrow72, vec_madd(aux612, mRHSrow62, vec_madd(aux512, mRHSrow52, vec_madd(aux412, mRHSrow42, vec_madd(aux312, mRHSrow32, vec_madd(aux212, mRHSrow22, vec_mul(aux0112, mRHSrow12)))))))))))), 0, mResult + 4*34);
+	vec_xst(vec_madd(aux1212, mRHSrow123, vec_madd(aux1112, mRHSrow113, vec_madd(aux1012, mRHSrow103, vec_madd(aux912, mRHSrow93, vec_madd(aux812, mRHSrow83, vec_madd(aux712, mRHSrow73, vec_madd(aux612, mRHSrow63, vec_madd(aux512, mRHSrow53, vec_madd(aux412, mRHSrow43, vec_madd(aux312, mRHSrow33, vec_madd(aux212, mRHSrow23, vec_mul(aux0112, mRHSrow13)))))))))))), 0, mResult + 4*35);
+	
+
+}
+
+
+
+//=========================================================================================================================
+//row x row float
+
+inline void mul4x4RowMajorFloat(const float* mLHS, const float* mRHS, float* const mResult){
+	
+	vector float mLHSrow1,mLHSrow2,mLHSrow3,mLHSrow4;
+	vector float mRHSrow1,mRHSrow2,mRHSrow3,mRHSrow4;
+
+
+	//====================================================
+	
+	mRHSrow1 = vec_xl(0,mRHS);
+	mRHSrow2 = vec_xl(0,mRHS+4);
+	mRHSrow3 = vec_xl(0,mRHS+4*2);
+	mRHSrow4 = vec_xl(0,mRHS+4*3);
+
+	mLHSrow1 = vec_xl(0,mLHS);
+	mLHSrow2 = vec_xl(0,mLHS+4);
+	mLHSrow3 = vec_xl(0,mLHS+4*2);
+	mLHSrow4 = vec_xl(0,mLHS+4*3);
+
+	//splat==============================================
+	
+	vector float auxLHS11 = {mLHSrow1[0],mLHSrow1[0],mLHSrow1[0],mLHSrow1[0]};
+	vector float auxLHS12 = {mLHSrow2[0],mLHSrow2[0],mLHSrow2[0],mLHSrow2[0]};
+	vector float auxLHS13 = {mLHSrow3[0],mLHSrow3[0],mLHSrow3[0],mLHSrow3[0]};
+	vector float auxLHS14 = {mLHSrow4[0],mLHSrow4[0],mLHSrow4[0],mLHSrow4[0]};
+	
+	vector float auxLHS21 = {mLHSrow1[1],mLHSrow1[1],mLHSrow1[1],mLHSrow1[1]};
+	vector float auxLHS22 = {mLHSrow2[1],mLHSrow2[1],mLHSrow2[1],mLHSrow2[1]};
+	vector float auxLHS23 = {mLHSrow3[1],mLHSrow3[1],mLHSrow3[1],mLHSrow3[1]};
+	vector float auxLHS24 = {mLHSrow4[1],mLHSrow4[1],mLHSrow4[1],mLHSrow4[1]};
+	
+	vector float auxLHS31 = {mLHSrow1[2],mLHSrow1[2],mLHSrow1[2],mLHSrow1[2]};
+	vector float auxLHS32 = {mLHSrow2[2],mLHSrow2[2],mLHSrow2[2],mLHSrow2[2]};
+	vector float auxLHS33 = {mLHSrow3[2],mLHSrow3[2],mLHSrow3[2],mLHSrow3[2]};
+	vector float auxLHS34 = {mLHSrow4[2],mLHSrow4[2],mLHSrow4[2],mLHSrow4[2]};
+	
+	vector float auxLHS41 = {mLHSrow1[3],mLHSrow1[3],mLHSrow1[3],mLHSrow1[3]};
+	vector float auxLHS42 = {mLHSrow2[3],mLHSrow2[3],mLHSrow2[3],mLHSrow2[3]};
+	vector float auxLHS43 = {mLHSrow3[3],mLHSrow3[3],mLHSrow3[3],mLHSrow3[3]};
+	vector float auxLHS44 = {mLHSrow4[3],mLHSrow4[3],mLHSrow4[3],mLHSrow4[3]};
+	
+
+ 	//row 1 
+	vec_xst(
+	vec_add(vec_add(vec_mul(auxLHS11,mRHSrow1),vec_mul(auxLHS12,mRHSrow2)),
+	vec_add(vec_mul(auxLHS13,mRHSrow3),vec_mul(auxLHS14,mRHSrow4))),0,
+	mResult
+	);
+
+	//row 2 
+	vec_xst(
+	vec_add(vec_add(vec_mul(auxLHS21,mRHSrow1),vec_mul(auxLHS22,mRHSrow2)),
+	vec_add(vec_mul(auxLHS23,mRHSrow3),vec_mul(auxLHS24,mRHSrow4))),0,mResult+4
+	);
+
+	//row 3
+	vec_xst(
+	vec_add(vec_add(vec_mul(auxLHS31,mRHSrow1),vec_mul(auxLHS32,mRHSrow2)),
+	vec_add(vec_mul(auxLHS33,mRHSrow3),vec_mul(auxLHS34,mRHSrow4))),0,mResult+8
+	);
+
+	//row 4
+	vec_xst(
+	vec_add(vec_add(vec_mul(auxLHS41,mRHSrow1),vec_mul(auxLHS42,mRHSrow2)),
+	vec_add(vec_mul(auxLHS43,mRHSrow3),vec_mul(auxLHS44,mRHSrow4))),0,mResult+12
+	);
+
+}
+
+inline void mul9x9RowMajorFloat(const float* mLHS, const float* mRHS, float* const mResult){
+
+	vector float mLHSrow11, mLHSrow12, mLHSrow13, mLHSrow21, mLHSrow22, mLHSrow23, mLHSrow31, mLHSrow32, mLHSrow33,
+	      	     mLHSrow41, mLHSrow42, mLHSrow43, mLHSrow51, mLHSrow52, mLHSrow53, mLHSrow61, mLHSrow62, mLHSrow63,
+		     mLHSrow71, mLHSrow72, mLHSrow73, mLHSrow81, mLHSrow82, mLHSrow83, mLHSrow91, mLHSrow92, mLHSrow93;
+
+	vector float mRHSrow11, mRHSrow12, mRHSrow13, mRHSrow21, mRHSrow22, mRHSrow23, mRHSrow31, mRHSrow32, mRHSrow33,
+	      	     mRHSrow41, mRHSrow42, mRHSrow43, mRHSrow51, mRHSrow52, mRHSrow53, mRHSrow61, mRHSrow62, mRHSrow63,
+		     mRHSrow71, mRHSrow72, mRHSrow73, mRHSrow81, mRHSrow82, mRHSrow83, mRHSrow91, mRHSrow92, mRHSrow93;
+
+//load
+// __8__17__26__35__44__53__62__71__80
+
+
+	mLHSrow11 = vec_xl(0,mLHS);
+	mLHSrow12 = vec_xl(0,mLHS+4);
+	mLHSrow13 = vec_splats((float)0);
+	mLHSrow13[0] = mLHS[8];
+
+	mLHSrow21 = vec_xl(0,mLHS+4*2+1);
+	mLHSrow22 = vec_xl(0,mLHS+4*3+1);
+	mLHSrow23 = vec_splats((float)0);
+	mLHSrow23[0] = mLHS[17];
+
+	mLHSrow31 = vec_xl(0,mLHS+4*4+2);
+	mLHSrow32 = vec_xl(0,mLHS+4*5+2);
+	mLHSrow33 = vec_splats((float)0);
+	mLHSrow33[0] = mLHS[26];
+
+	mLHSrow41 = vec_xl(0,mLHS+4*6+3);
+	mLHSrow42 = vec_xl(0,mLHS+4*7+3);
+	mLHSrow43 = vec_splats((float)0);
+	mLHSrow43[0] = mLHS[35];
+
+	mLHSrow51 = vec_xl(0,mLHS+4*8+4);
+	mLHSrow52 = vec_xl(0,mLHS+4*9+4);
+	mLHSrow53 = vec_splats((float)0);
+	mLHSrow53[0] = mLHS[44];
+
+	mLHSrow61 = vec_xl(0,mLHS+4*10+5);
+	mLHSrow62 = vec_xl(0,mLHS+4*11+5);
+	mLHSrow63 = vec_splats((float)0);
+	mLHSrow63[0] = mLHS[53];
+	
+	mLHSrow71 = vec_xl(0,mLHS+4*12+6);
+	mLHSrow72 = vec_xl(0,mLHS+4*13+6);
+	mLHSrow73 = vec_splats((float)0);
+	mLHSrow73[0] = mLHS[62];
+
+	mLHSrow81 = vec_xl(0,mLHS+4*14+7);
+	mLHSrow82 = vec_xl(0,mLHS+4*15+7);
+	mLHSrow83 = vec_splats((float)0);
+	mLHSrow83[0] = mLHS[71];
+
+	mLHSrow91 = vec_xl(0,mLHS+4*16+8);
+	mLHSrow92 = vec_xl(0,mLHS+4*17+8);
+	mLHSrow93 = vec_splats((float)0);
+	mLHSrow93[0] = mLHS[80];
+//-----------------------------------------------------
+
+	mRHSrow11 = vec_xl(0,mRHS);
+	mRHSrow12 = vec_xl(0,mRHS+4);
+	mRHSrow13 = vec_splats((float)0);
+	mRHSrow13[0] = mRHS[8];
+
+	mRHSrow21 = vec_xl(0,mRHS+4*2+1);
+	mRHSrow22 = vec_xl(0,mRHS+4*3+1);
+	mRHSrow23 = vec_splats((float)0);
+	mRHSrow23[0] = mRHS[17];
+
+	mRHSrow31 = vec_xl(0,mRHS+4*4+2);
+	mRHSrow32 = vec_xl(0,mRHS+4*5+2);
+	mRHSrow33 = vec_splats((float)0);
+	mRHSrow33[0] = mRHS[26];
+
+	mRHSrow41 = vec_xl(0,mRHS+4*6+3);
+	mRHSrow42 = vec_xl(0,mRHS+4*7+3);
+	mRHSrow43 = vec_splats((float)0);
+	mRHSrow43[0] = mRHS[35];
+
+	mRHSrow51 = vec_xl(0,mRHS+4*8+4);
+	mRHSrow52 = vec_xl(0,mRHS+4*9+4);
+	mRHSrow53 = vec_splats((float)0);
+	mRHSrow53[0] = mRHS[44];
+
+	mRHSrow61 = vec_xl(0,mRHS+4*10+5);
+	mRHSrow62 = vec_xl(0,mRHS+4*11+5);
+	mRHSrow63 = vec_splats((float)0);
+	mRHSrow63[0] = mRHS[53];
+	
+	mRHSrow71 = vec_xl(0,mRHS+4*12+6);
+	mRHSrow72 = vec_xl(0,mRHS+4*13+6);
+	mRHSrow73 = vec_splats((float)0);
+	mRHSrow73[0] = mRHS[62];
+
+	mRHSrow81 = vec_xl(0,mRHS+4*14+7);
+	mRHSrow82 = vec_xl(0,mRHS+4*15+7);
+	mRHSrow83 = vec_splats((float)0);
+	mRHSrow83[0] = mRHS[71];
+
+	mRHSrow91 = vec_xl(0,mRHS+4*16+8);
+	mRHSrow92 = vec_xl(0,mRHS+4*17+8);
+	mRHSrow93 = vec_splats((float)0);
+	mRHSrow93[0] = mRHS[80];
+
+//===================================================================================
+//Splat
+//===================================================================================
+	
+	vector float aux11={mLHSrow11[0],mLHSrow11[0],mLHSrow11[0],mLHSrow11[0]};
+	vector float aux12={mLHSrow21[0],mLHSrow21[0],mLHSrow21[0],mLHSrow21[0]};
+	vector float aux13={mLHSrow31[0],mLHSrow31[0],mLHSrow31[0],mLHSrow31[0]};
+	vector float aux14={mLHSrow41[0],mLHSrow41[0],mLHSrow41[0],mLHSrow41[0]};
+
+	vector float aux15={mLHSrow51[0],mLHSrow51[0],mLHSrow51[0],mLHSrow51[0]};
+	vector float aux16={mLHSrow61[0],mLHSrow61[0],mLHSrow61[0],mLHSrow61[0]};
+	vector float aux17={mLHSrow71[0],mLHSrow71[0],mLHSrow71[0],mLHSrow71[0]};
+	vector float aux18={mLHSrow81[0],mLHSrow81[0],mLHSrow81[0],mLHSrow81[0]};
+	
+	vector float aux19={mLHSrow91[0],mLHSrow91[0],mLHSrow91[0],mLHSrow91[0]};
+//----------------------------------------------------------------------------------
+	vector float aux21={mLHSrow11[1],mLHSrow11[1],mLHSrow11[1],mLHSrow11[1]};
+	vector float aux22={mLHSrow21[1],mLHSrow21[1],mLHSrow21[1],mLHSrow21[1]};
+	vector float aux23={mLHSrow31[1],mLHSrow31[1],mLHSrow31[1],mLHSrow31[1]};
+	vector float aux24={mLHSrow41[1],mLHSrow41[1],mLHSrow41[1],mLHSrow41[1]};
+
+	vector float aux25={mLHSrow51[1],mLHSrow51[1],mLHSrow51[1],mLHSrow51[1]};
+	vector float aux26={mLHSrow61[1],mLHSrow61[1],mLHSrow61[1],mLHSrow61[1]};
+	vector float aux27={mLHSrow71[1],mLHSrow71[1],mLHSrow71[1],mLHSrow71[1]};
+	vector float aux28={mLHSrow81[1],mLHSrow81[1],mLHSrow81[1],mLHSrow81[1]};
+	
+	vector float aux29={mLHSrow91[1],mLHSrow91[1],mLHSrow91[1],mLHSrow91[1]};
+//----------------------------------------------------------------------------------
+	vector float aux31={mLHSrow11[2],mLHSrow11[2],mLHSrow11[2],mLHSrow11[2]};
+	vector float aux32={mLHSrow21[2],mLHSrow21[2],mLHSrow21[2],mLHSrow21[2]};
+	vector float aux33={mLHSrow31[2],mLHSrow31[2],mLHSrow31[2],mLHSrow31[2]};
+	vector float aux34={mLHSrow41[2],mLHSrow41[2],mLHSrow41[2],mLHSrow41[2]};
+
+	vector float aux35={mLHSrow51[2],mLHSrow51[2],mLHSrow51[2],mLHSrow51[2]};
+	vector float aux36={mLHSrow61[2],mLHSrow61[2],mLHSrow61[2],mLHSrow61[2]};
+	vector float aux37={mLHSrow71[2],mLHSrow71[2],mLHSrow71[2],mLHSrow71[2]};
+	vector float aux38={mLHSrow81[2],mLHSrow81[2],mLHSrow81[2],mLHSrow81[2]};
+	
+	vector float aux39={mLHSrow91[2],mLHSrow91[2],mLHSrow91[2],mLHSrow91[2]};
+//----------------------------------------------------------------------------------
+	vector float aux41={mLHSrow11[3],mLHSrow11[3],mLHSrow11[3],mLHSrow11[3]};
+	vector float aux42={mLHSrow21[3],mLHSrow21[3],mLHSrow21[3],mLHSrow21[3]};
+	vector float aux43={mLHSrow31[3],mLHSrow31[3],mLHSrow31[3],mLHSrow31[3]};
+	vector float aux44={mLHSrow41[3],mLHSrow41[3],mLHSrow41[3],mLHSrow41[3]};
+
+	vector float aux45={mLHSrow51[3],mLHSrow51[3],mLHSrow51[3],mLHSrow51[3]};
+	vector float aux46={mLHSrow61[3],mLHSrow61[3],mLHSrow61[3],mLHSrow61[3]};
+	vector float aux47={mLHSrow71[3],mLHSrow71[3],mLHSrow71[3],mLHSrow71[3]};
+	vector float aux48={mLHSrow81[3],mLHSrow81[3],mLHSrow81[3],mLHSrow81[3]};
+	
+	vector float aux49={mLHSrow91[3],mLHSrow91[3],mLHSrow91[3],mLHSrow91[3]};
+//----------------------------------------------------------------------------------
+	vector float aux51={mLHSrow12[0],mLHSrow12[0],mLHSrow12[0],mLHSrow12[0]};
+	vector float aux52={mLHSrow22[0],mLHSrow22[0],mLHSrow22[0],mLHSrow22[0]};
+	vector float aux53={mLHSrow32[0],mLHSrow32[0],mLHSrow32[0],mLHSrow32[0]};
+	vector float aux54={mLHSrow42[0],mLHSrow42[0],mLHSrow42[0],mLHSrow42[0]};
+
+	vector float aux55={mLHSrow52[0],mLHSrow52[0],mLHSrow52[0],mLHSrow52[0]};
+	vector float aux56={mLHSrow62[0],mLHSrow62[0],mLHSrow62[0],mLHSrow62[0]};
+	vector float aux57={mLHSrow72[0],mLHSrow72[0],mLHSrow72[0],mLHSrow72[0]};
+	vector float aux58={mLHSrow82[0],mLHSrow82[0],mLHSrow82[0],mLHSrow82[0]};
+	
+	vector float aux59={mLHSrow92[0],mLHSrow92[0],mLHSrow92[0],mLHSrow92[0]};
+//----------------------------------------------------------------------------------
+	vector float aux61={mLHSrow12[1],mLHSrow12[1],mLHSrow12[1],mLHSrow12[1]};
+	vector float aux62={mLHSrow22[1],mLHSrow22[1],mLHSrow22[1],mLHSrow22[1]};
+	vector float aux63={mLHSrow32[1],mLHSrow32[1],mLHSrow32[1],mLHSrow32[1]};
+	vector float aux64={mLHSrow42[1],mLHSrow42[1],mLHSrow42[1],mLHSrow42[1]};
+
+	vector float aux65={mLHSrow52[1],mLHSrow52[1],mLHSrow52[1],mLHSrow52[1]};
+	vector float aux66={mLHSrow62[1],mLHSrow62[1],mLHSrow62[1],mLHSrow62[1]};
+	vector float aux67={mLHSrow72[1],mLHSrow72[1],mLHSrow72[1],mLHSrow72[1]};
+	vector float aux68={mLHSrow82[1],mLHSrow82[1],mLHSrow82[1],mLHSrow82[1]};
+	
+	vector float aux69={mLHSrow92[1],mLHSrow92[1],mLHSrow92[1],mLHSrow92[1]};
+//----------------------------------------------------------------------------------
+	vector float aux71={mLHSrow12[2],mLHSrow12[2],mLHSrow12[2],mLHSrow12[2]};
+	vector float aux72={mLHSrow22[2],mLHSrow22[2],mLHSrow22[2],mLHSrow22[2]};
+	vector float aux73={mLHSrow32[2],mLHSrow32[2],mLHSrow32[2],mLHSrow32[2]};
+	vector float aux74={mLHSrow42[2],mLHSrow42[2],mLHSrow42[2],mLHSrow42[2]};
+
+	vector float aux75={mLHSrow52[2],mLHSrow52[2],mLHSrow52[2],mLHSrow52[2]};
+	vector float aux76={mLHSrow62[2],mLHSrow62[2],mLHSrow62[2],mLHSrow62[2]};
+	vector float aux77={mLHSrow72[2],mLHSrow72[2],mLHSrow72[2],mLHSrow72[2]};
+	vector float aux78={mLHSrow82[2],mLHSrow82[2],mLHSrow82[2],mLHSrow82[2]};
+	
+	vector float aux79={mLHSrow92[2],mLHSrow92[2],mLHSrow92[2],mLHSrow92[2]};
+//----------------------------------------------------------------------------------
+	vector float aux81={mLHSrow12[3],mLHSrow12[3],mLHSrow12[3],mLHSrow12[3]};
+	vector float aux82={mLHSrow22[3],mLHSrow22[3],mLHSrow22[3],mLHSrow22[3]};
+	vector float aux83={mLHSrow32[3],mLHSrow32[3],mLHSrow32[3],mLHSrow32[3]};
+	vector float aux84={mLHSrow42[3],mLHSrow42[3],mLHSrow42[3],mLHSrow42[3]};
+
+	vector float aux85={mLHSrow52[3],mLHSrow52[3],mLHSrow52[3],mLHSrow52[3]};
+	vector float aux86={mLHSrow62[3],mLHSrow62[3],mLHSrow62[3],mLHSrow62[3]};
+	vector float aux87={mLHSrow72[3],mLHSrow72[3],mLHSrow72[3],mLHSrow72[3]};
+	vector float aux88={mLHSrow82[3],mLHSrow82[3],mLHSrow82[3],mLHSrow82[3]};
+	
+	vector float aux89={mLHSrow92[3],mLHSrow92[3],mLHSrow92[3],mLHSrow92[3]};
+//----------------------------------------------------------------------------------
+	vector float aux91={mLHSrow13[0],mLHSrow13[0],mLHSrow13[0],mLHSrow13[0]};
+	vector float aux92={mLHSrow23[0],mLHSrow23[0],mLHSrow23[0],mLHSrow23[0]};
+	vector float aux93={mLHSrow33[0],mLHSrow33[0],mLHSrow33[0],mLHSrow33[0]};
+	vector float aux94={mLHSrow43[0],mLHSrow43[0],mLHSrow43[0],mLHSrow43[0]};
+
+	vector float aux95={mLHSrow53[0],mLHSrow53[0],mLHSrow53[0],mLHSrow53[0]};
+	vector float aux96={mLHSrow63[0],mLHSrow63[0],mLHSrow63[0],mLHSrow63[0]};
+	vector float aux97={mLHSrow73[0],mLHSrow73[0],mLHSrow73[0],mLHSrow73[0]};
+	vector float aux98={mLHSrow83[0],mLHSrow83[0],mLHSrow83[0],mLHSrow83[0]};
+	
+	vector float aux99={mLHSrow93[0],mLHSrow93[0],mLHSrow93[0],mLHSrow93[0]};
+//----------------------------------------------------------------------------------
+
+
+//row1
+	vec_xst(vec_madd( mRHSrow91, aux91,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow21, aux21, vec_mul(mRHSrow11, aux11)),
+					vec_madd(mRHSrow41, aux41, vec_mul(mRHSrow31, aux31)) ),
+				vec_add(
+					vec_madd(mRHSrow61, aux61, vec_mul(mRHSrow51, aux51)),
+					vec_madd(mRHSrow81, aux81, vec_mul(mRHSrow71, aux71)) ) ) ),
+
+				0, mResult);	
+
+	
+	vec_xst(vec_madd( mRHSrow92, aux91,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow22, aux21, vec_mul(mRHSrow12, aux11)),
+					vec_madd(mRHSrow42, aux41, vec_mul(mRHSrow32, aux31)) ),
+				vec_add(
+					vec_madd(mRHSrow62, aux61, vec_mul(mRHSrow52, aux51)),
+					vec_madd(mRHSrow82, aux81, vec_mul(mRHSrow72, aux71)) ) ) ),
+
+				0, mResult+4);
+
+	vec_xst(vec_madd( mRHSrow93, aux91,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow23, aux21, vec_mul(mRHSrow13, aux11)),
+					vec_madd(mRHSrow43, aux41, vec_mul(mRHSrow33, aux31)) ),
+				vec_add(
+					vec_madd(mRHSrow63, aux61, vec_mul(mRHSrow53, aux51)),
+					vec_madd(mRHSrow83, aux81, vec_mul(mRHSrow73, aux71)) ) ) ),
+
+				0, mResult+8);	
+//row 2
+
+
+	vec_xst(vec_madd( mRHSrow91, aux92,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow21, aux22, vec_mul(mRHSrow11, aux12)),
+					vec_madd(mRHSrow41, aux42, vec_mul(mRHSrow31, aux32)) ),
+				vec_add(
+					vec_madd(mRHSrow61, aux62, vec_mul(mRHSrow51, aux52)),
+					vec_madd(mRHSrow81, aux82, vec_mul(mRHSrow71, aux72)) ) ) ),
+
+				0, mResult+4*2+1);
+
+	vec_xst(vec_madd( mRHSrow92, aux92,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow22, aux22, vec_mul(mRHSrow12, aux12)),
+					vec_madd(mRHSrow42, aux42, vec_mul(mRHSrow32, aux32)) ),
+				vec_add(
+					vec_madd(mRHSrow62, aux62, vec_mul(mRHSrow52, aux52)),
+					vec_madd(mRHSrow82, aux82, vec_mul(mRHSrow72, aux72)) ) ) ),
+
+				0, mResult+4*3+1);
+
+
+	vec_xst(vec_madd( mRHSrow93, aux92,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow23, aux22, vec_mul(mRHSrow13, aux12)),
+					vec_madd(mRHSrow43, aux42, vec_mul(mRHSrow33, aux32)) ),
+				vec_add(
+					vec_madd(mRHSrow63, aux62, vec_mul(mRHSrow53, aux52)),
+					vec_madd(mRHSrow83, aux82, vec_mul(mRHSrow73, aux72)) ) ) ),
+
+				0, mResult+17);
+
+//row 3
+
+	vec_xst(vec_madd( mRHSrow91, aux93,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow21, aux23, vec_mul(mRHSrow11, aux13)),
+					vec_madd(mRHSrow41, aux43, vec_mul(mRHSrow31, aux33)) ),
+				vec_add(
+					vec_madd(mRHSrow61, aux63, vec_mul(mRHSrow51, aux53)),
+					vec_madd(mRHSrow81, aux83, vec_mul(mRHSrow71, aux73)) ) ) ),
+
+				0, mResult+4*4+2);
+
+	vec_xst(vec_madd( mRHSrow92, aux93,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow22, aux23, vec_mul(mRHSrow12, aux13)),
+					vec_madd(mRHSrow42, aux43, vec_mul(mRHSrow32, aux33)) ),
+				vec_add(
+					vec_madd(mRHSrow62, aux63, vec_mul(mRHSrow52, aux53)),
+					vec_madd(mRHSrow82, aux83, vec_mul(mRHSrow72, aux73)) ) ) ),
+
+				0, mResult+4*5+2);
+
+
+	vec_xst(vec_madd( mRHSrow93, aux93,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow23, aux23, vec_mul(mRHSrow13, aux13)),
+					vec_madd(mRHSrow43, aux43, vec_mul(mRHSrow33, aux33)) ),
+				vec_add(
+					vec_madd(mRHSrow63, aux63, vec_mul(mRHSrow53, aux53)),
+					vec_madd(mRHSrow83, aux83, vec_mul(mRHSrow73, aux73)) ) ) ),
+
+				0, mResult+26);
+//row 4
+
+
+	vec_xst(vec_madd( mRHSrow91, aux94,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow21, aux24, vec_mul(mRHSrow11, aux14)),
+					vec_madd(mRHSrow41, aux44, vec_mul(mRHSrow31, aux34)) ),
+				vec_add(
+					vec_madd(mRHSrow61, aux64, vec_mul(mRHSrow51, aux54)),
+					vec_madd(mRHSrow81, aux84, vec_mul(mRHSrow71, aux74)) ) ) ),
+
+				0, mResult+4*6+3);
+
+	vec_xst(vec_madd( mRHSrow92, aux94,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow22, aux24, vec_mul(mRHSrow12, aux14)),
+					vec_madd(mRHSrow42, aux44, vec_mul(mRHSrow32, aux34)) ),
+				vec_add(
+					vec_madd(mRHSrow62, aux64, vec_mul(mRHSrow52, aux54)),
+					vec_madd(mRHSrow82, aux84, vec_mul(mRHSrow72, aux74)) ) ) ),
+
+				0, mResult+4*7+3);
+
+	vec_xst(vec_madd( mRHSrow93, aux94,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow23, aux24, vec_mul(mRHSrow13, aux14)),
+					vec_madd(mRHSrow43, aux44, vec_mul(mRHSrow33, aux34)) ),
+				vec_add(
+					vec_madd(mRHSrow63, aux64, vec_mul(mRHSrow53, aux54)),
+					vec_madd(mRHSrow83, aux84, vec_mul(mRHSrow73, aux74)) ) ) ),
+
+				0, mResult+35);
+//row 5
+
+
+	vec_xst(vec_madd( mRHSrow91, aux95,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow21, aux25, vec_mul(mRHSrow11, aux15)),
+					vec_madd(mRHSrow41, aux45, vec_mul(mRHSrow31, aux35)) ),
+				vec_add(
+					vec_madd(mRHSrow61, aux65, vec_mul(mRHSrow51, aux55)),
+					vec_madd(mRHSrow81, aux85, vec_mul(mRHSrow71, aux75)) ) ) ),
+
+				0, mResult+4*8+4);
+
+
+
+	vec_xst(vec_madd( mRHSrow92, aux95,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow22, aux25, vec_mul(mRHSrow12, aux15)),
+					vec_madd(mRHSrow42, aux45, vec_mul(mRHSrow32, aux35)) ),
+				vec_add(
+					vec_madd(mRHSrow62, aux65, vec_mul(mRHSrow52, aux55)),
+					vec_madd(mRHSrow82, aux85, vec_mul(mRHSrow72, aux75)) ) ) ),
+
+				0, mResult+4*9+4);
+
+
+	vec_xst(vec_madd( mRHSrow93, aux95,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow23, aux25, vec_mul(mRHSrow13, aux15)),
+					vec_madd(mRHSrow43, aux45, vec_mul(mRHSrow33, aux35)) ),
+				vec_add(
+					vec_madd(mRHSrow63, aux65, vec_mul(mRHSrow53, aux55)),
+					vec_madd(mRHSrow83, aux85, vec_mul(mRHSrow73, aux75)) ) ) ),
+
+				0, mResult+44);
+
+//row 6
+
+
+	vec_xst(vec_madd( mRHSrow91, aux96,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow21, aux26, vec_mul(mRHSrow11, aux16)),
+					vec_madd(mRHSrow41, aux46, vec_mul(mRHSrow31, aux36)) ),
+				vec_add(
+					vec_madd(mRHSrow61, aux66, vec_mul(mRHSrow51, aux56)),
+					vec_madd(mRHSrow81, aux86, vec_mul(mRHSrow71, aux76)) ) ) ),
+
+				0, mResult+4*10+5);
+
+
+	vec_xst(vec_madd( mRHSrow92, aux96,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow22, aux26, vec_mul(mRHSrow12, aux16)),
+					vec_madd(mRHSrow42, aux46, vec_mul(mRHSrow32, aux36)) ),
+				vec_add(
+					vec_madd(mRHSrow62, aux66, vec_mul(mRHSrow52, aux56)),
+					vec_madd(mRHSrow82, aux86, vec_mul(mRHSrow72, aux76)) ) ) ),
+
+				0, mResult+4*11+5);
+
+
+	vec_xst(vec_madd( mRHSrow93, aux96,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow23, aux26, vec_mul(mRHSrow13, aux16)),
+					vec_madd(mRHSrow43, aux46, vec_mul(mRHSrow33, aux36)) ),
+				vec_add(
+					vec_madd(mRHSrow63, aux66, vec_mul(mRHSrow53, aux56)),
+					vec_madd(mRHSrow83, aux86, vec_mul(mRHSrow73, aux76)) ) ) ),
+
+				0, mResult+53);
+
+//row 7
+
+	vec_xst(vec_madd( mRHSrow91, aux97,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow21, aux27, vec_mul(mRHSrow11, aux17)),
+					vec_madd(mRHSrow41, aux47, vec_mul(mRHSrow31, aux37)) ),
+				vec_add(
+					vec_madd(mRHSrow61, aux67, vec_mul(mRHSrow51, aux57)),
+					vec_madd(mRHSrow81, aux87, vec_mul(mRHSrow71, aux77)) ) ) ),
+
+				0, mResult+4*12+6);
+
+	vec_xst(vec_madd( mRHSrow92, aux97,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow22, aux27, vec_mul(mRHSrow12, aux17)),
+					vec_madd(mRHSrow42, aux47, vec_mul(mRHSrow32, aux37)) ),
+				vec_add(
+					vec_madd(mRHSrow62, aux67, vec_mul(mRHSrow52, aux57)),
+					vec_madd(mRHSrow82, aux87, vec_mul(mRHSrow72, aux77)) ) ) ),
+
+				0, mResult+4*13+6);
+
+
+	vec_xst(vec_madd( mRHSrow93, aux97,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow23, aux27, vec_mul(mRHSrow13, aux17)),
+					vec_madd(mRHSrow43, aux47, vec_mul(mRHSrow33, aux37)) ),
+				vec_add(
+					vec_madd(mRHSrow63, aux67, vec_mul(mRHSrow53, aux57)),
+					vec_madd(mRHSrow83, aux87, vec_mul(mRHSrow73, aux77)) ) ) ),
+
+				0, mResult+62);
+//row 8
+
+
+
+	vec_xst(vec_madd( mRHSrow91, aux98,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow21, aux28, vec_mul(mRHSrow11, aux18)),
+					vec_madd(mRHSrow41, aux48, vec_mul(mRHSrow31, aux38)) ),
+				vec_add(
+					vec_madd(mRHSrow61, aux68, vec_mul(mRHSrow51, aux58)),
+					vec_madd(mRHSrow81, aux88, vec_mul(mRHSrow71, aux78)) ) ) ),
+
+				0, mResult+4*14+7);
+
+
+	vec_xst(vec_madd( mRHSrow92, aux98,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow22, aux28, vec_mul(mRHSrow12, aux18)),
+					vec_madd(mRHSrow42, aux48, vec_mul(mRHSrow32, aux38)) ),
+				vec_add(
+					vec_madd(mRHSrow62, aux68, vec_mul(mRHSrow52, aux58)),
+					vec_madd(mRHSrow82, aux88, vec_mul(mRHSrow72, aux78)) ) ) ),
+
+				0, mResult+4*15+7);
+
+
+	vec_xst(vec_madd( mRHSrow93, aux98,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow23, aux28, vec_mul(mRHSrow13, aux18)),
+					vec_madd(mRHSrow43, aux48, vec_mul(mRHSrow33, aux38)) ),
+				vec_add(
+					vec_madd(mRHSrow63, aux68, vec_mul(mRHSrow53, aux58)),
+					vec_madd(mRHSrow83, aux88, vec_mul(mRHSrow73, aux78)) ) ) ),
+
+				0, mResult+71);
+
+//row 9
+
+
+	vec_xst(vec_madd( mRHSrow91, aux99,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow21, aux29, vec_mul(mRHSrow11, aux19)),
+					vec_madd(mRHSrow41, aux49, vec_mul(mRHSrow31, aux39)) ),
+				vec_add(
+					vec_madd(mRHSrow61, aux69, vec_mul(mRHSrow51, aux59)),
+					vec_madd(mRHSrow81, aux89, vec_mul(mRHSrow71, aux79)) ) ) ),
+
+				0, mResult+4*16+8);
+
+	vec_xst(vec_madd( mRHSrow92, aux99,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow22, aux29, vec_mul(mRHSrow12, aux19)),
+					vec_madd(mRHSrow42, aux49, vec_mul(mRHSrow32, aux39)) ),
+				vec_add(
+					vec_madd(mRHSrow62, aux69, vec_mul(mRHSrow52, aux59)),
+					vec_madd(mRHSrow82, aux89, vec_mul(mRHSrow72, aux79)) ) ) ),
+
+				0, mResult+4*17+8);
+
+
+	vector float mResultLastElem = 
+		
+		vec_madd( mRHSrow93, aux99,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow23, aux29, vec_mul(mRHSrow13, aux19)),
+					vec_madd(mRHSrow43, aux49, vec_mul(mRHSrow33, aux39)) ),
+				vec_add(
+					vec_madd(mRHSrow63, aux69, vec_mul(mRHSrow53, aux59)),
+					vec_madd(mRHSrow83, aux89, vec_mul(mRHSrow73, aux79)) ) ) );
+	mResult[80] = mResultLastElem[0];
+
+
+
+}
+
+
+inline void mul12x12RowMajorFloat(const float* mLHS, const float* mRHS, float* const mResult){
+
+	vector float mLHSrow11, mLHSrow12, mLHSrow13, mLHSrow21, mLHSrow22, mLHSrow23, mLHSrow31, mLHSrow32, mLHSrow33,
+	      	     mLHSrow41, mLHSrow42, mLHSrow43, mLHSrow51, mLHSrow52, mLHSrow53, mLHSrow61, mLHSrow62, mLHSrow63,
+		     mLHSrow71, mLHSrow72, mLHSrow73, mLHSrow81, mLHSrow82, mLHSrow83, mLHSrow91, mLHSrow92, mLHSrow93, mLHSrow101, mLHSrow102, mLHSrow103, mLHSrow111,
+		     mLHSrow112,mLHSrow113,mLHSrow121,mLHSrow122, mLHSrow123;
+
+	vector float mRHSrow11, mRHSrow12, mRHSrow13, mRHSrow21, mRHSrow22, mRHSrow23, mRHSrow31, mRHSrow32, mRHSrow33,
+	      	     mRHSrow41, mRHSrow42, mRHSrow43, mRHSrow51, mRHSrow52, mRHSrow53, mRHSrow61, mRHSrow62, mRHSrow63,
+		     mRHSrow71, mRHSrow72, mRHSrow73, mRHSrow81, mRHSrow82, mRHSrow83, mRHSrow91, mRHSrow92, mRHSrow93, mRHSrow101, mRHSrow102, mRHSrow103, mRHSrow111,
+		     mRHSrow112, mRHSrow113,  mRHSrow121, mRHSrow122, mRHSrow123;
+//load
+
+
+	mRHSrow11 = vec_xl(0,mRHS);
+	mRHSrow12 = vec_xl(0,mRHS+4);
+	mRHSrow13 = vec_xl(0,mRHS+4*2);
+
+	mRHSrow21 = vec_xl(0,mRHS+4*3);
+	mRHSrow22 = vec_xl(0,mRHS+4*4);
+	mRHSrow23 = vec_xl(0,mRHS+4*5);
+
+	mRHSrow31 = vec_xl(0,mRHS+4*6);
+	mRHSrow32 = vec_xl(0,mRHS+4*7);
+	mRHSrow33 = vec_xl(0,mRHS+4*8);
+
+	mRHSrow41 = vec_xl(0,mRHS+4*9);
+	mRHSrow42 = vec_xl(0,mRHS+4*10);
+	mRHSrow43 = vec_xl(0,mRHS+4*11);
+
+	mRHSrow51 = vec_xl(0,mRHS+4*12);
+	mRHSrow52 = vec_xl(0,mRHS+4*13);
+	mRHSrow53 = vec_xl(0,mRHS+4*14);
+
+	mRHSrow61 = vec_xl(0,mRHS+4*15);
+	mRHSrow62 = vec_xl(0,mRHS+4*16);
+	mRHSrow63 = vec_xl(0,mRHS+4*17);
+
+	mRHSrow71 = vec_xl(0,mRHS+4*18);
+	mRHSrow72 = vec_xl(0,mRHS+4*19);
+	mRHSrow73 = vec_xl(0,mRHS+4*20);
+
+	mRHSrow81 = vec_xl(0,mRHS+4*21);
+	mRHSrow82 = vec_xl(0,mRHS+4*22);
+	mRHSrow83 = vec_xl(0,mRHS+4*23);
+
+	mRHSrow91 = vec_xl(0,mRHS+4*24);
+	mRHSrow92 = vec_xl(0,mRHS+4*25);
+	mRHSrow93 = vec_xl(0,mRHS+4*26);
+
+	mRHSrow101 = vec_xl(0,mRHS+4*27);
+	mRHSrow102 = vec_xl(0,mRHS+4*28);
+	mRHSrow103 = vec_xl(0,mRHS+4*29);
+
+	mRHSrow111 = vec_xl(0,mRHS+4*30);
+	mRHSrow112 = vec_xl(0,mRHS+4*31);
+	mRHSrow113 = vec_xl(0,mRHS+4*32);
+
+	mRHSrow121 = vec_xl(0,mRHS+4*33);
+	mRHSrow122 = vec_xl(0,mRHS+4*34);
+	mRHSrow123 = vec_xl(0,mRHS+4*35);
+
+	//--------------------------------------------------
+	mLHSrow11 = vec_xl(0,mLHS);
+	mLHSrow12 = vec_xl(0,mLHS+4);
+	mLHSrow13 = vec_xl(0,mLHS+4*2);
+
+	mLHSrow21 = vec_xl(0,mLHS+4*3);
+	mLHSrow22 = vec_xl(0,mLHS+4*4);
+	mLHSrow23 = vec_xl(0,mLHS+4*5);
+
+	mLHSrow31 = vec_xl(0,mLHS+4*6);
+	mLHSrow32 = vec_xl(0,mLHS+4*7);
+	mLHSrow33 = vec_xl(0,mLHS+4*8);
+
+	mLHSrow41 = vec_xl(0,mLHS+4*9);
+	mLHSrow42 = vec_xl(0,mLHS+4*10);
+	mLHSrow43 = vec_xl(0,mLHS+4*11);
+
+	mLHSrow51 = vec_xl(0,mLHS+4*12);
+	mLHSrow52 = vec_xl(0,mLHS+4*13);
+	mLHSrow53 = vec_xl(0,mLHS+4*14);
+
+	mLHSrow61 = vec_xl(0,mLHS+4*15);
+	mLHSrow62 = vec_xl(0,mLHS+4*16);
+	mLHSrow63 = vec_xl(0,mLHS+4*17);
+
+	mLHSrow71 = vec_xl(0,mLHS+4*18);
+	mLHSrow72 = vec_xl(0,mLHS+4*19);
+	mLHSrow73 = vec_xl(0,mLHS+4*20);
+
+	mLHSrow81 = vec_xl(0,mLHS+4*21);
+	mLHSrow82 = vec_xl(0,mLHS+4*22);
+	mLHSrow83 = vec_xl(0,mLHS+4*23);
+
+	mLHSrow91 = vec_xl(0,mLHS+4*24);
+	mLHSrow92 = vec_xl(0,mLHS+4*25);
+	mLHSrow93 = vec_xl(0,mLHS+4*26);
+
+	mLHSrow101 = vec_xl(0,mLHS+4*27);
+	mLHSrow102 = vec_xl(0,mLHS+4*28);
+	mLHSrow103 = vec_xl(0,mLHS+4*29);
+
+	mLHSrow111 = vec_xl(0,mLHS+4*30);
+	mLHSrow112 = vec_xl(0,mLHS+4*31);
+	mLHSrow113 = vec_xl(0,mLHS+4*32);
+
+	mLHSrow121 = vec_xl(0,mLHS+4*33);
+	mLHSrow122 = vec_xl(0,mLHS+4*34);
+	mLHSrow123 = vec_xl(0,mLHS+4*35);
+
+//-------------------------------------------------------------------------
+
+	vector float aux11={mLHSrow11[0],mLHSrow11[0],mLHSrow11[0],mLHSrow11[0]};
+	vector float aux12={mLHSrow21[0],mLHSrow21[0],mLHSrow21[0],mLHSrow21[0]};
+	vector float aux13={mLHSrow31[0],mLHSrow31[0],mLHSrow31[0],mLHSrow31[0]};
+	vector float aux14={mLHSrow41[0],mLHSrow41[0],mLHSrow41[0],mLHSrow41[0]};
+
+	vector float aux15={mLHSrow51[0],mLHSrow51[0],mLHSrow51[0],mLHSrow51[0]};
+	vector float aux16={mLHSrow61[0],mLHSrow61[0],mLHSrow61[0],mLHSrow61[0]};
+	vector float aux17={mLHSrow71[0],mLHSrow71[0],mLHSrow71[0],mLHSrow71[0]};
+	vector float aux18={mLHSrow81[0],mLHSrow81[0],mLHSrow81[0],mLHSrow81[0]};
+
+	vector float aux19={mLHSrow91[0],mLHSrow91[0],mLHSrow91[0],mLHSrow91[0]};
+	vector float aux110={mLHSrow101[0],mLHSrow101[0],mLHSrow101[0],mLHSrow101[0]};
+	vector float aux0111={mLHSrow111[0],mLHSrow111[0],mLHSrow111[0],mLHSrow111[0]};
+	vector float aux0112={mLHSrow121[0],mLHSrow121[0],mLHSrow121[0],mLHSrow121[0]};
+
+//-------------------------------------------------------------------------
+	vector float aux21={mLHSrow11[1],mLHSrow11[1],mLHSrow11[1],mLHSrow11[1]};
+	vector float aux22={mLHSrow21[1],mLHSrow21[1],mLHSrow21[1],mLHSrow21[1]};
+	vector float aux23={mLHSrow31[1],mLHSrow31[1],mLHSrow31[1],mLHSrow31[1]};
+	vector float aux24={mLHSrow41[1],mLHSrow41[1],mLHSrow41[1],mLHSrow41[1]};
+
+	vector float aux25={mLHSrow51[1],mLHSrow51[1],mLHSrow51[1],mLHSrow51[1]};
+	vector float aux26={mLHSrow61[1],mLHSrow61[1],mLHSrow61[1],mLHSrow61[1]};
+	vector float aux27={mLHSrow71[1],mLHSrow71[1],mLHSrow71[1],mLHSrow71[1]};
+	vector float aux28={mLHSrow81[1],mLHSrow81[1],mLHSrow81[1],mLHSrow81[1]};
+
+	vector float aux29={mLHSrow91[1],mLHSrow91[1],mLHSrow91[1],mLHSrow91[1]};
+	vector float aux210={mLHSrow101[1],mLHSrow101[1],mLHSrow101[1],mLHSrow101[1]};
+	vector float aux211={mLHSrow111[1],mLHSrow111[1],mLHSrow111[1],mLHSrow111[1]};
+	vector float aux212={mLHSrow121[1],mLHSrow121[1],mLHSrow121[1],mLHSrow121[1]};
+
+//-------------------------------------------------------------------------
+	vector float aux31={mLHSrow11[2],mLHSrow11[2],mLHSrow11[2],mLHSrow11[2]};
+	vector float aux32={mLHSrow21[2],mLHSrow21[2],mLHSrow21[2],mLHSrow21[2]};
+	vector float aux33={mLHSrow31[2],mLHSrow31[2],mLHSrow31[2],mLHSrow31[2]};
+	vector float aux34={mLHSrow41[2],mLHSrow41[2],mLHSrow41[2],mLHSrow41[2]};
+
+	vector float aux35={mLHSrow51[2],mLHSrow51[2],mLHSrow51[2],mLHSrow51[2]};
+	vector float aux36={mLHSrow61[2],mLHSrow61[2],mLHSrow61[2],mLHSrow61[2]};
+	vector float aux37={mLHSrow71[2],mLHSrow71[2],mLHSrow71[2],mLHSrow71[2]};
+	vector float aux38={mLHSrow81[2],mLHSrow81[2],mLHSrow81[2],mLHSrow81[2]};
+
+	vector float aux39={mLHSrow91[2],mLHSrow91[2],mLHSrow91[2],mLHSrow91[2]};
+	vector float aux310={mLHSrow101[2],mLHSrow101[2],mLHSrow101[2],mLHSrow101[2]};
+	vector float aux311={mLHSrow111[2],mLHSrow111[2],mLHSrow111[2],mLHSrow111[2]};
+	vector float aux312={mLHSrow121[2],mLHSrow121[2],mLHSrow121[2],mLHSrow121[2]};
+
+//-------------------------------------------------------------------------
+	vector float aux41={mLHSrow11[3],mLHSrow11[3],mLHSrow11[3],mLHSrow11[3]};
+	vector float aux42={mLHSrow21[3],mLHSrow21[3],mLHSrow21[3],mLHSrow21[3]};
+	vector float aux43={mLHSrow31[3],mLHSrow31[3],mLHSrow31[3],mLHSrow31[3]};
+	vector float aux44={mLHSrow41[3],mLHSrow41[3],mLHSrow41[3],mLHSrow41[3]};
+
+	vector float aux45={mLHSrow51[3],mLHSrow51[3],mLHSrow51[3],mLHSrow51[3]};
+	vector float aux46={mLHSrow61[3],mLHSrow61[3],mLHSrow61[3],mLHSrow61[3]};
+	vector float aux47={mLHSrow71[3],mLHSrow71[3],mLHSrow71[3],mLHSrow71[3]};
+	vector float aux48={mLHSrow81[3],mLHSrow81[3],mLHSrow81[3],mLHSrow81[3]};
+
+	vector float aux49={mLHSrow91[3],mLHSrow91[3],mLHSrow91[3],mLHSrow91[3]};
+	vector float aux410={mLHSrow101[3],mLHSrow101[3],mLHSrow101[3],mLHSrow101[3]};
+	vector float aux411={mLHSrow111[3],mLHSrow111[3],mLHSrow111[3],mLHSrow111[3]};
+	vector float aux412={mLHSrow121[3],mLHSrow121[3],mLHSrow121[3],mLHSrow121[3]};
+
+//-------------------------------------------------------------------------
+
+	vector float aux51={mLHSrow12[0],mLHSrow12[0],mLHSrow12[0],mLHSrow12[0]};
+	vector float aux52={mLHSrow22[0],mLHSrow22[0],mLHSrow22[0],mLHSrow22[0]};
+	vector float aux53={mLHSrow32[0],mLHSrow32[0],mLHSrow32[0],mLHSrow32[0]};
+	vector float aux54={mLHSrow42[0],mLHSrow42[0],mLHSrow42[0],mLHSrow42[0]};
+
+	vector float aux55={mLHSrow52[0],mLHSrow52[0],mLHSrow52[0],mLHSrow52[0]};
+	vector float aux56={mLHSrow62[0],mLHSrow62[0],mLHSrow62[0],mLHSrow62[0]};
+	vector float aux57={mLHSrow72[0],mLHSrow72[0],mLHSrow72[0],mLHSrow72[0]};
+	vector float aux58={mLHSrow82[0],mLHSrow82[0],mLHSrow82[0],mLHSrow82[0]};
+
+	vector float aux59={mLHSrow92[0],mLHSrow92[0],mLHSrow92[0],mLHSrow92[0]};
+	vector float aux510={mLHSrow102[0],mLHSrow102[0],mLHSrow102[0],mLHSrow102[0]};
+	vector float aux511={mLHSrow112[0],mLHSrow112[0],mLHSrow112[0],mLHSrow112[0]};
+	vector float aux512={mLHSrow122[0],mLHSrow122[0],mLHSrow122[0],mLHSrow122[0]};
+
+//-------------------------------------------------------------------------
+	vector float aux61={mLHSrow12[1],mLHSrow12[1],mLHSrow12[1],mLHSrow12[1]};
+	vector float aux62={mLHSrow22[1],mLHSrow22[1],mLHSrow22[1],mLHSrow22[1]};
+	vector float aux63={mLHSrow32[1],mLHSrow32[1],mLHSrow32[1],mLHSrow32[1]};
+	vector float aux64={mLHSrow42[1],mLHSrow42[1],mLHSrow42[1],mLHSrow42[1]};
+
+	vector float aux65={mLHSrow52[1],mLHSrow52[1],mLHSrow52[1],mLHSrow52[1]};
+	vector float aux66={mLHSrow62[1],mLHSrow62[1],mLHSrow62[1],mLHSrow62[1]};
+	vector float aux67={mLHSrow72[1],mLHSrow72[1],mLHSrow72[1],mLHSrow72[1]};
+	vector float aux68={mLHSrow82[1],mLHSrow82[1],mLHSrow82[1],mLHSrow82[1]};
+
+	vector float aux69={mLHSrow92[1],mLHSrow92[1],mLHSrow92[1],mLHSrow92[1]};
+	vector float aux610={mLHSrow102[1],mLHSrow102[1],mLHSrow102[1],mLHSrow102[1]};
+	vector float aux611={mLHSrow112[1],mLHSrow112[1],mLHSrow112[1],mLHSrow112[1]};
+	vector float aux612={mLHSrow122[1],mLHSrow122[1],mLHSrow122[1],mLHSrow122[1]};
+
+//-------------------------------------------------------------------------
+	vector float aux71={mLHSrow12[2],mLHSrow12[2],mLHSrow12[2],mLHSrow12[2]};
+	vector float aux72={mLHSrow22[2],mLHSrow22[2],mLHSrow22[2],mLHSrow22[2]};
+	vector float aux73={mLHSrow32[2],mLHSrow32[2],mLHSrow32[2],mLHSrow32[2]};
+	vector float aux74={mLHSrow42[2],mLHSrow42[2],mLHSrow42[2],mLHSrow42[2]};
+
+	vector float aux75={mLHSrow52[2],mLHSrow52[2],mLHSrow52[2],mLHSrow52[2]};
+	vector float aux76={mLHSrow62[2],mLHSrow62[2],mLHSrow62[2],mLHSrow62[2]};
+	vector float aux77={mLHSrow72[2],mLHSrow72[2],mLHSrow72[2],mLHSrow72[2]};
+	vector float aux78={mLHSrow82[2],mLHSrow82[2],mLHSrow82[2],mLHSrow82[2]};
+
+	vector float aux79={mLHSrow92[2],mLHSrow92[2],mLHSrow92[2],mLHSrow92[2]};
+	vector float aux710={mLHSrow102[2],mLHSrow102[2],mLHSrow102[2],mLHSrow102[2]};
+	vector float aux711={mLHSrow112[2],mLHSrow112[2],mLHSrow112[2],mLHSrow112[2]};
+	vector float aux712={mLHSrow122[2],mLHSrow122[2],mLHSrow122[2],mLHSrow122[2]};
+
+//-------------------------------------------------------------------------
+	vector float aux81={mLHSrow12[3],mLHSrow12[3],mLHSrow12[3],mLHSrow12[3]};
+	vector float aux82={mLHSrow22[3],mLHSrow22[3],mLHSrow22[3],mLHSrow22[3]};
+	vector float aux83={mLHSrow32[3],mLHSrow32[3],mLHSrow32[3],mLHSrow32[3]};
+	vector float aux84={mLHSrow42[3],mLHSrow42[3],mLHSrow42[3],mLHSrow42[3]};
+
+	vector float aux85={mLHSrow52[3],mLHSrow52[3],mLHSrow52[3],mLHSrow52[3]};
+	vector float aux86={mLHSrow62[3],mLHSrow62[3],mLHSrow62[3],mLHSrow62[3]};
+	vector float aux87={mLHSrow72[3],mLHSrow72[3],mLHSrow72[3],mLHSrow72[3]};
+	vector float aux88={mLHSrow82[3],mLHSrow82[3],mLHSrow82[3],mLHSrow82[3]};
+
+	vector float aux89={mLHSrow92[3],mLHSrow92[3],mLHSrow92[3],mLHSrow92[3]};
+	vector float aux810={mLHSrow102[3],mLHSrow102[3],mLHSrow102[3],mLHSrow102[3]};
+	vector float aux811={mLHSrow112[3],mLHSrow112[3],mLHSrow112[3],mLHSrow112[3]};
+	vector float aux812={mLHSrow122[3],mLHSrow122[3],mLHSrow122[3],mLHSrow122[3]};
+
+//-------------------------------------------------------------------------
+	vector float aux91={mLHSrow13[0],mLHSrow13[0],mLHSrow13[0],mLHSrow13[0]};
+	vector float aux92={mLHSrow23[0],mLHSrow23[0],mLHSrow23[0],mLHSrow23[0]};
+	vector float aux93={mLHSrow33[0],mLHSrow33[0],mLHSrow33[0],mLHSrow33[0]};
+	vector float aux94={mLHSrow43[0],mLHSrow43[0],mLHSrow43[0],mLHSrow43[0]};
+
+	vector float aux95={mLHSrow53[0],mLHSrow53[0],mLHSrow53[0],mLHSrow53[0]};
+	vector float aux96={mLHSrow63[0],mLHSrow63[0],mLHSrow63[0],mLHSrow63[0]};
+	vector float aux97={mLHSrow73[0],mLHSrow73[0],mLHSrow73[0],mLHSrow73[0]};
+	vector float aux98={mLHSrow83[0],mLHSrow83[0],mLHSrow83[0],mLHSrow83[0]};
+
+	vector float aux99={mLHSrow93[0],mLHSrow93[0],mLHSrow93[0],mLHSrow93[0]};
+	vector float aux910={mLHSrow103[0],mLHSrow103[0],mLHSrow103[0],mLHSrow103[0]};
+	vector float aux911={mLHSrow113[0],mLHSrow113[0],mLHSrow113[0],mLHSrow113[0]};
+	vector float aux912={mLHSrow123[0],mLHSrow123[0],mLHSrow123[0],mLHSrow123[0]};
+
+//-------------------------------------------------------------------------
+	vector float aux101={mLHSrow13[1],mLHSrow13[1],mLHSrow13[1],mLHSrow13[1]};
+	vector float aux102={mLHSrow23[1],mLHSrow23[1],mLHSrow23[1],mLHSrow23[1]};
+	vector float aux103={mLHSrow33[1],mLHSrow33[1],mLHSrow33[1],mLHSrow33[1]};
+	vector float aux104={mLHSrow43[1],mLHSrow43[1],mLHSrow43[1],mLHSrow43[1]};
+
+	vector float aux105={mLHSrow53[1],mLHSrow53[1],mLHSrow53[1],mLHSrow53[1]};
+	vector float aux106={mLHSrow63[1],mLHSrow63[1],mLHSrow63[1],mLHSrow63[1]};
+	vector float aux107={mLHSrow73[1],mLHSrow73[1],mLHSrow73[1],mLHSrow73[1]};
+	vector float aux108={mLHSrow83[1],mLHSrow83[1],mLHSrow83[1],mLHSrow83[1]};
+
+	vector float aux109={mLHSrow93[1],mLHSrow93[1],mLHSrow93[1],mLHSrow93[1]};
+	vector float aux1010={mLHSrow103[1],mLHSrow103[1],mLHSrow103[1],mLHSrow103[1]};
+	vector float aux1011={mLHSrow113[1],mLHSrow113[1],mLHSrow113[1],mLHSrow113[1]};
+	vector float aux1012={mLHSrow123[1],mLHSrow123[1],mLHSrow123[1],mLHSrow123[1]};
+
+//-------------------------------------------------------------------------
+	vector float aux111={mLHSrow13[2],mLHSrow13[2],mLHSrow13[2],mLHSrow13[2]};
+	vector float aux112={mLHSrow23[2],mLHSrow23[2],mLHSrow23[2],mLHSrow23[2]};
+	vector float aux113={mLHSrow33[2],mLHSrow33[2],mLHSrow33[2],mLHSrow33[2]};
+	vector float aux114={mLHSrow43[2],mLHSrow43[2],mLHSrow43[2],mLHSrow43[2]};
+
+	vector float aux115={mLHSrow53[2],mLHSrow53[2],mLHSrow53[2],mLHSrow53[2]};
+	vector float aux116={mLHSrow63[2],mLHSrow63[2],mLHSrow63[2],mLHSrow63[2]};
+	vector float aux117={mLHSrow73[2],mLHSrow73[2],mLHSrow73[2],mLHSrow73[2]};
+	vector float aux118={mLHSrow83[2],mLHSrow83[2],mLHSrow83[2],mLHSrow83[2]};
+
+	vector float aux119={mLHSrow93[2],mLHSrow93[2],mLHSrow93[2],mLHSrow93[2]};
+	vector float aux1110={mLHSrow103[2],mLHSrow103[2],mLHSrow103[2],mLHSrow103[2]};
+	vector float aux1111={mLHSrow113[2],mLHSrow113[2],mLHSrow113[2],mLHSrow113[2]};
+	vector float aux1112={mLHSrow123[2],mLHSrow123[2],mLHSrow123[2],mLHSrow123[2]};
+
+//-------------------------------------------------------------------------
+	vector float aux121={mLHSrow13[3],mLHSrow13[3],mLHSrow13[3],mLHSrow13[3]};
+	vector float aux122={mLHSrow23[3],mLHSrow23[3],mLHSrow23[3],mLHSrow23[3]};
+	vector float aux123={mLHSrow33[3],mLHSrow33[3],mLHSrow33[3],mLHSrow33[3]};
+	vector float aux124={mLHSrow43[3],mLHSrow43[3],mLHSrow43[3],mLHSrow43[3]};
+
+	vector float aux125={mLHSrow53[3],mLHSrow53[3],mLHSrow53[3],mLHSrow53[3]};
+	vector float aux126={mLHSrow63[3],mLHSrow63[3],mLHSrow63[3],mLHSrow63[3]};
+	vector float aux127={mLHSrow73[3],mLHSrow73[3],mLHSrow73[3],mLHSrow73[3]};
+	vector float aux128={mLHSrow83[3],mLHSrow83[3],mLHSrow83[3],mLHSrow83[3]};
+
+	vector float aux129={mLHSrow93[3],mLHSrow93[3],mLHSrow93[3],mLHSrow93[3]};
+	vector float aux1210={mLHSrow103[3],mLHSrow103[3],mLHSrow103[3],mLHSrow103[3]};
+	vector float aux1211={mLHSrow113[3],mLHSrow113[3],mLHSrow113[3],mLHSrow113[3]};
+	vector float aux1212={mLHSrow123[3],mLHSrow123[3],mLHSrow123[3],mLHSrow123[3]};
+
+//-------------------------------------------------------------------------
+		//row 1 of result
+	vec_xst(vec_madd(aux121, mRHSrow121, vec_madd(aux111, mRHSrow111, vec_madd(aux101, mRHSrow101, vec_madd(aux91, mRHSrow91, vec_madd(aux81, mRHSrow81, vec_madd(aux71, mRHSrow71, vec_madd(aux61, mRHSrow61, vec_madd(aux51, mRHSrow51, vec_madd(aux41, mRHSrow41, vec_madd(aux31, mRHSrow31, vec_madd(aux21, mRHSrow21, vec_mul(aux11, mRHSrow11)))))))))))), 0, mResult);
+	vec_xst(vec_madd(aux121, mRHSrow122, vec_madd(aux111, mRHSrow112, vec_madd(aux101, mRHSrow102, vec_madd(aux91, mRHSrow92, vec_madd(aux81, mRHSrow82, vec_madd(aux71, mRHSrow72, vec_madd(aux61, mRHSrow62, vec_madd(aux51, mRHSrow52, vec_madd(aux41, mRHSrow42, vec_madd(aux31, mRHSrow32, vec_madd(aux21, mRHSrow22, vec_mul(aux11, mRHSrow12)))))))))))), 0, mResult + 4);
+	vec_xst(vec_madd(aux121, mRHSrow123, vec_madd(aux111, mRHSrow113, vec_madd(aux101, mRHSrow103, vec_madd(aux91, mRHSrow93, vec_madd(aux81, mRHSrow83, vec_madd(aux71, mRHSrow73, vec_madd(aux61, mRHSrow63, vec_madd(aux51, mRHSrow53, vec_madd(aux41, mRHSrow43, vec_madd(aux31, mRHSrow33, vec_madd(aux21, mRHSrow23, vec_mul(aux11, mRHSrow13)))))))))))), 0, mResult + 4*2);
+
+	//row 2 of result
+	vec_xst(vec_madd(aux122, mRHSrow121, vec_madd(aux112, mRHSrow111, vec_madd(aux102, mRHSrow101, vec_madd(aux92, mRHSrow91, vec_madd(aux82, mRHSrow81, vec_madd(aux72, mRHSrow71, vec_madd(aux62, mRHSrow61, vec_madd(aux52, mRHSrow51, vec_madd(aux42, mRHSrow41, vec_madd(aux32, mRHSrow31, vec_madd(aux22, mRHSrow21, vec_mul(aux12, mRHSrow11)))))))))))), 0, mResult + 4*3);
+	vec_xst(vec_madd(aux122, mRHSrow122, vec_madd(aux112, mRHSrow112, vec_madd(aux102, mRHSrow102, vec_madd(aux92, mRHSrow92, vec_madd(aux82, mRHSrow82, vec_madd(aux72, mRHSrow72, vec_madd(aux62, mRHSrow62, vec_madd(aux52, mRHSrow52, vec_madd(aux42, mRHSrow42, vec_madd(aux32, mRHSrow32, vec_madd(aux22, mRHSrow22, vec_mul(aux12, mRHSrow12)))))))))))), 0, mResult + 4*4);
+	vec_xst(vec_madd(aux122, mRHSrow123, vec_madd(aux112, mRHSrow113, vec_madd(aux102, mRHSrow103, vec_madd(aux92, mRHSrow93, vec_madd(aux82, mRHSrow83, vec_madd(aux72, mRHSrow73, vec_madd(aux62, mRHSrow63, vec_madd(aux52, mRHSrow53, vec_madd(aux42, mRHSrow43, vec_madd(aux32, mRHSrow33, vec_madd(aux22, mRHSrow23, vec_mul(aux12, mRHSrow13)))))))))))), 0, mResult + 4*5);
+
+	// row 3 of mResult
+	vec_xst(vec_madd(aux123, mRHSrow121, vec_madd(aux113, mRHSrow111, vec_madd(aux103, mRHSrow101, vec_madd(aux93, mRHSrow91, vec_madd(aux83, mRHSrow81, vec_madd(aux73, mRHSrow71, vec_madd(aux63, mRHSrow61, vec_madd(aux53, mRHSrow51, vec_madd(aux43, mRHSrow41, vec_madd(aux33, mRHSrow31, vec_madd(aux23, mRHSrow21, vec_mul(aux13, mRHSrow11)))))))))))), 0, mResult + 4*6);
+	vec_xst(vec_madd(aux123, mRHSrow122, vec_madd(aux113, mRHSrow112, vec_madd(aux103, mRHSrow102, vec_madd(aux93, mRHSrow92, vec_madd(aux83, mRHSrow82, vec_madd(aux73, mRHSrow72, vec_madd(aux63, mRHSrow62, vec_madd(aux53, mRHSrow52, vec_madd(aux43, mRHSrow42, vec_madd(aux33, mRHSrow32, vec_madd(aux23, mRHSrow22, vec_mul(aux13, mRHSrow12)))))))))))), 0, mResult + 4*7);
+	vec_xst(vec_madd(aux123, mRHSrow123, vec_madd(aux113, mRHSrow113, vec_madd(aux103, mRHSrow103, vec_madd(aux93, mRHSrow93, vec_madd(aux83, mRHSrow83, vec_madd(aux73, mRHSrow73, vec_madd(aux63, mRHSrow63, vec_madd(aux53, mRHSrow53, vec_madd(aux43, mRHSrow43, vec_madd(aux33, mRHSrow33, vec_madd(aux23, mRHSrow23, vec_mul(aux13, mRHSrow13)))))))))))), 0, mResult + 4*8);
+	
+	// row 4 of mResult
+	vec_xst(vec_madd(aux124, mRHSrow121, vec_madd(aux114, mRHSrow111, vec_madd(aux104, mRHSrow101, vec_madd(aux94, mRHSrow91, vec_madd(aux84, mRHSrow81, vec_madd(aux74, mRHSrow71, vec_madd(aux64, mRHSrow61, vec_madd(aux54, mRHSrow51, vec_madd(aux44, mRHSrow41, vec_madd(aux34, mRHSrow31, vec_madd(aux24, mRHSrow21, vec_mul(aux14, mRHSrow11)))))))))))), 0, mResult + 4*9);
+	vec_xst(vec_madd(aux124, mRHSrow122, vec_madd(aux114, mRHSrow112, vec_madd(aux104, mRHSrow102, vec_madd(aux94, mRHSrow92, vec_madd(aux84, mRHSrow82, vec_madd(aux74, mRHSrow72, vec_madd(aux64, mRHSrow62, vec_madd(aux54, mRHSrow52, vec_madd(aux44, mRHSrow42, vec_madd(aux34, mRHSrow32, vec_madd(aux24, mRHSrow22, vec_mul(aux14, mRHSrow12)))))))))))), 0, mResult + 4*10);
+	vec_xst(vec_madd(aux124, mRHSrow123, vec_madd(aux114, mRHSrow113, vec_madd(aux104, mRHSrow103, vec_madd(aux94, mRHSrow93, vec_madd(aux84, mRHSrow83, vec_madd(aux74, mRHSrow73, vec_madd(aux64, mRHSrow63, vec_madd(aux54, mRHSrow53, vec_madd(aux44, mRHSrow43, vec_madd(aux34, mRHSrow33, vec_madd(aux24, mRHSrow23, vec_mul(aux14, mRHSrow13)))))))))))), 0, mResult + 4*11);
+	
+	// row 5 of mResult
+	vec_xst(vec_madd(aux125, mRHSrow121, vec_madd(aux115, mRHSrow111, vec_madd(aux105, mRHSrow101, vec_madd(aux95, mRHSrow91, vec_madd(aux85, mRHSrow81, vec_madd(aux75, mRHSrow71, vec_madd(aux65, mRHSrow61, vec_madd(aux55, mRHSrow51, vec_madd(aux45, mRHSrow41, vec_madd(aux35, mRHSrow31, vec_madd(aux25, mRHSrow21, vec_mul(aux15, mRHSrow11)))))))))))), 0, mResult + 4*12);
+	vec_xst(vec_madd(aux125, mRHSrow122, vec_madd(aux115, mRHSrow112, vec_madd(aux105, mRHSrow102, vec_madd(aux95, mRHSrow92, vec_madd(aux85, mRHSrow82, vec_madd(aux75, mRHSrow72, vec_madd(aux65, mRHSrow62, vec_madd(aux55, mRHSrow52, vec_madd(aux45, mRHSrow42, vec_madd(aux35, mRHSrow32, vec_madd(aux25, mRHSrow22, vec_mul(aux15, mRHSrow12)))))))))))), 0, mResult + 4*13);
+	vec_xst(vec_madd(aux125, mRHSrow123, vec_madd(aux115, mRHSrow113, vec_madd(aux105, mRHSrow103, vec_madd(aux95, mRHSrow93, vec_madd(aux85, mRHSrow83, vec_madd(aux75, mRHSrow73, vec_madd(aux65, mRHSrow63, vec_madd(aux55, mRHSrow53, vec_madd(aux45, mRHSrow43, vec_madd(aux35, mRHSrow33, vec_madd(aux25, mRHSrow23, vec_mul(aux15, mRHSrow13)))))))))))), 0, mResult + 4*14);
+	
+	// row 6 of mResult
+	vec_xst(vec_madd(aux126, mRHSrow121, vec_madd(aux116, mRHSrow111, vec_madd(aux106, mRHSrow101, vec_madd(aux96, mRHSrow91, vec_madd(aux86, mRHSrow81, vec_madd(aux76, mRHSrow71, vec_madd(aux66, mRHSrow61, vec_madd(aux56, mRHSrow51, vec_madd(aux46, mRHSrow41, vec_madd(aux36, mRHSrow31, vec_madd(aux26, mRHSrow21, vec_mul(aux16, mRHSrow11)))))))))))), 0, mResult + 4*15);
+	vec_xst(vec_madd(aux126, mRHSrow122, vec_madd(aux116, mRHSrow112, vec_madd(aux106, mRHSrow102, vec_madd(aux96, mRHSrow92, vec_madd(aux86, mRHSrow82, vec_madd(aux76, mRHSrow72, vec_madd(aux66, mRHSrow62, vec_madd(aux56, mRHSrow52, vec_madd(aux46, mRHSrow42, vec_madd(aux36, mRHSrow32, vec_madd(aux26, mRHSrow22, vec_mul(aux16, mRHSrow12)))))))))))), 0, mResult + 4*16);
+	vec_xst(vec_madd(aux126, mRHSrow123, vec_madd(aux116, mRHSrow113, vec_madd(aux106, mRHSrow103, vec_madd(aux96, mRHSrow93, vec_madd(aux86, mRHSrow83, vec_madd(aux76, mRHSrow73, vec_madd(aux66, mRHSrow63, vec_madd(aux56, mRHSrow53, vec_madd(aux46, mRHSrow43, vec_madd(aux36, mRHSrow33, vec_madd(aux26, mRHSrow23, vec_mul(aux16, mRHSrow13)))))))))))), 0, mResult + 4*17);
+	
+	// row 7 of mResult
+	vec_xst(vec_madd(aux127, mRHSrow121, vec_madd(aux117, mRHSrow111, vec_madd(aux107, mRHSrow101, vec_madd(aux97, mRHSrow91, vec_madd(aux87, mRHSrow81, vec_madd(aux77, mRHSrow71, vec_madd(aux67, mRHSrow61, vec_madd(aux57, mRHSrow51, vec_madd(aux47, mRHSrow41, vec_madd(aux37, mRHSrow31, vec_madd(aux27, mRHSrow21, vec_mul(aux17, mRHSrow11)))))))))))), 0, mResult + 4*18);
+	vec_xst(vec_madd(aux127, mRHSrow122, vec_madd(aux117, mRHSrow112, vec_madd(aux107, mRHSrow102, vec_madd(aux97, mRHSrow92, vec_madd(aux87, mRHSrow82, vec_madd(aux77, mRHSrow72, vec_madd(aux67, mRHSrow62, vec_madd(aux57, mRHSrow52, vec_madd(aux47, mRHSrow42, vec_madd(aux37, mRHSrow32, vec_madd(aux27, mRHSrow22, vec_mul(aux17, mRHSrow12)))))))))))), 0, mResult + 4*19);
+	vec_xst(vec_madd(aux127, mRHSrow123, vec_madd(aux117, mRHSrow113, vec_madd(aux107, mRHSrow103, vec_madd(aux97, mRHSrow93, vec_madd(aux87, mRHSrow83, vec_madd(aux77, mRHSrow73, vec_madd(aux67, mRHSrow63, vec_madd(aux57, mRHSrow53, vec_madd(aux47, mRHSrow43, vec_madd(aux37, mRHSrow33, vec_madd(aux27, mRHSrow23, vec_mul(aux17, mRHSrow13)))))))))))), 0, mResult + 4*20);
+	
+	// row 8 of mResult
+	vec_xst(vec_madd(aux128, mRHSrow121, vec_madd(aux118, mRHSrow111, vec_madd(aux108, mRHSrow101, vec_madd(aux98, mRHSrow91, vec_madd(aux88, mRHSrow81, vec_madd(aux78, mRHSrow71, vec_madd(aux68, mRHSrow61, vec_madd(aux58, mRHSrow51, vec_madd(aux48, mRHSrow41, vec_madd(aux38, mRHSrow31, vec_madd(aux28, mRHSrow21, vec_mul(aux18, mRHSrow11)))))))))))), 0, mResult + 4*21);
+	vec_xst(vec_madd(aux128, mRHSrow122, vec_madd(aux118, mRHSrow112, vec_madd(aux108, mRHSrow102, vec_madd(aux98, mRHSrow92, vec_madd(aux88, mRHSrow82, vec_madd(aux78, mRHSrow72, vec_madd(aux68, mRHSrow62, vec_madd(aux58, mRHSrow52, vec_madd(aux48, mRHSrow42, vec_madd(aux38, mRHSrow32, vec_madd(aux28, mRHSrow22, vec_mul(aux18, mRHSrow12)))))))))))), 0, mResult + 4*22);
+	vec_xst(vec_madd(aux128, mRHSrow123, vec_madd(aux118, mRHSrow113, vec_madd(aux108, mRHSrow103, vec_madd(aux98, mRHSrow93, vec_madd(aux88, mRHSrow83, vec_madd(aux78, mRHSrow73, vec_madd(aux68, mRHSrow63, vec_madd(aux58, mRHSrow53, vec_madd(aux48, mRHSrow43, vec_madd(aux38, mRHSrow33, vec_madd(aux28, mRHSrow23, vec_mul(aux18, mRHSrow13)))))))))))), 0, mResult + 4*23);
+	
+	// row 9 of mResult
+	vec_xst(vec_madd(aux129, mRHSrow121, vec_madd(aux119, mRHSrow111, vec_madd(aux109, mRHSrow101, vec_madd(aux99, mRHSrow91, vec_madd(aux89, mRHSrow81, vec_madd(aux79, mRHSrow71, vec_madd(aux69, mRHSrow61, vec_madd(aux59, mRHSrow51, vec_madd(aux49, mRHSrow41, vec_madd(aux39, mRHSrow31, vec_madd(aux29, mRHSrow21, vec_mul(aux19, mRHSrow11)))))))))))), 0, mResult + 4*24);
+	vec_xst(vec_madd(aux129, mRHSrow122, vec_madd(aux119, mRHSrow112, vec_madd(aux109, mRHSrow102, vec_madd(aux99, mRHSrow92, vec_madd(aux89, mRHSrow82, vec_madd(aux79, mRHSrow72, vec_madd(aux69, mRHSrow62, vec_madd(aux59, mRHSrow52, vec_madd(aux49, mRHSrow42, vec_madd(aux39, mRHSrow32, vec_madd(aux29, mRHSrow22, vec_mul(aux19, mRHSrow12)))))))))))), 0, mResult + 4*25);
+	vec_xst(vec_madd(aux129, mRHSrow123, vec_madd(aux119, mRHSrow113, vec_madd(aux109, mRHSrow103, vec_madd(aux99, mRHSrow93, vec_madd(aux89, mRHSrow83, vec_madd(aux79, mRHSrow73, vec_madd(aux69, mRHSrow63, vec_madd(aux59, mRHSrow53, vec_madd(aux49, mRHSrow43, vec_madd(aux39, mRHSrow33, vec_madd(aux29, mRHSrow23, vec_mul(aux19, mRHSrow13)))))))))))), 0, mResult + 4*26);
+	
+	// row 10 of mResult
+	vec_xst(vec_madd(aux1210, mRHSrow121, vec_madd(aux1110, mRHSrow111, vec_madd(aux1010, mRHSrow101, vec_madd(aux910, mRHSrow91, vec_madd(aux810, mRHSrow81, vec_madd(aux710, mRHSrow71, vec_madd(aux610, mRHSrow61, vec_madd(aux510, mRHSrow51, vec_madd(aux410, mRHSrow41, vec_madd(aux310, mRHSrow31, vec_madd(aux210, mRHSrow21, vec_mul(aux110, mRHSrow11)))))))))))), 0, mResult + 4*27);
+	vec_xst(vec_madd(aux1210, mRHSrow122, vec_madd(aux1110, mRHSrow112, vec_madd(aux1010, mRHSrow102, vec_madd(aux910, mRHSrow92, vec_madd(aux810, mRHSrow82, vec_madd(aux710, mRHSrow72, vec_madd(aux610, mRHSrow62, vec_madd(aux510, mRHSrow52, vec_madd(aux410, mRHSrow42, vec_madd(aux310, mRHSrow32, vec_madd(aux210, mRHSrow22, vec_mul(aux110, mRHSrow12)))))))))))), 0, mResult + 4*28);
+	vec_xst(vec_madd(aux1210, mRHSrow123, vec_madd(aux1110, mRHSrow113, vec_madd(aux1010, mRHSrow103, vec_madd(aux910, mRHSrow93, vec_madd(aux810, mRHSrow83, vec_madd(aux710, mRHSrow73, vec_madd(aux610, mRHSrow63, vec_madd(aux510, mRHSrow53, vec_madd(aux410, mRHSrow43, vec_madd(aux310, mRHSrow33, vec_madd(aux210, mRHSrow23, vec_mul(aux110, mRHSrow13)))))))))))), 0, mResult + 4*29);
+	
+
+	// row 11 of mResult
+	vec_xst(vec_madd(aux1211, mRHSrow121, vec_madd(aux1111, mRHSrow111, vec_madd(aux1011, mRHSrow101, vec_madd(aux911, mRHSrow91, vec_madd(aux811, mRHSrow81, vec_madd(aux711, mRHSrow71, vec_madd(aux611, mRHSrow61, vec_madd(aux511, mRHSrow51, vec_madd(aux411, mRHSrow41, vec_madd(aux311, mRHSrow31, vec_madd(aux211, mRHSrow21, vec_mul(aux0111, mRHSrow11)))))))))))), 0, mResult + 4*30);
+	vec_xst(vec_madd(aux1211, mRHSrow122, vec_madd(aux1111, mRHSrow112, vec_madd(aux1011, mRHSrow102, vec_madd(aux911, mRHSrow92, vec_madd(aux811, mRHSrow82, vec_madd(aux711, mRHSrow72, vec_madd(aux611, mRHSrow62, vec_madd(aux511, mRHSrow52, vec_madd(aux411, mRHSrow42, vec_madd(aux311, mRHSrow32, vec_madd(aux211, mRHSrow22, vec_mul(aux0111, mRHSrow12)))))))))))), 0, mResult + 4*31);
+	vec_xst(vec_madd(aux1211, mRHSrow123, vec_madd(aux1111, mRHSrow113, vec_madd(aux1011, mRHSrow103, vec_madd(aux911, mRHSrow93, vec_madd(aux811, mRHSrow83, vec_madd(aux711, mRHSrow73, vec_madd(aux611, mRHSrow63, vec_madd(aux511, mRHSrow53, vec_madd(aux411, mRHSrow43, vec_madd(aux311, mRHSrow33, vec_madd(aux211, mRHSrow23, vec_mul(aux0111, mRHSrow13)))))))))))), 0, mResult + 4*32);
+	
+	// row 12 of mResult
+	vec_xst(vec_madd(aux1212, mRHSrow121, vec_madd(aux1112, mRHSrow111, vec_madd(aux1012, mRHSrow101, vec_madd(aux912, mRHSrow91, vec_madd(aux812, mRHSrow81, vec_madd(aux712, mRHSrow71, vec_madd(aux612, mRHSrow61, vec_madd(aux512, mRHSrow51, vec_madd(aux412, mRHSrow41, vec_madd(aux312, mRHSrow31, vec_madd(aux212, mRHSrow21, vec_mul(aux0112, mRHSrow11)))))))))))), 0, mResult + 4*33);
+	vec_xst(vec_madd(aux1212, mRHSrow122, vec_madd(aux1112, mRHSrow112, vec_madd(aux1012, mRHSrow102, vec_madd(aux912, mRHSrow92, vec_madd(aux812, mRHSrow82, vec_madd(aux712, mRHSrow72, vec_madd(aux612, mRHSrow62, vec_madd(aux512, mRHSrow52, vec_madd(aux412, mRHSrow42, vec_madd(aux312, mRHSrow32, vec_madd(aux212, mRHSrow22, vec_mul(aux0112, mRHSrow12)))))))))))), 0, mResult + 4*34);
+	vec_xst(vec_madd(aux1212, mRHSrow123, vec_madd(aux1112, mRHSrow113, vec_madd(aux1012, mRHSrow103, vec_madd(aux912, mRHSrow93, vec_madd(aux812, mRHSrow83, vec_madd(aux712, mRHSrow73, vec_madd(aux612, mRHSrow63, vec_madd(aux512, mRHSrow53, vec_madd(aux412, mRHSrow43, vec_madd(aux312, mRHSrow33, vec_madd(aux212, mRHSrow23, vec_mul(aux0112, mRHSrow13)))))))))))), 0, mResult + 4*35);
+	
+
+}
+//=========================================================================================================================
+//=========================================================================================================================
+//col x row
+inline void mul12x12ColMajorFloat(const float* mLHS, const float* mRHS, float* const mResult){
+
+	vector float mLHScol11, mLHScol12, mLHScol13, mLHScol21, mLHScol22, mLHScol23, mLHScol31, mLHScol32, mLHScol33,
+	      	     mLHScol41, mLHScol42, mLHScol43, mLHScol51, mLHScol52, mLHScol53, mLHScol61, mLHScol62, mLHScol63,
+		     mLHScol71, mLHScol72, mLHScol73, mLHScol81, mLHScol82, mLHScol83, mLHScol91, mLHScol92, mLHScol93, mLHScol101, mLHScol102, mLHScol103, mLHScol111,
+		     mLHScol112, mLHScol113, mLHScol121, mLHScol122, mLHScol123;
+
+	vector float mRHSrow11, mRHSrow12, mRHSrow13, mRHSrow21, mRHSrow22, mRHSrow23, mRHSrow31, mRHSrow32, mRHSrow33,
+	      	     mRHSrow41, mRHSrow42, mRHSrow43, mRHSrow51, mRHSrow52, mRHSrow53, mRHSrow61, mRHSrow62, mRHSrow63,
+		     mRHSrow71, mRHSrow72, mRHSrow73, mRHSrow81, mRHSrow82, mRHSrow83, mRHSrow91, mRHSrow92, mRHSrow93, mRHSrow101, mRHSrow102, mRHSrow103, mRHSrow111,
+		     mRHSrow112, mRHSrow113,  mRHSrow121, mRHSrow122, mRHSrow123;
+//load
+//1 row/column --> 3 vectors.
+	
+	mLHScol11 = vec_xl(0,mLHS);
+	mLHScol12 = vec_xl(0,mLHS+4);
+	mLHScol13 = vec_xl(0,mLHS+4*2);
+
+	mLHScol21 = vec_xl(0,mLHS+4*3);
+	mLHScol22 = vec_xl(0,mLHS+4*4);
+	mLHScol23 = vec_xl(0,mLHS+4*5);
+
+	mLHScol31 = vec_xl(0,mLHS+4*6);
+	mLHScol32 = vec_xl(0,mLHS+4*7);
+	mLHScol33 = vec_xl(0,mLHS+4*8);
+
+	mLHScol41 = vec_xl(0,mLHS+4*9);
+	mLHScol42 = vec_xl(0,mLHS+4*10);
+	mLHScol43 = vec_xl(0,mLHS+4*11);
+
+	mLHScol51 = vec_xl(0,mLHS+4*12);
+	mLHScol52 = vec_xl(0,mLHS+4*13);
+	mLHScol53 = vec_xl(0,mLHS+4*14);
+
+	mLHScol61 = vec_xl(0,mLHS+4*15);
+	mLHScol62 = vec_xl(0,mLHS+4*16);
+	mLHScol63 = vec_xl(0,mLHS+4*17);
+
+	mLHScol71 = vec_xl(0,mLHS+4*18);
+	mLHScol72 = vec_xl(0,mLHS+4*19);
+	mLHScol73 = vec_xl(0,mLHS+4*20);
+
+	mLHScol81 = vec_xl(0,mLHS+4*21);
+	mLHScol82 = vec_xl(0,mLHS+4*22);
+	mLHScol83 = vec_xl(0,mLHS+4*23);
+
+	mLHScol91 = vec_xl(0,mLHS+4*24);
+	mLHScol92 = vec_xl(0,mLHS+4*25);
+	mLHScol93 = vec_xl(0,mLHS+4*26);
+
+	mLHScol101 = vec_xl(0,mLHS+4*27);
+	mLHScol102 = vec_xl(0,mLHS+4*28);
+	mLHScol103 = vec_xl(0,mLHS+4*29);
+
+	mLHScol111 = vec_xl(0,mLHS+4*30);
+	mLHScol112 = vec_xl(0,mLHS+4*31);
+	mLHScol113 = vec_xl(0,mLHS+4*32);
+
+	mLHScol121 = vec_xl(0,mLHS+4*33);
+	mLHScol122 = vec_xl(0,mLHS+4*34);
+	mLHScol123 = vec_xl(0,mLHS+4*35);
+//=====================================================================
+
+	mRHSrow11 = vec_xl(0,mRHS);
+	mRHSrow12 = vec_xl(0,mRHS+4);
+	mRHSrow13 = vec_xl(0,mRHS+4*2);
+
+	mRHSrow21 = vec_xl(0,mRHS+4*3);
+	mRHSrow22 = vec_xl(0,mRHS+4*4);
+	mRHSrow23 = vec_xl(0,mRHS+4*5);
+
+	mRHSrow31 = vec_xl(0,mRHS+4*6);
+	mRHSrow32 = vec_xl(0,mRHS+4*7);
+	mRHSrow33 = vec_xl(0,mRHS+4*8);
+
+	mRHSrow41 = vec_xl(0,mRHS+4*9);
+	mRHSrow42 = vec_xl(0,mRHS+4*10);
+	mRHSrow43 = vec_xl(0,mRHS+4*11);
+
+	mRHSrow51 = vec_xl(0,mRHS+4*12);
+	mRHSrow52 = vec_xl(0,mRHS+4*13);
+	mRHSrow53 = vec_xl(0,mRHS+4*14);
+
+	mRHSrow61 = vec_xl(0,mRHS+4*15);
+	mRHSrow62 = vec_xl(0,mRHS+4*16);
+	mRHSrow63 = vec_xl(0,mRHS+4*17);
+
+	mRHSrow71 = vec_xl(0,mRHS+4*18);
+	mRHSrow72 = vec_xl(0,mRHS+4*19);
+	mRHSrow73 = vec_xl(0,mRHS+4*20);
+
+	mRHSrow81 = vec_xl(0,mRHS+4*21);
+	mRHSrow82 = vec_xl(0,mRHS+4*22);
+	mRHSrow83 = vec_xl(0,mRHS+4*23);
+
+	mRHSrow91 = vec_xl(0,mRHS+4*24);
+	mRHSrow92 = vec_xl(0,mRHS+4*25);
+	mRHSrow93 = vec_xl(0,mRHS+4*26);
+
+	mRHSrow101 = vec_xl(0,mRHS+4*27);
+	mRHSrow102 = vec_xl(0,mRHS+4*28);
+	mRHSrow103 = vec_xl(0,mRHS+4*29);
+
+	mRHSrow111 = vec_xl(0,mRHS+4*30);
+	mRHSrow112 = vec_xl(0,mRHS+4*31);
+	mRHSrow113 = vec_xl(0,mRHS+4*32);
+
+	mRHSrow121 = vec_xl(0,mRHS+4*33);
+	mRHSrow122 = vec_xl(0,mRHS+4*34);
+	mRHSrow123 = vec_xl(0,mRHS+4*35);
+//=====================================================================
+
+
+
+
+//===================================================================================
+//Splat
+//===================================================================================
+
+	vector float aux11={mLHScol11[0],mLHScol11[0],mLHScol11[0],mLHScol11[0]};
+	vector float aux12={mLHScol11[1],mLHScol11[1],mLHScol11[1],mLHScol11[1]};
+	vector float aux13={mLHScol11[2],mLHScol11[2],mLHScol11[2],mLHScol11[2]};
+	vector float aux14={mLHScol11[3],mLHScol11[3],mLHScol11[3],mLHScol11[3]};
+
+	vector float aux15={mLHScol12[0],mLHScol12[0],mLHScol12[0],mLHScol12[0]};
+	vector float aux16={mLHScol12[1],mLHScol12[1],mLHScol12[1],mLHScol12[1]};
+	vector float aux17={mLHScol12[2],mLHScol12[2],mLHScol12[2],mLHScol12[2]};
+	vector float aux18={mLHScol12[3],mLHScol12[3],mLHScol12[3],mLHScol12[3]};
+
+	vector float aux19={mLHScol13[0],mLHScol13[0],mLHScol13[0],mLHScol13[0]};
+	vector float aux110={mLHScol13[1],mLHScol13[1],mLHScol13[1],mLHScol13[1]};
+	vector float aux0111={mLHScol13[2],mLHScol13[2],mLHScol13[2],mLHScol13[2]};
+	vector float aux0112={mLHScol13[3],mLHScol13[3],mLHScol13[3],mLHScol13[3]};
+
+//===================================================================================
+
+	vector float aux21={mLHScol21[0],mLHScol21[0],mLHScol21[0],mLHScol21[0]};
+	vector float aux22={mLHScol21[1],mLHScol21[1],mLHScol21[1],mLHScol21[1]};
+	vector float aux23={mLHScol21[2],mLHScol21[2],mLHScol21[2],mLHScol21[2]};
+	vector float aux24={mLHScol21[3],mLHScol21[3],mLHScol21[3],mLHScol21[3]};
+
+	vector float aux25={mLHScol22[0],mLHScol22[0],mLHScol22[0],mLHScol22[0]};
+	vector float aux26={mLHScol22[1],mLHScol22[1],mLHScol22[1],mLHScol22[1]};
+	vector float aux27={mLHScol22[2],mLHScol22[2],mLHScol22[2],mLHScol22[2]};
+	vector float aux28={mLHScol22[3],mLHScol22[3],mLHScol22[3],mLHScol22[3]};
+
+	vector float aux29={mLHScol23[0],mLHScol23[0],mLHScol23[0],mLHScol23[0]};
+	vector float aux210={mLHScol23[1],mLHScol23[1],mLHScol23[1],mLHScol23[1]};
+	vector float aux211={mLHScol23[2],mLHScol23[2],mLHScol23[2],mLHScol23[2]};
+	vector float aux212={mLHScol23[3],mLHScol23[3],mLHScol23[3],mLHScol23[3]};
+
+//===================================================================================
+
+	vector float aux31={mLHScol31[0],mLHScol31[0],mLHScol31[0],mLHScol31[0]};
+	vector float aux32={mLHScol31[1],mLHScol31[1],mLHScol31[1],mLHScol31[1]};
+	vector float aux33={mLHScol31[2],mLHScol31[2],mLHScol31[2],mLHScol31[2]};
+	vector float aux34={mLHScol31[3],mLHScol31[3],mLHScol31[3],mLHScol31[3]};
+
+	vector float aux35={mLHScol32[0],mLHScol32[0],mLHScol32[0],mLHScol32[0]};
+	vector float aux36={mLHScol32[1],mLHScol32[1],mLHScol32[1],mLHScol32[1]};
+	vector float aux37={mLHScol32[2],mLHScol32[2],mLHScol32[2],mLHScol32[2]};
+	vector float aux38={mLHScol32[3],mLHScol32[3],mLHScol32[3],mLHScol32[3]};
+
+	vector float aux39={mLHScol33[0],mLHScol33[0],mLHScol33[0],mLHScol33[0]};
+	vector float aux310={mLHScol33[1],mLHScol33[1],mLHScol33[1],mLHScol33[1]};
+	vector float aux311={mLHScol33[2],mLHScol33[2],mLHScol33[2],mLHScol33[2]};
+	vector float aux312={mLHScol33[3],mLHScol33[3],mLHScol33[3],mLHScol33[3]};
+
+
+//===================================================================================
+
+	vector float aux41={mLHScol41[0],mLHScol41[0],mLHScol41[0],mLHScol41[0]};
+	vector float aux42={mLHScol41[1],mLHScol41[1],mLHScol41[1],mLHScol41[1]};
+	vector float aux43={mLHScol41[2],mLHScol41[2],mLHScol41[2],mLHScol41[2]};
+	vector float aux44={mLHScol41[3],mLHScol41[3],mLHScol41[3],mLHScol41[3]};
+
+	vector float aux45={mLHScol42[0],mLHScol22[0],mLHScol22[0],mLHScol22[0]};
+	vector float aux46={mLHScol42[1],mLHScol22[1],mLHScol22[1],mLHScol22[1]};
+	vector float aux47={mLHScol42[2],mLHScol22[2],mLHScol22[2],mLHScol22[2]};
+	vector float aux48={mLHScol42[3],mLHScol22[3],mLHScol22[3],mLHScol22[3]};
+
+	vector float aux49={mLHScol43[0],mLHScol43[0],mLHScol43[0],mLHScol43[0]};
+	vector float aux410={mLHScol43[1],mLHScol43[1],mLHScol43[1],mLHScol43[1]};
+	vector float aux411={mLHScol43[2],mLHScol43[2],mLHScol43[2],mLHScol43[2]};
+	vector float aux412={mLHScol43[3],mLHScol43[3],mLHScol43[3],mLHScol43[3]};
+
+
+//===================================================================================
+
+	
+	vector float aux51={mLHScol51[0],mLHScol51[0],mLHScol51[0],mLHScol51[0]};
+	vector float aux52={mLHScol51[1],mLHScol51[1],mLHScol51[1],mLHScol51[1]};
+	vector float aux53={mLHScol51[2],mLHScol51[2],mLHScol51[2],mLHScol51[2]};
+	vector float aux54={mLHScol51[3],mLHScol51[3],mLHScol51[3],mLHScol51[3]};
+
+	vector float aux55={mLHScol52[0],mLHScol52[0],mLHScol52[0],mLHScol52[0]};
+	vector float aux56={mLHScol52[1],mLHScol52[1],mLHScol52[1],mLHScol52[1]};
+	vector float aux57={mLHScol52[2],mLHScol52[2],mLHScol52[2],mLHScol52[2]};
+	vector float aux58={mLHScol52[3],mLHScol52[3],mLHScol52[3],mLHScol52[3]};
+
+	vector float aux59={mLHScol53[0],mLHScol53[0],mLHScol53[0],mLHScol53[0]};
+	vector float aux510={mLHScol53[1],mLHScol53[1],mLHScol53[1],mLHScol53[1]};
+	vector float aux511={mLHScol53[2],mLHScol53[2],mLHScol53[2],mLHScol53[2]};
+	vector float aux512={mLHScol53[3],mLHScol53[3],mLHScol53[3],mLHScol53[3]};
+
+//===================================================================================
+
+	vector float aux61={mLHScol61[0],mLHScol61[0],mLHScol61[0],mLHScol61[0]};
+	vector float aux62={mLHScol61[1],mLHScol61[1],mLHScol61[1],mLHScol61[1]};
+	vector float aux63={mLHScol61[2],mLHScol61[2],mLHScol61[2],mLHScol61[2]};
+	vector float aux64={mLHScol61[3],mLHScol61[3],mLHScol61[3],mLHScol61[3]};
+
+	vector float aux65={mLHScol62[0],mLHScol62[0],mLHScol62[0],mLHScol62[0]};
+	vector float aux66={mLHScol62[1],mLHScol62[1],mLHScol62[1],mLHScol62[1]};
+	vector float aux67={mLHScol62[2],mLHScol62[2],mLHScol62[2],mLHScol62[2]};
+	vector float aux68={mLHScol62[3],mLHScol62[3],mLHScol62[3],mLHScol62[3]};
+
+	vector float aux69={mLHScol63[0],mLHScol63[0],mLHScol63[0],mLHScol63[0]};
+	vector float aux610={mLHScol63[1],mLHScol63[1],mLHScol63[1],mLHScol63[1]};
+	vector float aux611={mLHScol63[2],mLHScol63[2],mLHScol63[2],mLHScol63[2]};
+	vector float aux612={mLHScol63[3],mLHScol63[3],mLHScol63[3],mLHScol63[3]};
+
+//===================================================================================
+
+	vector float aux71={mLHScol71[0],mLHScol71[0],mLHScol71[0],mLHScol71[0]};
+	vector float aux72={mLHScol71[1],mLHScol71[1],mLHScol71[1],mLHScol71[1]};
+	vector float aux73={mLHScol71[2],mLHScol71[2],mLHScol71[2],mLHScol71[2]};
+	vector float aux74={mLHScol71[3],mLHScol71[3],mLHScol71[3],mLHScol71[3]};
+
+	vector float aux75={mLHScol72[0],mLHScol72[0],mLHScol72[0],mLHScol72[0]};
+	vector float aux76={mLHScol72[1],mLHScol72[1],mLHScol72[1],mLHScol72[1]};
+	vector float aux77={mLHScol72[2],mLHScol72[2],mLHScol72[2],mLHScol72[2]};
+	vector float aux78={mLHScol72[3],mLHScol72[3],mLHScol72[3],mLHScol72[3]};
+
+	vector float aux79={mLHScol73[0],mLHScol73[0],mLHScol73[0],mLHScol73[0]};
+	vector float aux710={mLHScol73[1],mLHScol73[1],mLHScol73[1],mLHScol73[1]};
+	vector float aux711={mLHScol73[2],mLHScol73[2],mLHScol73[2],mLHScol73[2]};
+	vector float aux712={mLHScol73[3],mLHScol73[3],mLHScol73[3],mLHScol73[3]};
+
+//===================================================================================
+
+	vector float aux81={mLHScol81[0],mLHScol81[0],mLHScol81[0],mLHScol81[0]};
+	vector float aux82={mLHScol81[1],mLHScol81[1],mLHScol81[1],mLHScol81[1]};
+	vector float aux83={mLHScol81[2],mLHScol81[2],mLHScol81[2],mLHScol81[2]};
+	vector float aux84={mLHScol81[3],mLHScol81[3],mLHScol81[3],mLHScol81[3]};
+
+	vector float aux85={mLHScol82[0],mLHScol82[0],mLHScol82[0],mLHScol82[0]};
+	vector float aux86={mLHScol82[1],mLHScol82[1],mLHScol82[1],mLHScol82[1]};
+	vector float aux87={mLHScol82[2],mLHScol82[2],mLHScol82[2],mLHScol82[2]};
+	vector float aux88={mLHScol82[3],mLHScol82[3],mLHScol82[3],mLHScol82[3]};
+
+	vector float aux89={mLHScol83[0],mLHScol83[0],mLHScol83[0],mLHScol83[0]};
+	vector float aux810={mLHScol83[1],mLHScol83[1],mLHScol83[1],mLHScol83[1]};
+	vector float aux811={mLHScol83[2],mLHScol83[2],mLHScol83[2],mLHScol83[2]};
+	vector float aux812={mLHScol83[3],mLHScol83[3],mLHScol83[3],mLHScol83[3]};
+
+//===================================================================================
+
+	vector float aux91={mLHScol91[0],mLHScol91[0],mLHScol91[0],mLHScol91[0]};
+	vector float aux92={mLHScol91[1],mLHScol91[1],mLHScol91[1],mLHScol91[1]};
+	vector float aux93={mLHScol91[2],mLHScol91[2],mLHScol91[2],mLHScol91[2]};
+	vector float aux94={mLHScol91[3],mLHScol91[3],mLHScol91[3],mLHScol91[3]};
+
+	vector float aux95={mLHScol92[0],mLHScol92[0],mLHScol92[0],mLHScol92[0]};
+	vector float aux96={mLHScol92[1],mLHScol92[1],mLHScol92[1],mLHScol92[1]};
+	vector float aux97={mLHScol92[2],mLHScol92[2],mLHScol92[2],mLHScol92[2]};
+	vector float aux98={mLHScol92[3],mLHScol92[3],mLHScol92[3],mLHScol92[3]};
+
+	vector float aux99={mLHScol93[0],mLHScol93[0],mLHScol93[0],mLHScol93[0]};
+	vector float aux910={mLHScol93[1],mLHScol93[1],mLHScol93[1],mLHScol93[1]};
+	vector float aux911={mLHScol93[2],mLHScol93[2],mLHScol93[2],mLHScol93[2]};
+	vector float aux912={mLHScol93[3],mLHScol93[3],mLHScol93[3],mLHScol93[3]};
+
+//===================================================================================
+
+	vector float aux101={mLHScol101[0],mLHScol101[0],mLHScol101[0],mLHScol101[0]};
+	vector float aux102={mLHScol101[1],mLHScol101[1],mLHScol101[1],mLHScol101[1]};
+	vector float aux103={mLHScol101[2],mLHScol101[2],mLHScol101[2],mLHScol101[2]};
+	vector float aux104={mLHScol101[3],mLHScol101[3],mLHScol101[3],mLHScol101[3]};
+
+	vector float aux105={mLHScol102[0],mLHScol102[0],mLHScol102[0],mLHScol102[0]};
+	vector float aux106={mLHScol102[1],mLHScol102[1],mLHScol102[1],mLHScol102[1]};
+	vector float aux107={mLHScol102[2],mLHScol102[2],mLHScol102[2],mLHScol102[2]};
+	vector float aux108={mLHScol102[3],mLHScol102[3],mLHScol102[3],mLHScol102[3]};
+
+	vector float aux109={mLHScol103[0],mLHScol103[0],mLHScol103[0],mLHScol103[0]};
+	vector float aux1010={mLHScol103[1],mLHScol103[1],mLHScol103[1],mLHScol103[1]};
+	vector float aux1011={mLHScol103[2],mLHScol103[2],mLHScol103[2],mLHScol103[2]};
+	vector float aux1012={mLHScol103[3],mLHScol103[3],mLHScol103[3],mLHScol103[3]};
+
+//===================================================================================
+
+	vector float aux111={mLHScol111[0],mLHScol111[0],mLHScol111[0],mLHScol111[0]};
+	vector float aux112={mLHScol111[1],mLHScol111[1],mLHScol111[1],mLHScol111[1]};
+	vector float aux113={mLHScol111[2],mLHScol111[2],mLHScol111[2],mLHScol111[2]};
+	vector float aux114={mLHScol111[3],mLHScol111[3],mLHScol111[3],mLHScol111[3]};
+
+	vector float aux115={mLHScol112[0],mLHScol112[0],mLHScol112[0],mLHScol112[0]};
+	vector float aux116={mLHScol112[1],mLHScol112[1],mLHScol112[1],mLHScol112[1]};
+	vector float aux117={mLHScol112[2],mLHScol112[2],mLHScol112[2],mLHScol112[2]};
+	vector float aux118={mLHScol112[3],mLHScol112[3],mLHScol112[3],mLHScol112[3]};
+
+	vector float aux119={mLHScol113[0],mLHScol113[0],mLHScol113[0],mLHScol113[0]};
+	vector float aux1110={mLHScol113[1],mLHScol113[1],mLHScol113[1],mLHScol113[1]};
+	vector float aux1111={mLHScol113[2],mLHScol113[2],mLHScol113[2],mLHScol113[2]};
+	vector float aux1112={mLHScol113[3],mLHScol113[3],mLHScol113[3],mLHScol113[3]};
+
+//===================================================================================
+
+	vector float aux121={mLHScol121[0],mLHScol121[0],mLHScol121[0],mLHScol121[0]};
+	vector float aux122={mLHScol121[1],mLHScol121[1],mLHScol121[1],mLHScol121[1]};
+	vector float aux123={mLHScol121[2],mLHScol121[2],mLHScol121[2],mLHScol121[2]};
+	vector float aux124={mLHScol121[3],mLHScol121[3],mLHScol121[3],mLHScol121[3]};
+
+	vector float aux125={mLHScol122[0],mLHScol122[0],mLHScol122[0],mLHScol122[0]};
+	vector float aux126={mLHScol122[1],mLHScol122[1],mLHScol122[1],mLHScol122[1]};
+	vector float aux127={mLHScol122[2],mLHScol122[2],mLHScol122[2],mLHScol122[2]};
+	vector float aux128={mLHScol122[3],mLHScol122[3],mLHScol122[3],mLHScol122[3]};
+
+	vector float aux129={mLHScol123[0],mLHScol123[0],mLHScol123[0],mLHScol123[0]};
+	vector float aux1210={mLHScol123[1],mLHScol123[1],mLHScol123[1],mLHScol123[1]};
+	vector float aux1211={mLHScol123[2],mLHScol123[2],mLHScol123[2],mLHScol123[2]};
+	vector float aux1212={mLHScol123[3],mLHScol123[3],mLHScol123[3],mLHScol123[3]};
+
+//===================================================================================
+//end of splat
+//===================================================================================
+//store rows
+//===================================================================================
+		//row 1 of result
+	vec_xst(vec_madd(aux121, mRHSrow121, vec_madd(aux111, mRHSrow111, vec_madd(aux101, mRHSrow101, vec_madd(aux91, mRHSrow91, vec_madd(aux81, mRHSrow81, vec_madd(aux71, mRHSrow71, vec_madd(aux61, mRHSrow61, vec_madd(aux51, mRHSrow51, vec_madd(aux41, mRHSrow41, vec_madd(aux31, mRHSrow31, vec_madd(aux21, mRHSrow21, vec_mul(aux11, mRHSrow11)))))))))))), 0, mResult);
+	vec_xst(vec_madd(aux121, mRHSrow122, vec_madd(aux111, mRHSrow112, vec_madd(aux101, mRHSrow102, vec_madd(aux91, mRHSrow92, vec_madd(aux81, mRHSrow82, vec_madd(aux71, mRHSrow72, vec_madd(aux61, mRHSrow62, vec_madd(aux51, mRHSrow52, vec_madd(aux41, mRHSrow42, vec_madd(aux31, mRHSrow32, vec_madd(aux21, mRHSrow22, vec_mul(aux11, mRHSrow12)))))))))))), 0, mResult + 4);
+	vec_xst(vec_madd(aux121, mRHSrow123, vec_madd(aux111, mRHSrow113, vec_madd(aux101, mRHSrow103, vec_madd(aux91, mRHSrow93, vec_madd(aux81, mRHSrow83, vec_madd(aux71, mRHSrow73, vec_madd(aux61, mRHSrow63, vec_madd(aux51, mRHSrow53, vec_madd(aux41, mRHSrow43, vec_madd(aux31, mRHSrow33, vec_madd(aux21, mRHSrow23, vec_mul(aux11, mRHSrow13)))))))))))), 0, mResult + 4*2);
+
+	//row 2 of result
+	vec_xst(vec_madd(aux122, mRHSrow121, vec_madd(aux112, mRHSrow111, vec_madd(aux102, mRHSrow101, vec_madd(aux92, mRHSrow91, vec_madd(aux82, mRHSrow81, vec_madd(aux72, mRHSrow71, vec_madd(aux62, mRHSrow61, vec_madd(aux52, mRHSrow51, vec_madd(aux42, mRHSrow41, vec_madd(aux32, mRHSrow31, vec_madd(aux22, mRHSrow21, vec_mul(aux12, mRHSrow11)))))))))))), 0, mResult + 4*3);
+	vec_xst(vec_madd(aux122, mRHSrow122, vec_madd(aux112, mRHSrow112, vec_madd(aux102, mRHSrow102, vec_madd(aux92, mRHSrow92, vec_madd(aux82, mRHSrow82, vec_madd(aux72, mRHSrow72, vec_madd(aux62, mRHSrow62, vec_madd(aux52, mRHSrow52, vec_madd(aux42, mRHSrow42, vec_madd(aux32, mRHSrow32, vec_madd(aux22, mRHSrow22, vec_mul(aux12, mRHSrow12)))))))))))), 0, mResult + 4*4);
+	vec_xst(vec_madd(aux122, mRHSrow123, vec_madd(aux112, mRHSrow113, vec_madd(aux102, mRHSrow103, vec_madd(aux92, mRHSrow93, vec_madd(aux82, mRHSrow83, vec_madd(aux72, mRHSrow73, vec_madd(aux62, mRHSrow63, vec_madd(aux52, mRHSrow53, vec_madd(aux42, mRHSrow43, vec_madd(aux32, mRHSrow33, vec_madd(aux22, mRHSrow23, vec_mul(aux12, mRHSrow13)))))))))))), 0, mResult + 4*5);
+
+	// row 3 of mResult
+	vec_xst(vec_madd(aux123, mRHSrow121, vec_madd(aux113, mRHSrow111, vec_madd(aux103, mRHSrow101, vec_madd(aux93, mRHSrow91, vec_madd(aux83, mRHSrow81, vec_madd(aux73, mRHSrow71, vec_madd(aux63, mRHSrow61, vec_madd(aux53, mRHSrow51, vec_madd(aux43, mRHSrow41, vec_madd(aux33, mRHSrow31, vec_madd(aux23, mRHSrow21, vec_mul(aux13, mRHSrow11)))))))))))), 0, mResult + 4*6);
+	vec_xst(vec_madd(aux123, mRHSrow122, vec_madd(aux113, mRHSrow112, vec_madd(aux103, mRHSrow102, vec_madd(aux93, mRHSrow92, vec_madd(aux83, mRHSrow82, vec_madd(aux73, mRHSrow72, vec_madd(aux63, mRHSrow62, vec_madd(aux53, mRHSrow52, vec_madd(aux43, mRHSrow42, vec_madd(aux33, mRHSrow32, vec_madd(aux23, mRHSrow22, vec_mul(aux13, mRHSrow12)))))))))))), 0, mResult + 4*7);
+	vec_xst(vec_madd(aux123, mRHSrow123, vec_madd(aux113, mRHSrow113, vec_madd(aux103, mRHSrow103, vec_madd(aux93, mRHSrow93, vec_madd(aux83, mRHSrow83, vec_madd(aux73, mRHSrow73, vec_madd(aux63, mRHSrow63, vec_madd(aux53, mRHSrow53, vec_madd(aux43, mRHSrow43, vec_madd(aux33, mRHSrow33, vec_madd(aux23, mRHSrow23, vec_mul(aux13, mRHSrow13)))))))))))), 0, mResult + 4*8);
+	
+	// row 4 of mResult
+	vec_xst(vec_madd(aux124, mRHSrow121, vec_madd(aux114, mRHSrow111, vec_madd(aux104, mRHSrow101, vec_madd(aux94, mRHSrow91, vec_madd(aux84, mRHSrow81, vec_madd(aux74, mRHSrow71, vec_madd(aux64, mRHSrow61, vec_madd(aux54, mRHSrow51, vec_madd(aux44, mRHSrow41, vec_madd(aux34, mRHSrow31, vec_madd(aux24, mRHSrow21, vec_mul(aux14, mRHSrow11)))))))))))), 0, mResult + 4*9);
+	vec_xst(vec_madd(aux124, mRHSrow122, vec_madd(aux114, mRHSrow112, vec_madd(aux104, mRHSrow102, vec_madd(aux94, mRHSrow92, vec_madd(aux84, mRHSrow82, vec_madd(aux74, mRHSrow72, vec_madd(aux64, mRHSrow62, vec_madd(aux54, mRHSrow52, vec_madd(aux44, mRHSrow42, vec_madd(aux34, mRHSrow32, vec_madd(aux24, mRHSrow22, vec_mul(aux14, mRHSrow12)))))))))))), 0, mResult + 4*10);
+	vec_xst(vec_madd(aux124, mRHSrow123, vec_madd(aux114, mRHSrow113, vec_madd(aux104, mRHSrow103, vec_madd(aux94, mRHSrow93, vec_madd(aux84, mRHSrow83, vec_madd(aux74, mRHSrow73, vec_madd(aux64, mRHSrow63, vec_madd(aux54, mRHSrow53, vec_madd(aux44, mRHSrow43, vec_madd(aux34, mRHSrow33, vec_madd(aux24, mRHSrow23, vec_mul(aux14, mRHSrow13)))))))))))), 0, mResult + 4*11);
+	
+	// row 5 of mResult
+	vec_xst(vec_madd(aux125, mRHSrow121, vec_madd(aux115, mRHSrow111, vec_madd(aux105, mRHSrow101, vec_madd(aux95, mRHSrow91, vec_madd(aux85, mRHSrow81, vec_madd(aux75, mRHSrow71, vec_madd(aux65, mRHSrow61, vec_madd(aux55, mRHSrow51, vec_madd(aux45, mRHSrow41, vec_madd(aux35, mRHSrow31, vec_madd(aux25, mRHSrow21, vec_mul(aux15, mRHSrow11)))))))))))), 0, mResult + 4*12);
+	vec_xst(vec_madd(aux125, mRHSrow122, vec_madd(aux115, mRHSrow112, vec_madd(aux105, mRHSrow102, vec_madd(aux95, mRHSrow92, vec_madd(aux85, mRHSrow82, vec_madd(aux75, mRHSrow72, vec_madd(aux65, mRHSrow62, vec_madd(aux55, mRHSrow52, vec_madd(aux45, mRHSrow42, vec_madd(aux35, mRHSrow32, vec_madd(aux25, mRHSrow22, vec_mul(aux15, mRHSrow12)))))))))))), 0, mResult + 4*13);
+	vec_xst(vec_madd(aux125, mRHSrow123, vec_madd(aux115, mRHSrow113, vec_madd(aux105, mRHSrow103, vec_madd(aux95, mRHSrow93, vec_madd(aux85, mRHSrow83, vec_madd(aux75, mRHSrow73, vec_madd(aux65, mRHSrow63, vec_madd(aux55, mRHSrow53, vec_madd(aux45, mRHSrow43, vec_madd(aux35, mRHSrow33, vec_madd(aux25, mRHSrow23, vec_mul(aux15, mRHSrow13)))))))))))), 0, mResult + 4*14);
+	
+	// row 6 of mResult
+	vec_xst(vec_madd(aux126, mRHSrow121, vec_madd(aux116, mRHSrow111, vec_madd(aux106, mRHSrow101, vec_madd(aux96, mRHSrow91, vec_madd(aux86, mRHSrow81, vec_madd(aux76, mRHSrow71, vec_madd(aux66, mRHSrow61, vec_madd(aux56, mRHSrow51, vec_madd(aux46, mRHSrow41, vec_madd(aux36, mRHSrow31, vec_madd(aux26, mRHSrow21, vec_mul(aux16, mRHSrow11)))))))))))), 0, mResult + 4*15);
+	vec_xst(vec_madd(aux126, mRHSrow122, vec_madd(aux116, mRHSrow112, vec_madd(aux106, mRHSrow102, vec_madd(aux96, mRHSrow92, vec_madd(aux86, mRHSrow82, vec_madd(aux76, mRHSrow72, vec_madd(aux66, mRHSrow62, vec_madd(aux56, mRHSrow52, vec_madd(aux46, mRHSrow42, vec_madd(aux36, mRHSrow32, vec_madd(aux26, mRHSrow22, vec_mul(aux16, mRHSrow12)))))))))))), 0, mResult + 4*16);
+	vec_xst(vec_madd(aux126, mRHSrow123, vec_madd(aux116, mRHSrow113, vec_madd(aux106, mRHSrow103, vec_madd(aux96, mRHSrow93, vec_madd(aux86, mRHSrow83, vec_madd(aux76, mRHSrow73, vec_madd(aux66, mRHSrow63, vec_madd(aux56, mRHSrow53, vec_madd(aux46, mRHSrow43, vec_madd(aux36, mRHSrow33, vec_madd(aux26, mRHSrow23, vec_mul(aux16, mRHSrow13)))))))))))), 0, mResult + 4*17);
+	
+	// row 7 of mResult
+	vec_xst(vec_madd(aux127, mRHSrow121, vec_madd(aux117, mRHSrow111, vec_madd(aux107, mRHSrow101, vec_madd(aux97, mRHSrow91, vec_madd(aux87, mRHSrow81, vec_madd(aux77, mRHSrow71, vec_madd(aux67, mRHSrow61, vec_madd(aux57, mRHSrow51, vec_madd(aux47, mRHSrow41, vec_madd(aux37, mRHSrow31, vec_madd(aux27, mRHSrow21, vec_mul(aux17, mRHSrow11)))))))))))), 0, mResult + 4*18);
+	vec_xst(vec_madd(aux127, mRHSrow122, vec_madd(aux117, mRHSrow112, vec_madd(aux107, mRHSrow102, vec_madd(aux97, mRHSrow92, vec_madd(aux87, mRHSrow82, vec_madd(aux77, mRHSrow72, vec_madd(aux67, mRHSrow62, vec_madd(aux57, mRHSrow52, vec_madd(aux47, mRHSrow42, vec_madd(aux37, mRHSrow32, vec_madd(aux27, mRHSrow22, vec_mul(aux17, mRHSrow12)))))))))))), 0, mResult + 4*19);
+	vec_xst(vec_madd(aux127, mRHSrow123, vec_madd(aux117, mRHSrow113, vec_madd(aux107, mRHSrow103, vec_madd(aux97, mRHSrow93, vec_madd(aux87, mRHSrow83, vec_madd(aux77, mRHSrow73, vec_madd(aux67, mRHSrow63, vec_madd(aux57, mRHSrow53, vec_madd(aux47, mRHSrow43, vec_madd(aux37, mRHSrow33, vec_madd(aux27, mRHSrow23, vec_mul(aux17, mRHSrow13)))))))))))), 0, mResult + 4*20);
+	
+	// row 8 of mResult
+	vec_xst(vec_madd(aux128, mRHSrow121, vec_madd(aux118, mRHSrow111, vec_madd(aux108, mRHSrow101, vec_madd(aux98, mRHSrow91, vec_madd(aux88, mRHSrow81, vec_madd(aux78, mRHSrow71, vec_madd(aux68, mRHSrow61, vec_madd(aux58, mRHSrow51, vec_madd(aux48, mRHSrow41, vec_madd(aux38, mRHSrow31, vec_madd(aux28, mRHSrow21, vec_mul(aux18, mRHSrow11)))))))))))), 0, mResult + 4*21);
+	vec_xst(vec_madd(aux128, mRHSrow122, vec_madd(aux118, mRHSrow112, vec_madd(aux108, mRHSrow102, vec_madd(aux98, mRHSrow92, vec_madd(aux88, mRHSrow82, vec_madd(aux78, mRHSrow72, vec_madd(aux68, mRHSrow62, vec_madd(aux58, mRHSrow52, vec_madd(aux48, mRHSrow42, vec_madd(aux38, mRHSrow32, vec_madd(aux28, mRHSrow22, vec_mul(aux18, mRHSrow12)))))))))))), 0, mResult + 4*22);
+	vec_xst(vec_madd(aux128, mRHSrow123, vec_madd(aux118, mRHSrow113, vec_madd(aux108, mRHSrow103, vec_madd(aux98, mRHSrow93, vec_madd(aux88, mRHSrow83, vec_madd(aux78, mRHSrow73, vec_madd(aux68, mRHSrow63, vec_madd(aux58, mRHSrow53, vec_madd(aux48, mRHSrow43, vec_madd(aux38, mRHSrow33, vec_madd(aux28, mRHSrow23, vec_mul(aux18, mRHSrow13)))))))))))), 0, mResult + 4*23);
+	
+	// row 9 of mResult
+	vec_xst(vec_madd(aux129, mRHSrow121, vec_madd(aux119, mRHSrow111, vec_madd(aux109, mRHSrow101, vec_madd(aux99, mRHSrow91, vec_madd(aux89, mRHSrow81, vec_madd(aux79, mRHSrow71, vec_madd(aux69, mRHSrow61, vec_madd(aux59, mRHSrow51, vec_madd(aux49, mRHSrow41, vec_madd(aux39, mRHSrow31, vec_madd(aux29, mRHSrow21, vec_mul(aux19, mRHSrow11)))))))))))), 0, mResult + 4*24);
+	vec_xst(vec_madd(aux129, mRHSrow122, vec_madd(aux119, mRHSrow112, vec_madd(aux109, mRHSrow102, vec_madd(aux99, mRHSrow92, vec_madd(aux89, mRHSrow82, vec_madd(aux79, mRHSrow72, vec_madd(aux69, mRHSrow62, vec_madd(aux59, mRHSrow52, vec_madd(aux49, mRHSrow42, vec_madd(aux39, mRHSrow32, vec_madd(aux29, mRHSrow22, vec_mul(aux19, mRHSrow12)))))))))))), 0, mResult + 4*25);
+	vec_xst(vec_madd(aux129, mRHSrow123, vec_madd(aux119, mRHSrow113, vec_madd(aux109, mRHSrow103, vec_madd(aux99, mRHSrow93, vec_madd(aux89, mRHSrow83, vec_madd(aux79, mRHSrow73, vec_madd(aux69, mRHSrow63, vec_madd(aux59, mRHSrow53, vec_madd(aux49, mRHSrow43, vec_madd(aux39, mRHSrow33, vec_madd(aux29, mRHSrow23, vec_mul(aux19, mRHSrow13)))))))))))), 0, mResult + 4*26);
+	
+	// row 10 of mResult
+	vec_xst(vec_madd(aux1210, mRHSrow121, vec_madd(aux1110, mRHSrow111, vec_madd(aux1010, mRHSrow101, vec_madd(aux910, mRHSrow91, vec_madd(aux810, mRHSrow81, vec_madd(aux710, mRHSrow71, vec_madd(aux610, mRHSrow61, vec_madd(aux510, mRHSrow51, vec_madd(aux410, mRHSrow41, vec_madd(aux310, mRHSrow31, vec_madd(aux210, mRHSrow21, vec_mul(aux110, mRHSrow11)))))))))))), 0, mResult + 4*27);
+	vec_xst(vec_madd(aux1210, mRHSrow122, vec_madd(aux1110, mRHSrow112, vec_madd(aux1010, mRHSrow102, vec_madd(aux910, mRHSrow92, vec_madd(aux810, mRHSrow82, vec_madd(aux710, mRHSrow72, vec_madd(aux610, mRHSrow62, vec_madd(aux510, mRHSrow52, vec_madd(aux410, mRHSrow42, vec_madd(aux310, mRHSrow32, vec_madd(aux210, mRHSrow22, vec_mul(aux110, mRHSrow12)))))))))))), 0, mResult + 4*28);
+	vec_xst(vec_madd(aux1210, mRHSrow123, vec_madd(aux1110, mRHSrow113, vec_madd(aux1010, mRHSrow103, vec_madd(aux910, mRHSrow93, vec_madd(aux810, mRHSrow83, vec_madd(aux710, mRHSrow73, vec_madd(aux610, mRHSrow63, vec_madd(aux510, mRHSrow53, vec_madd(aux410, mRHSrow43, vec_madd(aux310, mRHSrow33, vec_madd(aux210, mRHSrow23, vec_mul(aux110, mRHSrow13)))))))))))), 0, mResult + 4*29);
+	
+	// row 11 of mResult
+	vec_xst(vec_madd(aux1211, mRHSrow121, vec_madd(aux1111, mRHSrow111, vec_madd(aux1011, mRHSrow101, vec_madd(aux911, mRHSrow91, vec_madd(aux811, mRHSrow81, vec_madd(aux711, mRHSrow71, vec_madd(aux611, mRHSrow61, vec_madd(aux511, mRHSrow51, vec_madd(aux411, mRHSrow41, vec_madd(aux311, mRHSrow31, vec_madd(aux211, mRHSrow21, vec_mul(aux0111, mRHSrow11)))))))))))), 0, mResult + 4*30);
+	vec_xst(vec_madd(aux1211, mRHSrow122, vec_madd(aux1111, mRHSrow112, vec_madd(aux1011, mRHSrow102, vec_madd(aux911, mRHSrow92, vec_madd(aux811, mRHSrow82, vec_madd(aux711, mRHSrow72, vec_madd(aux611, mRHSrow62, vec_madd(aux511, mRHSrow52, vec_madd(aux411, mRHSrow42, vec_madd(aux311, mRHSrow32, vec_madd(aux211, mRHSrow22, vec_mul(aux0111, mRHSrow12)))))))))))), 0, mResult + 4*31);
+	vec_xst(vec_madd(aux1211, mRHSrow123, vec_madd(aux1111, mRHSrow113, vec_madd(aux1011, mRHSrow103, vec_madd(aux911, mRHSrow93, vec_madd(aux811, mRHSrow83, vec_madd(aux711, mRHSrow73, vec_madd(aux611, mRHSrow63, vec_madd(aux511, mRHSrow53, vec_madd(aux411, mRHSrow43, vec_madd(aux311, mRHSrow33, vec_madd(aux211, mRHSrow23, vec_mul(aux0111, mRHSrow13)))))))))))), 0, mResult + 4*32);
+	
+	// row 12 of mResult
+	vec_xst(vec_madd(aux1212, mRHSrow121, vec_madd(aux1112, mRHSrow111, vec_madd(aux1012, mRHSrow101, vec_madd(aux912, mRHSrow91, vec_madd(aux812, mRHSrow81, vec_madd(aux712, mRHSrow71, vec_madd(aux612, mRHSrow61, vec_madd(aux512, mRHSrow51, vec_madd(aux412, mRHSrow41, vec_madd(aux312, mRHSrow31, vec_madd(aux212, mRHSrow21, vec_mul(aux0112, mRHSrow11)))))))))))), 0, mResult + 4*33);
+	vec_xst(vec_madd(aux1212, mRHSrow122, vec_madd(aux1112, mRHSrow112, vec_madd(aux1012, mRHSrow102, vec_madd(aux912, mRHSrow92, vec_madd(aux812, mRHSrow82, vec_madd(aux712, mRHSrow72, vec_madd(aux612, mRHSrow62, vec_madd(aux512, mRHSrow52, vec_madd(aux412, mRHSrow42, vec_madd(aux312, mRHSrow32, vec_madd(aux212, mRHSrow22, vec_mul(aux0112, mRHSrow12)))))))))))), 0, mResult + 4*34);
+	vec_xst(vec_madd(aux1212, mRHSrow123, vec_madd(aux1112, mRHSrow113, vec_madd(aux1012, mRHSrow103, vec_madd(aux912, mRHSrow93, vec_madd(aux812, mRHSrow83, vec_madd(aux712, mRHSrow73, vec_madd(aux612, mRHSrow63, vec_madd(aux512, mRHSrow53, vec_madd(aux412, mRHSrow43, vec_madd(aux312, mRHSrow33, vec_madd(aux212, mRHSrow23, vec_mul(aux0112, mRHSrow13)))))))))))), 0, mResult + 4*35);
+	
+
+}
+//float 9x9 matrices
+inline void mul9x9ColMajorFloat(const float* mLHS, const float* mRHS, float* const mResult){
+
+	vector float mLHScol11, mLHScol12, mLHScol13, mLHScol21, mLHScol22, mLHScol23, mLHScol31, mLHScol32, mLHScol33,
+	      	     mLHScol41, mLHScol42, mLHScol43, mLHScol51, mLHScol52, mLHScol53, mLHScol61, mLHScol62, mLHScol63,
+		     mLHScol71, mLHScol72, mLHScol73, mLHScol81, mLHScol82, mLHScol83, mLHScol91, mLHScol92, mLHScol93;
+
+	vector float mRHSrow11, mRHSrow12, mRHSrow13, mRHSrow21, mRHSrow22, mRHSrow23, mRHSrow31, mRHSrow32, mRHSrow33,
+	      	     mRHSrow41, mRHSrow42, mRHSrow43, mRHSrow51, mRHSrow52, mRHSrow53, mRHSrow61, mRHSrow62, mRHSrow63,
+		     mRHSrow71, mRHSrow72, mRHSrow73, mRHSrow81, mRHSrow82, mRHSrow83, mRHSrow91, mRHSrow92, mRHSrow93;
+
+//load
+// __8__17__26__35__44__53__62__71__80
+	mLHScol11 = vec_xl(0,mLHS);
+	mLHScol12 = vec_xl(0,mLHS+4);
+	mLHScol13 = vec_splats((float)0);
+	mLHScol13[0] = mLHS[8];
+
+	mLHScol21 = vec_xl(0,mLHS+4*2+1);
+	mLHScol22 = vec_xl(0,mLHS+4*3+1);
+	mLHScol23 = vec_splats((float)0);
+	mLHScol23[0] = mLHS[17];
+
+	mLHScol31 = vec_xl(0,mLHS+4*4+2);
+	mLHScol32 = vec_xl(0,mLHS+4*5+2);
+	mLHScol33 = vec_splats((float)0);
+	mLHScol33[0] = mLHS[26];
+
+	mLHScol41 = vec_xl(0,mLHS+4*6+3);
+	mLHScol42 = vec_xl(0,mLHS+4*7+3);
+	mLHScol43 = vec_splats((float)0);
+	mLHScol43[0] = mLHS[35];
+
+	mLHScol51 = vec_xl(0,mLHS+4*8+4);
+	mLHScol52 = vec_xl(0,mLHS+4*9+4);
+	mLHScol53 = vec_splats((float)0);
+	mLHScol53[0] = mLHS[44];
+
+	mLHScol61 = vec_xl(0,mLHS+4*10+5);
+	mLHScol62 = vec_xl(0,mLHS+4*11+5);
+	mLHScol63 = vec_splats((float)0);
+	mLHScol63[0] = mLHS[53];
+
+	mLHScol71 = vec_xl(0,mLHS+4*12+6);
+	mLHScol72 = vec_xl(0,mLHS+4*13+6);
+	mLHScol73 = vec_splats((float)0);
+	mLHScol73[0] = mLHS[62];
+
+	mLHScol81 = vec_xl(0,mLHS+4*14+7);
+	mLHScol82 = vec_xl(0,mLHS+4*15+7);
+	mLHScol83 = vec_splats((float)0);
+	mLHScol83[0] = mLHS[71];
+
+	mLHScol91 = vec_xl(0,mLHS+4*16+8);
+	mLHScol92 = vec_xl(0,mLHS+4*17+8);
+	mLHScol93 = vec_splats((float)0);
+	mLHScol93[0] = mLHS[80];
+//--------------------------------------------------------------------------------
+
+	mRHSrow11 = vec_xl(0,mRHS);
+	mRHSrow12 = vec_xl(0,mRHS+4);
+	mRHSrow13 = vec_splats((float)0);
+	mRHSrow13[0] = mRHS[8];
+
+	mRHSrow21 = vec_xl(0,mRHS+4*2+1);
+	mRHSrow22 = vec_xl(0,mRHS+4*3+1);
+	mRHSrow23 = vec_splats((float)0);
+	mRHSrow23[0] = mRHS[17];
+
+	mRHSrow31 = vec_xl(0,mRHS+4*4+2);
+	mRHSrow32 = vec_xl(0,mRHS+4*5+2);
+	mRHSrow33 = vec_splats((float)0);
+	mRHSrow33[0] = mRHS[26];
+
+	mRHSrow41 = vec_xl(0,mRHS+4*6+3);
+	mRHSrow42 = vec_xl(0,mRHS+4*7+3);
+	mRHSrow43 = vec_splats((float)0);
+	mRHSrow43[0] = mRHS[35];
+
+	mRHSrow51 = vec_xl(0,mRHS+4*8+4);
+	mRHSrow52 = vec_xl(0,mRHS+4*9+4);
+	mRHSrow53 = vec_splats((float)0);
+	mRHSrow53[0] = mRHS[44];
+
+	mRHSrow61 = vec_xl(0,mRHS+4*10+5);
+	mRHSrow62 = vec_xl(0,mRHS+4*11+5);
+	mRHSrow63 = vec_splats((float)0);
+	mRHSrow63[0] = mRHS[53];
+	
+	mRHSrow71 = vec_xl(0,mRHS+4*12+6);
+	mRHSrow72 = vec_xl(0,mRHS+4*13+6);
+	mRHSrow73 = vec_splats((float)0);
+	mRHSrow73[0] = mRHS[62];
+
+	mRHSrow81 = vec_xl(0,mRHS+4*14+7);
+	mRHSrow82 = vec_xl(0,mRHS+4*15+7);
+	mRHSrow83 = vec_splats((float)0);
+	mRHSrow83[0] = mRHS[71];
+
+	mRHSrow91 = vec_xl(0,mRHS+4*16+8);
+	mRHSrow92 = vec_xl(0,mRHS+4*17+8);
+	mRHSrow93 = vec_splats((float)0);
+	mRHSrow93[0] = mRHS[80];
+
+//===================================================================================
+//Splat
+//===================================================================================
+	vector float aux11={mLHScol11[0],mLHScol11[0],mLHScol11[0],mLHScol11[0]};
+	vector float aux12={mLHScol11[1],mLHScol11[1],mLHScol11[1],mLHScol11[1]};
+	vector float aux13={mLHScol11[2],mLHScol11[2],mLHScol11[2],mLHScol11[2]};
+	vector float aux14={mLHScol11[3],mLHScol11[3],mLHScol11[3],mLHScol11[3]};
+
+	vector float aux15={mLHScol12[0],mLHScol12[0],mLHScol12[0],mLHScol12[0]};
+	vector float aux16={mLHScol12[1],mLHScol12[1],mLHScol12[1],mLHScol12[1]};
+	vector float aux17={mLHScol12[2],mLHScol12[2],mLHScol12[2],mLHScol12[2]};
+	vector float aux18={mLHScol12[3],mLHScol12[3],mLHScol12[3],mLHScol12[3]};
+	
+	vector float aux19={mLHScol13[0],mLHScol13[0],mLHScol13[0],mLHScol13[0]};
+//===================================================================================
+	vector float aux21={mLHScol21[0],mLHScol21[0],mLHScol21[0],mLHScol21[0]};
+	vector float aux22={mLHScol21[1],mLHScol21[1],mLHScol21[1],mLHScol21[1]};
+	vector float aux23={mLHScol21[2],mLHScol21[2],mLHScol21[2],mLHScol21[2]};
+	vector float aux24={mLHScol21[3],mLHScol21[3],mLHScol21[3],mLHScol21[3]};
+
+	vector float aux25={mLHScol22[0],mLHScol22[0],mLHScol22[0],mLHScol22[0]};
+	vector float aux26={mLHScol22[1],mLHScol22[1],mLHScol22[1],mLHScol22[1]};
+	vector float aux27={mLHScol22[2],mLHScol22[2],mLHScol22[2],mLHScol22[2]};
+	vector float aux28={mLHScol22[3],mLHScol22[3],mLHScol22[3],mLHScol22[3]};
+
+	vector float aux29={mLHScol23[0],mLHScol23[0],mLHScol23[0],mLHScol23[0]};
+//===================================================================================
+
+	vector float aux31={mLHScol31[0],mLHScol31[0],mLHScol31[0],mLHScol31[0]};
+	vector float aux32={mLHScol31[1],mLHScol31[1],mLHScol31[1],mLHScol31[1]};
+	vector float aux33={mLHScol31[2],mLHScol31[2],mLHScol31[2],mLHScol31[2]};
+	vector float aux34={mLHScol31[3],mLHScol31[3],mLHScol31[3],mLHScol31[3]};
+
+	vector float aux35={mLHScol32[0],mLHScol32[0],mLHScol32[0],mLHScol32[0]};
+	vector float aux36={mLHScol32[1],mLHScol32[1],mLHScol32[1],mLHScol32[1]};
+	vector float aux37={mLHScol32[2],mLHScol32[2],mLHScol32[2],mLHScol32[2]};
+	vector float aux38={mLHScol32[3],mLHScol32[3],mLHScol32[3],mLHScol32[3]};
+
+	vector float aux39={mLHScol33[0],mLHScol33[0],mLHScol33[0],mLHScol33[0]};
+//===================================================================================
+
+	vector float aux41={mLHScol41[0],mLHScol41[0],mLHScol41[0],mLHScol41[0]};
+	vector float aux42={mLHScol41[1],mLHScol41[1],mLHScol41[1],mLHScol41[1]};
+	vector float aux43={mLHScol41[2],mLHScol41[2],mLHScol41[2],mLHScol41[2]};
+	vector float aux44={mLHScol41[3],mLHScol41[3],mLHScol41[3],mLHScol41[3]};
+
+	vector float aux45={mLHScol42[0],mLHScol42[0],mLHScol42[0],mLHScol42[0]};
+	vector float aux46={mLHScol42[1],mLHScol42[1],mLHScol42[1],mLHScol42[1]};
+	vector float aux47={mLHScol42[2],mLHScol42[2],mLHScol42[2],mLHScol42[2]};
+	vector float aux48={mLHScol42[3],mLHScol42[3],mLHScol42[3],mLHScol42[3]};
+
+	vector float aux49={mLHScol43[0],mLHScol43[0],mLHScol43[0],mLHScol43[0]};
+//===================================================================================
+	vector float aux51={mLHScol51[0],mLHScol51[0],mLHScol51[0],mLHScol51[0]};
+	vector float aux52={mLHScol51[1],mLHScol51[1],mLHScol51[1],mLHScol51[1]};
+	vector float aux53={mLHScol51[2],mLHScol51[2],mLHScol51[2],mLHScol51[2]};
+	vector float aux54={mLHScol51[3],mLHScol51[3],mLHScol51[3],mLHScol51[3]};
+
+	vector float aux55={mLHScol52[0],mLHScol52[0],mLHScol52[0],mLHScol52[0]};
+	vector float aux56={mLHScol52[1],mLHScol52[1],mLHScol52[1],mLHScol52[1]};
+	vector float aux57={mLHScol52[2],mLHScol52[2],mLHScol52[2],mLHScol52[2]};
+	vector float aux58={mLHScol52[3],mLHScol52[3],mLHScol52[3],mLHScol52[3]};
+
+	vector float aux59={mLHScol53[0],mLHScol53[0],mLHScol53[0],mLHScol53[0]};
+//===================================================================================
+	vector float aux61={mLHScol61[0],mLHScol61[0],mLHScol61[0],mLHScol61[0]};
+	vector float aux62={mLHScol61[1],mLHScol61[1],mLHScol61[1],mLHScol61[1]};
+	vector float aux63={mLHScol61[2],mLHScol61[2],mLHScol61[2],mLHScol61[2]};
+	vector float aux64={mLHScol61[3],mLHScol61[3],mLHScol61[3],mLHScol61[3]};
+
+	vector float aux65={mLHScol62[0],mLHScol62[0],mLHScol62[0],mLHScol62[0]};
+	vector float aux66={mLHScol62[1],mLHScol62[1],mLHScol62[1],mLHScol62[1]};
+	vector float aux67={mLHScol62[2],mLHScol62[2],mLHScol62[2],mLHScol62[2]};
+	vector float aux68={mLHScol62[3],mLHScol62[3],mLHScol62[3],mLHScol62[3]};
+
+	vector float aux69={mLHScol63[0],mLHScol63[0],mLHScol63[0],mLHScol63[0]};
+//===================================================================================
+	vector float aux71={mLHScol71[0],mLHScol71[0],mLHScol71[0],mLHScol71[0]};
+	vector float aux72={mLHScol71[1],mLHScol71[1],mLHScol71[1],mLHScol71[1]};
+	vector float aux73={mLHScol71[2],mLHScol71[2],mLHScol71[2],mLHScol71[2]};
+	vector float aux74={mLHScol71[3],mLHScol71[3],mLHScol71[3],mLHScol71[3]};
+
+	vector float aux75={mLHScol72[0],mLHScol72[0],mLHScol72[0],mLHScol72[0]};
+	vector float aux76={mLHScol72[1],mLHScol72[1],mLHScol72[1],mLHScol72[1]};
+	vector float aux77={mLHScol72[2],mLHScol72[2],mLHScol72[2],mLHScol72[2]};
+	vector float aux78={mLHScol72[3],mLHScol72[3],mLHScol72[3],mLHScol72[3]};
+
+	vector float aux79={mLHScol73[0],mLHScol73[0],mLHScol73[0],mLHScol73[0]};
+//===================================================================================
+	vector float aux81={mLHScol81[0],mLHScol81[0],mLHScol81[0],mLHScol81[0]};
+	vector float aux82={mLHScol81[1],mLHScol81[1],mLHScol81[1],mLHScol81[1]};
+	vector float aux83={mLHScol81[2],mLHScol81[2],mLHScol81[2],mLHScol81[2]};
+	vector float aux84={mLHScol81[3],mLHScol81[3],mLHScol81[3],mLHScol81[3]};
+
+	vector float aux85={mLHScol82[0],mLHScol82[0],mLHScol82[0],mLHScol82[0]};
+	vector float aux86={mLHScol82[1],mLHScol82[1],mLHScol82[1],mLHScol82[1]};
+	vector float aux87={mLHScol82[2],mLHScol82[2],mLHScol82[2],mLHScol82[2]};
+	vector float aux88={mLHScol82[3],mLHScol82[3],mLHScol82[3],mLHScol82[3]};
+
+	vector float aux89={mLHScol83[0],mLHScol83[0],mLHScol83[0],mLHScol83[0]};
+//===================================================================================
+	vector float aux91={mLHScol91[0],mLHScol91[0],mLHScol91[0],mLHScol91[0]};
+	vector float aux92={mLHScol91[1],mLHScol91[1],mLHScol91[1],mLHScol91[1]};
+	vector float aux93={mLHScol91[2],mLHScol91[2],mLHScol91[2],mLHScol91[2]};
+	vector float aux94={mLHScol91[3],mLHScol91[3],mLHScol91[3],mLHScol91[3]};
+
+	vector float aux95={mLHScol92[0],mLHScol92[0],mLHScol92[0],mLHScol92[0]};
+	vector float aux96={mLHScol92[1],mLHScol92[1],mLHScol92[1],mLHScol92[1]};
+	vector float aux97={mLHScol92[2],mLHScol92[2],mLHScol92[2],mLHScol92[2]};
+	vector float aux98={mLHScol92[3],mLHScol92[3],mLHScol92[3],mLHScol92[3]};
+
+	vector float aux99={mLHScol93[0],mLHScol93[0],mLHScol93[0],mLHScol93[0]};
+//===================================================================================
+//end of splat
+//===================================================================================
+
+//row1
+	vec_xst(vec_madd( mRHSrow91, aux91,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow21, aux21, vec_mul(mRHSrow11, aux11)),
+					vec_madd(mRHSrow41, aux41, vec_mul(mRHSrow31, aux31)) ),
+				vec_add(
+					vec_madd(mRHSrow61, aux61, vec_mul(mRHSrow51, aux51)),
+					vec_madd(mRHSrow81, aux81, vec_mul(mRHSrow71, aux71)) ) ) ),
+
+				0, mResult);	
+
+	
+	vec_xst(vec_madd( mRHSrow92, aux91,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow22, aux21, vec_mul(mRHSrow12, aux11)),
+					vec_madd(mRHSrow42, aux41, vec_mul(mRHSrow32, aux31)) ),
+				vec_add(
+					vec_madd(mRHSrow62, aux61, vec_mul(mRHSrow52, aux51)),
+					vec_madd(mRHSrow82, aux81, vec_mul(mRHSrow72, aux71)) ) ) ),
+
+				0, mResult+4);
+
+	vec_xst(vec_madd( mRHSrow93, aux91,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow23, aux21, vec_mul(mRHSrow13, aux11)),
+					vec_madd(mRHSrow43, aux41, vec_mul(mRHSrow33, aux31)) ),
+				vec_add(
+					vec_madd(mRHSrow63, aux61, vec_mul(mRHSrow53, aux51)),
+					vec_madd(mRHSrow83, aux81, vec_mul(mRHSrow73, aux71)) ) ) ),
+
+				0, mResult+8);	
+//row 2
+
+
+	vec_xst(vec_madd( mRHSrow91, aux92,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow21, aux22, vec_mul(mRHSrow11, aux12)),
+					vec_madd(mRHSrow41, aux42, vec_mul(mRHSrow31, aux32)) ),
+				vec_add(
+					vec_madd(mRHSrow61, aux62, vec_mul(mRHSrow51, aux52)),
+					vec_madd(mRHSrow81, aux82, vec_mul(mRHSrow71, aux72)) ) ) ),
+
+				0, mResult+4*2+1);
+
+	vec_xst(vec_madd( mRHSrow92, aux92,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow22, aux22, vec_mul(mRHSrow12, aux12)),
+					vec_madd(mRHSrow42, aux42, vec_mul(mRHSrow32, aux32)) ),
+				vec_add(
+					vec_madd(mRHSrow62, aux62, vec_mul(mRHSrow52, aux52)),
+					vec_madd(mRHSrow82, aux82, vec_mul(mRHSrow72, aux72)) ) ) ),
+
+				0, mResult+4*3+1);
+
+
+	vec_xst(vec_madd( mRHSrow93, aux92,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow23, aux22, vec_mul(mRHSrow13, aux12)),
+					vec_madd(mRHSrow43, aux42, vec_mul(mRHSrow33, aux32)) ),
+				vec_add(
+					vec_madd(mRHSrow63, aux62, vec_mul(mRHSrow53, aux52)),
+					vec_madd(mRHSrow83, aux82, vec_mul(mRHSrow73, aux72)) ) ) ),
+
+				0, mResult+17);
+
+//row 3
+
+
+	vec_xst(vec_madd( mRHSrow91, aux93,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow21, aux23, vec_mul(mRHSrow11, aux13)),
+					vec_madd(mRHSrow41, aux43, vec_mul(mRHSrow31, aux33)) ),
+				vec_add(
+					vec_madd(mRHSrow61, aux63, vec_mul(mRHSrow51, aux53)),
+					vec_madd(mRHSrow81, aux83, vec_mul(mRHSrow71, aux73)) ) ) ),
+
+				0, mResult+4*4+2);
+
+	vec_xst(vec_madd( mRHSrow92, aux93,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow22, aux23, vec_mul(mRHSrow12, aux13)),
+					vec_madd(mRHSrow42, aux43, vec_mul(mRHSrow32, aux33)) ),
+				vec_add(
+					vec_madd(mRHSrow62, aux63, vec_mul(mRHSrow52, aux53)),
+					vec_madd(mRHSrow82, aux83, vec_mul(mRHSrow72, aux73)) ) ) ),
+
+				0, mResult+4*5+2);
+
+
+	vec_xst(vec_madd( mRHSrow93, aux93,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow23, aux23, vec_mul(mRHSrow13, aux13)),
+					vec_madd(mRHSrow43, aux43, vec_mul(mRHSrow33, aux33)) ),
+				vec_add(
+					vec_madd(mRHSrow63, aux63, vec_mul(mRHSrow53, aux53)),
+					vec_madd(mRHSrow83, aux83, vec_mul(mRHSrow73, aux73)) ) ) ),
+
+				0, mResult+26);
+//row 4
+
+
+	vec_xst(vec_madd( mRHSrow91, aux94,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow21, aux24, vec_mul(mRHSrow11, aux14)),
+					vec_madd(mRHSrow41, aux44, vec_mul(mRHSrow31, aux34)) ),
+				vec_add(
+					vec_madd(mRHSrow61, aux64, vec_mul(mRHSrow51, aux54)),
+					vec_madd(mRHSrow81, aux84, vec_mul(mRHSrow71, aux74)) ) ) ),
+
+				0, mResult+4*6+3);
+
+	vec_xst(vec_madd( mRHSrow92, aux94,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow22, aux24, vec_mul(mRHSrow12, aux14)),
+					vec_madd(mRHSrow42, aux44, vec_mul(mRHSrow32, aux34)) ),
+				vec_add(
+					vec_madd(mRHSrow62, aux64, vec_mul(mRHSrow52, aux54)),
+					vec_madd(mRHSrow82, aux84, vec_mul(mRHSrow72, aux74)) ) ) ),
+
+				0, mResult+4*7+3);
+
+	vec_xst(vec_madd( mRHSrow93, aux94,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow23, aux24, vec_mul(mRHSrow13, aux14)),
+					vec_madd(mRHSrow43, aux44, vec_mul(mRHSrow33, aux34)) ),
+				vec_add(
+					vec_madd(mRHSrow63, aux64, vec_mul(mRHSrow53, aux54)),
+					vec_madd(mRHSrow83, aux84, vec_mul(mRHSrow73, aux74)) ) ) ),
+
+				0, mResult+35);
+//row 5
+
+
+	vec_xst(vec_madd( mRHSrow91, aux95,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow21, aux25, vec_mul(mRHSrow11, aux15)),
+					vec_madd(mRHSrow41, aux45, vec_mul(mRHSrow31, aux35)) ),
+				vec_add(
+					vec_madd(mRHSrow61, aux65, vec_mul(mRHSrow51, aux55)),
+					vec_madd(mRHSrow81, aux85, vec_mul(mRHSrow71, aux75)) ) ) ),
+
+				0, mResult+4*8+4);
+
+
+
+	vec_xst(vec_madd( mRHSrow92, aux95,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow22, aux25, vec_mul(mRHSrow12, aux15)),
+					vec_madd(mRHSrow42, aux45, vec_mul(mRHSrow32, aux35)) ),
+				vec_add(
+					vec_madd(mRHSrow62, aux65, vec_mul(mRHSrow52, aux55)),
+					vec_madd(mRHSrow82, aux85, vec_mul(mRHSrow72, aux75)) ) ) ),
+
+				0, mResult+4*9+4);
+
+
+	vec_xst(vec_madd( mRHSrow93, aux95,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow23, aux25, vec_mul(mRHSrow13, aux15)),
+					vec_madd(mRHSrow43, aux45, vec_mul(mRHSrow33, aux35)) ),
+				vec_add(
+					vec_madd(mRHSrow63, aux65, vec_mul(mRHSrow53, aux55)),
+					vec_madd(mRHSrow83, aux85, vec_mul(mRHSrow73, aux75)) ) ) ),
+
+				0, mResult+44);
+
+//row 6
+
+
+	vec_xst(vec_madd( mRHSrow91, aux96,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow21, aux26, vec_mul(mRHSrow11, aux16)),
+					vec_madd(mRHSrow41, aux46, vec_mul(mRHSrow31, aux36)) ),
+				vec_add(
+					vec_madd(mRHSrow61, aux66, vec_mul(mRHSrow51, aux56)),
+					vec_madd(mRHSrow81, aux86, vec_mul(mRHSrow71, aux76)) ) ) ),
+
+				0, mResult+4*10+5);
+
+
+	vec_xst(vec_madd( mRHSrow92, aux96,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow22, aux26, vec_mul(mRHSrow12, aux16)),
+					vec_madd(mRHSrow42, aux46, vec_mul(mRHSrow32, aux36)) ),
+				vec_add(
+					vec_madd(mRHSrow62, aux66, vec_mul(mRHSrow52, aux56)),
+					vec_madd(mRHSrow82, aux86, vec_mul(mRHSrow72, aux76)) ) ) ),
+
+				0, mResult+4*11+5);
+
+
+	vec_xst(vec_madd( mRHSrow93, aux96,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow23, aux26, vec_mul(mRHSrow13, aux16)),
+					vec_madd(mRHSrow43, aux46, vec_mul(mRHSrow33, aux36)) ),
+				vec_add(
+					vec_madd(mRHSrow63, aux66, vec_mul(mRHSrow53, aux56)),
+					vec_madd(mRHSrow83, aux86, vec_mul(mRHSrow73, aux76)) ) ) ),
+
+				0, mResult+53);
+
+//row 7
+
+
+	vec_xst(vec_madd( mRHSrow91, aux97,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow21, aux27, vec_mul(mRHSrow11, aux17)),
+					vec_madd(mRHSrow41, aux47, vec_mul(mRHSrow31, aux37)) ),
+				vec_add(
+					vec_madd(mRHSrow61, aux67, vec_mul(mRHSrow51, aux57)),
+					vec_madd(mRHSrow81, aux87, vec_mul(mRHSrow71, aux77)) ) ) ),
+
+				0, mResult+4*12+6);
+
+	vec_xst(vec_madd( mRHSrow92, aux97,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow22, aux27, vec_mul(mRHSrow12, aux17)),
+					vec_madd(mRHSrow42, aux47, vec_mul(mRHSrow32, aux37)) ),
+				vec_add(
+					vec_madd(mRHSrow62, aux67, vec_mul(mRHSrow52, aux57)),
+					vec_madd(mRHSrow82, aux87, vec_mul(mRHSrow72, aux77)) ) ) ),
+
+				0, mResult+4*13+6);
+
+
+	vec_xst(vec_madd( mRHSrow93, aux97,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow23, aux27, vec_mul(mRHSrow13, aux17)),
+					vec_madd(mRHSrow43, aux47, vec_mul(mRHSrow33, aux37)) ),
+				vec_add(
+					vec_madd(mRHSrow63, aux67, vec_mul(mRHSrow53, aux57)),
+					vec_madd(mRHSrow83, aux87, vec_mul(mRHSrow73, aux77)) ) ) ),
+
+				0, mResult+62);
+//row 8
+
+
+
+	vec_xst(vec_madd( mRHSrow91, aux98,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow21, aux28, vec_mul(mRHSrow11, aux18)),
+					vec_madd(mRHSrow41, aux48, vec_mul(mRHSrow31, aux38)) ),
+				vec_add(
+					vec_madd(mRHSrow61, aux68, vec_mul(mRHSrow51, aux58)),
+					vec_madd(mRHSrow81, aux88, vec_mul(mRHSrow71, aux78)) ) ) ),
+
+				0, mResult+4*14+7);
+
+
+	vec_xst(vec_madd( mRHSrow92, aux98,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow22, aux28, vec_mul(mRHSrow12, aux18)),
+					vec_madd(mRHSrow42, aux48, vec_mul(mRHSrow32, aux38)) ),
+				vec_add(
+					vec_madd(mRHSrow62, aux68, vec_mul(mRHSrow52, aux58)),
+					vec_madd(mRHSrow82, aux88, vec_mul(mRHSrow72, aux78)) ) ) ),
+
+				0, mResult+4*15+7);
+
+
+	vec_xst(vec_madd( mRHSrow93, aux98,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow23, aux28, vec_mul(mRHSrow13, aux18)),
+					vec_madd(mRHSrow43, aux48, vec_mul(mRHSrow33, aux38)) ),
+				vec_add(
+					vec_madd(mRHSrow63, aux68, vec_mul(mRHSrow53, aux58)),
+					vec_madd(mRHSrow83, aux88, vec_mul(mRHSrow73, aux78)) ) ) ),
+
+				0, mResult+71);
+
+//row 9
+
+
+	vec_xst(vec_madd( mRHSrow91, aux99,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow21, aux29, vec_mul(mRHSrow11, aux19)),
+					vec_madd(mRHSrow41, aux49, vec_mul(mRHSrow31, aux39)) ),
+				vec_add(
+					vec_madd(mRHSrow61, aux69, vec_mul(mRHSrow51, aux59)),
+					vec_madd(mRHSrow81, aux89, vec_mul(mRHSrow71, aux79)) ) ) ),
+
+				0, mResult+4*16+8);
+
+	vec_xst(vec_madd( mRHSrow92, aux99,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow22, aux29, vec_mul(mRHSrow12, aux19)),
+					vec_madd(mRHSrow42, aux49, vec_mul(mRHSrow32, aux39)) ),
+				vec_add(
+					vec_madd(mRHSrow62, aux69, vec_mul(mRHSrow52, aux59)),
+					vec_madd(mRHSrow82, aux89, vec_mul(mRHSrow72, aux79)) ) ) ),
+
+				0, mResult+4*17+8);
+
+
+	vector float mResultLastElem = 
+		
+		vec_madd( mRHSrow93, aux99,
+			vec_add(
+				vec_add(
+					vec_madd(mRHSrow23, aux29, vec_mul(mRHSrow13, aux19)),
+					vec_madd(mRHSrow43, aux49, vec_mul(mRHSrow33, aux39)) ),
+				vec_add(
+					vec_madd(mRHSrow63, aux69, vec_mul(mRHSrow53, aux59)),
+					vec_madd(mRHSrow83, aux89, vec_mul(mRHSrow73, aux79)) ) ) );
+	mResult[80] = mResultLastElem[0];
+
+
+}
+
+
+
+//float 4x4 matrices col major
+
+inline void mul4x4ColMajorFloat(const float* mLHS, const float* mRHS, float* const mResult){
+	vector float mLHScol1,mLHScol2,mLHScol3,mLHScol4;
+	vector float mRHSrow1,mRHSrow2,mRHSrow3,mRHSrow4;
+	
+	mLHScol1 = vec_xl(0,mLHS);
+	mLHScol2 = vec_xl(0,mLHS+4);
+	mLHScol3 = vec_xl(0,mLHS+8);
+	mLHScol4 = vec_xl(0,mLHS+12);
+
+	mRHSrow1 = vec_xl(0,mRHS);
+	mRHSrow2 = vec_xl(0,mRHS+4);
+	mRHSrow3 = vec_xl(0,mRHS+8);
+	mRHSrow4 = vec_xl(0,mRHS+12);
+
+	vector float auxLHS11 = {mLHScol1[0],mLHScol1[0],mLHScol1[0],mLHScol1[0]};
+	vector float auxLHS12 = {mLHScol1[1],mLHScol1[1],mLHScol1[1],mLHScol1[1]};
+	vector float auxLHS13 = {mLHScol1[2],mLHScol1[2],mLHScol1[2],mLHScol1[2]};
+	vector float auxLHS14 = {mLHScol1[3],mLHScol1[3],mLHScol1[3],mLHScol1[3]};
+	
+	vector float auxLHS21 = {mLHScol2[0],mLHScol2[0],mLHScol2[0],mLHScol2[0]};
+	vector float auxLHS22 = {mLHScol2[1],mLHScol2[1],mLHScol2[1],mLHScol2[1]};
+	vector float auxLHS23 = {mLHScol2[2],mLHScol2[2],mLHScol2[2],mLHScol2[2]};
+	vector float auxLHS24 = {mLHScol2[3],mLHScol2[3],mLHScol2[3],mLHScol2[3]};
+	
+	vector float auxLHS31 = {mLHScol3[0],mLHScol3[0],mLHScol3[0],mLHScol3[0]};
+	vector float auxLHS32 = {mLHScol3[1],mLHScol3[1],mLHScol3[1],mLHScol3[1]};
+	vector float auxLHS33 = {mLHScol3[2],mLHScol3[2],mLHScol3[2],mLHScol3[2]};
+	vector float auxLHS34 = {mLHScol3[3],mLHScol3[3],mLHScol3[3],mLHScol3[3]};
+	
+	vector float auxLHS41 = {mLHScol4[0],mLHScol4[0],mLHScol4[0],mLHScol4[0]};
+	vector float auxLHS42 = {mLHScol4[1],mLHScol4[1],mLHScol4[1],mLHScol4[1]};
+	vector float auxLHS43 = {mLHScol4[2],mLHScol4[2],mLHScol4[2],mLHScol4[2]};
+	vector float auxLHS44 = {mLHScol4[3],mLHScol4[3],mLHScol4[3],mLHScol4[3]};
+
+ 	//row 1 
+	vec_xst(
+	vec_add(vec_add(vec_mul(auxLHS11,mRHSrow1),vec_mul(auxLHS12,mRHSrow2)),
+	vec_add(vec_mul(auxLHS13,mRHSrow3),vec_mul(auxLHS14,mRHSrow4))),0,
+	mResult
+	);
+
+	//row 2 
+	vec_xst(
+	vec_add(vec_add(vec_mul(auxLHS21,mRHSrow1),vec_mul(auxLHS22,mRHSrow2)),
+	vec_add(vec_mul(auxLHS23,mRHSrow3),vec_mul(auxLHS24,mRHSrow4))),0,mResult+4
+	);
+
+	//row 3
+	vec_xst(
+	vec_add(vec_add(vec_mul(auxLHS31,mRHSrow1),vec_mul(auxLHS32,mRHSrow2)),
+	vec_add(vec_mul(auxLHS33,mRHSrow3),vec_mul(auxLHS34,mRHSrow4))),0,mResult+8
+	);
+
+	//row 4
+	vec_xst(
+	vec_add(vec_add(vec_mul(auxLHS41,mRHSrow1),vec_mul(auxLHS42,mRHSrow2)),
+	vec_add(vec_mul(auxLHS43,mRHSrow3),vec_mul(auxLHS44,mRHSrow4))),0,mResult+12
+	);
+
+}
+
 
 //====================================================================================================
 inline void mul4x4RowMajor(const double* mLHS, const double* mRHS, double* const mResult)
